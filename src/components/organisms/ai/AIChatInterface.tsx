@@ -11,6 +11,7 @@ interface Props {
 
 export function AIChatInterface({ personaId }: Props) {
   const persona = aiPersonas.find(p => p.id === personaId) || aiPersonas[0];
+  const endOfMessagesRef = useRef<HTMLDivElement>(null);
   const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat({
     api: '/api/ai/chat',
     body: { personaId },

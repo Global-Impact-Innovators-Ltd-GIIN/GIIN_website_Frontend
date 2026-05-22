@@ -18,7 +18,7 @@ export async function POST(req: Request) {
     // Select the appropriate persona, fallback to default
     const systemPrompt = systemPrompts[personaId as string] || systemPrompts['default'];
 
-    const result = streamText({
+    const result = await streamText({
       model: openai('gpt-4o-mini'),
       system: systemPrompt,
       messages,
