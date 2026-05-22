@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: giin-website-deployment
+  labels:
+    app: giin-website
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: giin-website
+  template:
+    metadata:
+      labels:
+        app: giin-website
+    spec:
+      containers:
+      - name: giin-website
+        image: giin-registry.giin.com/giin-website:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 3000
+        env:
+        - name: NODE_ENV
+          value: "production"
+        - name: REDIS_URL
+          value: "redis://redis-service:6379"
+        resources:
+          limits:
+            cpu: "1"
+            memory: "1Gi"
+          requests:
+            cpu: "500m"
+            memory: "512Mi"
+        livenessProbe:
+          httpGet:
+            path: /api/v1/health
+            port: 3000
+          initialDelaySeconds: 15
+          periodSeconds: 20
+        readinessProbe:
+          httpGet:
+            path: /api/v1/health
+            port: 3000
+          initialDelaySeconds: 5
+          periodSeconds: 10

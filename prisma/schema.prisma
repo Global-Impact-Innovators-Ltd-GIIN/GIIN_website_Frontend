@@ -1,0 +1,797 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ==========================================
+// 1. Core Identity & Multi-Tenancy
+// ==========================================
+
+model User {
+  id            String    @id @default(uuid())
+  email         String    @unique
+  passwordHash  String?
+  firstName     String?
+  lastName      String?
+  avatarUrl     String?
+  isSuperAdmin  Boolean   @default(false)
+  
+  // Unified Profile
+  bio           String?
+  linkedInUrl   String?
+  title         String?
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations
+  organizations   OrganizationMember[]
+  enrollments     Enrollment[]
+  certificates    Certificate[]
+  payments        Payment[]
+  subscriptions   Subscription[]
+  notifications   Notification[]
+  sentMessages    Message[]         @relation("SentMessages")
+  receivedMessages Message[]        @relation("ReceivedMessages")
+  aiInteractions  AIInteraction[]
+  auditLogs       AuditLog[]
+  eventAttendees  EventAttendee[]
+  jobApplications JobApplication[]
+  managedProjects Project[]         @relation("ProjectManager")
+  authoredBlogs   Blog[]            @relation("BlogAuthor")
+  
+  // Leadership Ecosystem Relations
+  leaderProfile   LeaderProfile?
+  mentorships     MentorshipSession[] @relation("MenteeUser")
+  forumThreads    ForumThread[]     @relation("ThreadAuthor")
+  forumPosts      ForumPost[]       @relation("PostAuthor")
+  
+  // Technology Ecosystem Relations
+  assignedTasks   Task[]            @relation("TaskAssignee")
+  reportedTickets Ticket[]          @relation("TicketReporter")
+  
+  // Multimedia Ecosystem Relations
+  createdAssets   MediaAsset[]      @relation("AssetCreator")
+  mediaReviews    ContentApproval[] @relation("ContentReviewer")
+  
+  // Innovation Lab Relations
+  startupRoles    StartupFounder[]  @relation("StartupFounderUser")
+  investorProfile Investor?         @relation("InvestorProfile")
+  
+  // Research & Academy Relations
+  authoredPapers  PaperAuthor[]     @relation("AuthoredPapers")
+  ledResearch     AcademicProject[] @relation("LeadResearchProjects")
+  
+  // Cyber Defense Relations
+  conductedAudits SecurityAudit[]   @relation("Auditor")
+  reportedIncidents Incident[]      @relation("IncidentReporter")
+  consultantProfile ConsultantProfile? @relation("ConsultantProfile")
+}
+
+enum OrgType {
+  CLIENT
+  PARTNER
+  INTERNAL
+  ACADEMY
+}
+
+model Organization {
+  id          String   @id @default(uuid())
+  name        String
+  slug        String   @unique
+  type        OrgType  @default(CLIENT)
+  logoUrl     String?
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  members        OrganizationMember[]
+  projects       Project[]
+  courses        Course[]
+  events         Event[]
+  mediaAssets    MediaAsset[]
+  podcasts       Podcast[]
+  innovationLabs InnovationLab[]
+  blogs          Blog[]
+  caseStudies    CaseStudy[]
+  academies      Academy[]
+  proposals      Proposal[]   @relation("ClientProposals")
+  mediaBookings  MediaBooking[] @relation("ClientBookings")
+  startups       Startup[]
+  providedGrants Grant[]      @relation("GrantProvider")
+  publications   ResearchPaper[] @relation("ResearchPublications")
+  
+  // Cyber Defense Relations
+  securityAudits SecurityAudit[] @relation("OrgAudits")
+  incidents      Incident[]      @relation("OrgIncidents")
+  assessments    Assessment[]    @relation("OrgAssessments")
+}
+
+model OrganizationMember {
+  id             String       @id @default(uuid())
+  userId         String
+  organizationId String
+  roleId         String
+  
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  role           Role         @relation(fields: [roleId], references: [id])
+
+  createdAt      DateTime     @default(now())
+
+  @@unique([userId, organizationId, roleId])
+}
+
+// ==========================================
+// 2. RBAC Permission Structure
+// ==========================================
+
+model Role {
+  id          String   @id @default(uuid())
+  name        String   @unique // e.g., ORG_ADMIN, TRAINER, STUDENT, RESEARCHER, CLIENT_REP, PARTNER_LEAD, STAFF
+  description String?
+  
+  members     OrganizationMember[]
+  permissions RolePermission[]
+}
+
+model Permission {
+  id          String   @id @default(uuid())
+  action      String   @unique // e.g., "course:create", "user:delete"
+  
+  roles       RolePermission[]
+}
+
+model RolePermission {
+  roleId       String
+  permissionId String
+  
+  role         Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@id([roleId, permissionId])
+}
+
+// ==========================================
+// 3. Education & Academies
+// ==========================================
+
+model Academy {
+  id             String       @id @default(uuid())
+  name           String
+  description    String?
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  courses        Course[]
+  createdAt      DateTime     @default(now())
+}
+
+model Course {
+  id             String       @id @default(uuid())
+  title          String
+  description    String
+  academyId      String?
+  organizationId String
+  
+  academy        Academy?     @relation(fields: [academyId], references: [id])
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  
+  enrollments    Enrollment[]
+  certificates   Certificate[]
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+}
+
+model Enrollment {
+  id        String   @id @default(uuid())
+  userId    String
+  courseId  String
+  status    String   // ACTIVE, COMPLETED, DROPPED
+  
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@unique([userId, courseId])
+}
+
+model Certificate {
+  id        String   @id @default(uuid())
+  userId    String
+  courseId  String
+  issueDate DateTime @default(now())
+  url       String
+  
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+}
+
+// ==========================================
+// 4. Events, Programs & Labs
+// ==========================================
+
+enum EventType {
+  CONFERENCE
+  LEADERSHIP_PROGRAM
+  WORKSHOP
+  WEBINAR
+}
+
+model Event {
+  id             String       @id @default(uuid())
+  title          String
+  description    String?
+  startDate      DateTime
+  endDate        DateTime
+  type           EventType
+  organizationId String
+  
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  attendees      EventAttendee[]
+}
+
+model EventAttendee {
+  id        String   @id @default(uuid())
+  eventId   String
+  userId    String
+  status    String   // REGISTERED, ATTENDED, CANCELLED
+  
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([eventId, userId])
+}
+
+model Project {
+  id             String       @id @default(uuid())
+  name           String
+  description    String?
+  status         String       // PLANNING, DEVELOPMENT, TESTING, DEPLOYED
+  organizationId String
+  managerId      String?
+  budget         Float?
+  timeline       String?
+  
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  manager        User?        @relation("ProjectManager", fields: [managerId], references: [id])
+  
+  tasks          Task[]
+  tickets        Ticket[]
+  repositories   Repository[]
+  
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+}
+
+model InnovationLab {
+  id             String       @id @default(uuid())
+  name           String
+  focusArea      String
+  organizationId String
+  
+  organization   Organization @relation(fields: [organizationId], references: [id])
+}
+
+// ==========================================
+// 5. Media, Publications & Content
+// ==========================================
+
+model MediaAsset {
+  id             String       @id @default(uuid())
+  title          String
+  description    String?
+  type           String       // VIDEO, AUDIO, IMAGE, BRANDING, DOCUMENTARY
+  status         String       // DRAFT, IN_REVIEW, APPROVED, PUBLISHED
+  organizationId String
+  creatorId      String?
+  
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  creator        User?        @relation("AssetCreator", fields: [creatorId], references: [id])
+  
+  versions       MediaAssetVersion[]
+  approvals      ContentApproval[]
+  
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+}
+
+model MediaAssetVersion {
+  id             String       @id @default(uuid())
+  assetId        String
+  versionNumber  Int
+  url            String
+  thumbnailUrl   String?
+  sizeBytes      BigInt?
+  duration       Int?         // in seconds (for video/audio)
+  notes          String?
+  
+  asset          MediaAsset   @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  createdAt      DateTime     @default(now())
+}
+
+model ContentApproval {
+  id             String       @id @default(uuid())
+  assetId        String
+  reviewerId     String
+  status         String       // PENDING, APPROVED, REJECTED, CHANGES_REQUESTED
+  feedback       String?      @db.Text
+  
+  asset          MediaAsset   @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  reviewer       User         @relation("ContentReviewer", fields: [reviewerId], references: [id])
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+}
+
+model MediaBooking {
+  id             String       @id @default(uuid())
+  clientId       String
+  serviceType    String       // PHOTOGRAPHY, VIDEOGRAPHY, PODCAST, BRANDING
+  location       String?
+  startDate      DateTime
+  endDate        DateTime?
+  status         String       // REQUESTED, CONFIRMED, COMPLETED, CANCELLED
+  details        String?      @db.Text
+  
+  client         Organization @relation("ClientBookings", fields: [clientId], references: [id])
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+}
+
+model Podcast {
+  id             String       @id @default(uuid())
+  title          String
+  episodeNumber  Int
+  audioUrl       String
+  organizationId String
+  
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  publishDate    DateTime     @default(now())
+}
+
+model Blog {
+  id             String       @id @default(uuid())
+  title          String
+  content        String
+  authorId       String
+  organizationId String
+  
+  author         User         @relation("BlogAuthor", fields: [authorId], references: [id])
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+}
+
+model CaseStudy {
+  id             String       @id @default(uuid())
+  title          String
+  summary        String
+  content        String
+  organizationId String
+  
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  createdAt      DateTime     @default(now())
+}
+
+model JobApplication {
+  id             String   @id @default(uuid())
+  userId         String
+  position       String
+  status         String   // PENDING, REVIEWED, REJECTED, HIRED
+  resumeUrl      String?
+  
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt      DateTime @default(now())
+}
+
+// ==========================================
+// 6. Financials
+// ==========================================
+
+model Subscription {
+  id        String   @id @default(uuid())
+  userId    String
+  plan      String   // BASIC, PRO, ENTERPRISE
+  status    String   // ACTIVE, CANCELED
+  
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  payments  Payment[]
+}
+
+model Payment {
+  id             String   @id @default(uuid())
+  userId         String
+  subscriptionId String?
+  amount         Float
+  currency       String   @default("USD")
+  status         String   // SUCCESS, PENDING, FAILED
+  
+  user           User     @relation(fields: [userId], references: [id])
+  subscription   Subscription? @relation(fields: [subscriptionId], references: [id])
+  createdAt      DateTime @default(now())
+}
+
+// ==========================================
+// 7. Communications, AI & Analytics
+// ==========================================
+
+model Message {
+  id         String   @id @default(uuid())
+  senderId   String
+  receiverId String
+  content    String
+  read       Boolean  @default(false)
+  
+  sender     User     @relation("SentMessages", fields: [senderId], references: [id])
+  receiver   User     @relation("ReceivedMessages", fields: [receiverId], references: [id])
+  createdAt  DateTime @default(now())
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String
+  title     String
+  body      String
+  read      Boolean  @default(false)
+  
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+}
+
+model AIInteraction {
+  id        String   @id @default(uuid())
+  userId    String
+  prompt    String
+  response  String
+  model     String   @default("gpt-4o")
+  
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+}
+
+model Analytics {
+  id        String   @id @default(uuid())
+  eventType String   // PAGE_VIEW, CLICK, SIGN_UP
+  payload   Json
+  createdAt DateTime @default(now())
+  
+  userId    String?
+}
+
+model AuditLog {
+  id        String   @id @default(uuid())
+  userId    String
+  action    String
+  resource  String
+  details   Json?
+  
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+}
+
+// ==========================================
+// 8. Leadership Institute Ecosystem
+// ==========================================
+
+model LeaderProfile {
+  id              String   @id @default(uuid())
+  userId          String   @unique
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type            String   // TRAINER, MENTOR, EXECUTIVE
+  expertise       String[]
+  rating          Float    @default(5.0)
+  totalMentees    Int      @default(0)
+  available       Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  mentoringSessions MentorshipSession[] @relation("MentorProfile")
+}
+
+model MentorshipSession {
+  id              String   @id @default(uuid())
+  mentorId        String
+  menteeId        String
+  scheduledAt     DateTime
+  status          String   // PENDING, SCHEDULED, COMPLETED, CANCELED
+  notes           String?
+  
+  mentor          LeaderProfile @relation("MentorProfile", fields: [mentorId], references: [id])
+  mentee          User          @relation("MenteeUser", fields: [menteeId], references: [id])
+  createdAt       DateTime      @default(now())
+}
+
+model ForumThread {
+  id              String   @id @default(uuid())
+  title           String
+  content         String
+  authorId        String
+  category        String   // LEADERSHIP, INNOVATION, POLICY
+  
+  author          User     @relation("ThreadAuthor", fields: [authorId], references: [id])
+  posts           ForumPost[]
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model ForumPost {
+  id              String   @id @default(uuid())
+  threadId        String
+  authorId        String
+  content         String
+  
+  thread          ForumThread @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  author          User        @relation("PostAuthor", fields: [authorId], references: [id])
+  createdAt       DateTime    @default(now())
+}
+
+// ==========================================
+// 9. Technology Company Ecosystem
+// ==========================================
+
+model Task {
+  id              String   @id @default(uuid())
+  title           String
+  description     String?
+  status          String   // BACKLOG, TODO, IN_PROGRESS, REVIEW, DONE
+  priority        String   // LOW, MEDIUM, HIGH, CRITICAL
+  projectId       String
+  assigneeId      String?
+  
+  project         Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  assignee        User?    @relation("TaskAssignee", fields: [assigneeId], references: [id])
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model Ticket {
+  id              String   @id @default(uuid())
+  subject         String
+  description     String
+  status          String   // OPEN, IN_PROGRESS, RESOLVED, CLOSED
+  priority        String
+  projectId       String?
+  reporterId      String
+  
+  project         Project? @relation(fields: [projectId], references: [id])
+  reporter        User     @relation("TicketReporter", fields: [reporterId], references: [id])
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model Repository {
+  id              String   @id @default(uuid())
+  name            String
+  url             String
+  provider        String   // GITHUB, GITLAB, BITBUCKET
+  projectId       String
+  
+  project         Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  createdAt       DateTime @default(now())
+}
+
+model Proposal {
+  id              String   @id @default(uuid())
+  title           String
+  content         String   @db.Text
+  totalAmount     Float
+  status          String   // DRAFT, SENT, ACCEPTED, REJECTED
+  clientId        String
+  
+  client          Organization @relation("ClientProposals", fields: [clientId], references: [id])
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model SoftwareProduct {
+  id              String   @id @default(uuid())
+  name            String
+  description     String
+  version         String
+  licenseType     String
+  status          String   // ACTIVE, DEPRECATED, IN_DEVELOPMENT
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+// ==========================================
+// 10. Innovation Lab & Venture Ecosystem
+// ==========================================
+
+model Startup {
+  id              String   @id @default(uuid())
+  name            String
+  industry        String
+  stage           String   // IDEA, PRE_SEED, SEED, SERIES_A, GROWTH
+  description     String   @db.Text
+  pitchDeckUrl    String?
+  innovationScore Float?   // AI generated score
+  foundedAt       DateTime?
+  organizationId  String?
+  
+  organization    Organization? @relation(fields: [organizationId], references: [id])
+  founders        StartupFounder[]
+  grantApps       GrantApplication[]
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model StartupFounder {
+  id              String   @id @default(uuid())
+  startupId       String
+  userId          String
+  role            String   // CEO, CTO, COO, FOUNDER
+  
+  startup         Startup  @relation(fields: [startupId], references: [id], onDelete: Cascade)
+  user            User     @relation("StartupFounderUser", fields: [userId], references: [id], onDelete: Cascade)
+  createdAt       DateTime @default(now())
+}
+
+model Investor {
+  id              String   @id @default(uuid())
+  name            String
+  type            String   // VC, ANGEL, PE, CORPORATE
+  thesis          String?  @db.Text
+  ticketSizeMin   Float?
+  ticketSizeMax   Float?
+  userId          String?  @unique
+  
+  user            User?    @relation("InvestorProfile", fields: [userId], references: [id])
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model Grant {
+  id              String   @id @default(uuid())
+  title           String
+  description     String   @db.Text
+  amount          Float
+  deadline        DateTime
+  status          String   // OPEN, CLOSED, AWARDED
+  providerId      String
+  
+  provider        Organization @relation("GrantProvider", fields: [providerId], references: [id])
+  applications    GrantApplication[]
+  createdAt       DateTime @default(now())
+}
+
+model GrantApplication {
+  id              String   @id @default(uuid())
+  grantId         String
+  startupId       String
+  status          String   // SUBMITTED, REVIEWING, APPROVED, REJECTED
+  proposalText    String?  @db.Text
+  
+  grant           Grant    @relation(fields: [grantId], references: [id], onDelete: Cascade)
+  startup         Startup  @relation(fields: [startupId], references: [id], onDelete: Cascade)
+  createdAt       DateTime @default(now())
+}
+
+model Competition {
+  id              String   @id @default(uuid())
+  name            String
+  type            String   // HACKATHON, PITCH_COMPETITION, CHALLENGE
+  description     String   @db.Text
+  startDate       DateTime
+  endDate         DateTime
+  prizePool       Float?
+  status          String   // UPCOMING, ONGOING, COMPLETED
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+// ==========================================
+// 11. Research & Academy Ecosystem
+// ==========================================
+
+model ResearchPaper {
+  id              String   @id @default(uuid())
+  title           String
+  abstract        String   @db.Text
+  doi             String?  @unique
+  url             String?
+  status          String   // DRAFT, PEER_REVIEW, PUBLISHED
+  publishedAt     DateTime?
+  organizationId  String?
+  
+  organization    Organization? @relation("ResearchPublications", fields: [organizationId], references: [id])
+  authors         PaperAuthor[]
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model PaperAuthor {
+  id              String   @id @default(uuid())
+  paperId         String
+  userId          String
+  order           Int      @default(1)
+  
+  paper           ResearchPaper @relation(fields: [paperId], references: [id], onDelete: Cascade)
+  user            User          @relation("AuthoredPapers", fields: [userId], references: [id], onDelete: Cascade)
+  createdAt       DateTime      @default(now())
+}
+
+model AcademicProject {
+  id              String   @id @default(uuid())
+  title           String
+  description     String   @db.Text
+  status          String   // PROPOSED, ONGOING, COMPLETED
+  fundingAmount   Float?
+  leadResearcherId String
+  
+  leadResearcher  User     @relation("LeadResearchProjects", fields: [leadResearcherId], references: [id])
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+// ==========================================
+// 12. Cyber Defense & Consulting Ecosystem
+// ==========================================
+
+model SecurityAudit {
+  id              String   @id @default(uuid())
+  title           String
+  description     String   @db.Text
+  riskScore       Int      // 1-100 score
+  status          String   // PENDING, IN_PROGRESS, RESOLVED
+  organizationId  String
+  auditorId       String
+  
+  organization    Organization @relation("OrgAudits", fields: [organizationId], references: [id], onDelete: Cascade)
+  auditor         User         @relation("Auditor", fields: [auditorId], references: [id])
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model Incident {
+  id              String   @id @default(uuid())
+  title           String
+  severity        String   // LOW, MEDIUM, HIGH, CRITICAL
+  description     String   @db.Text
+  status          String   // OPEN, INVESTIGATING, CLOSED
+  organizationId  String
+  reporterId      String
+  
+  organization    Organization @relation("OrgIncidents", fields: [organizationId], references: [id], onDelete: Cascade)
+  reporter        User         @relation("IncidentReporter", fields: [reporterId], references: [id])
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model ConsultantProfile {
+  id              String   @id @default(uuid())
+  userId          String   @unique
+  specialty       String   // CYBERSECURITY, BUSINESS_STRATEGY, DIGITAL_TRANSFORMATION
+  bio             String   @db.Text
+  hourlyRate      Float?
+  
+  user            User     @relation("ConsultantProfile", fields: [userId], references: [id], onDelete: Cascade)
+  assessments     Assessment[]
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model Assessment {
+  id              String   @id @default(uuid())
+  title           String
+  type            String   // BUSINESS_MATURITY, RISK_ASSESSMENT
+  reportData      String?  @db.Text
+  organizationId  String
+  consultantId    String
+  
+  organization    Organization      @relation("OrgAssessments", fields: [organizationId], references: [id], onDelete: Cascade)
+  consultant      ConsultantProfile @relation(fields: [consultantId], references: [id])
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
