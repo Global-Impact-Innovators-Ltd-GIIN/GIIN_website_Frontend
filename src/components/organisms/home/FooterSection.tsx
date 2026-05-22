@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { Logo } from "@/components/ui/logo";
 
 export function FooterSection() {
   return (
@@ -8,7 +9,9 @@ export function FooterSection() {
       <div className="container mx-auto px-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 mb-24">
           <div className="lg:col-span-2">
-            <h2 className="font-heading text-3xl font-bold text-white mb-6">GLOBAL IMPACT INNOVATORS</h2>
+            <div className="mb-6">
+              <Logo size="md" />
+            </div>
             <p className="text-muted-foreground max-w-sm mb-8">
               Leading Innovation. Transforming Nations. We are an ecosystem dedicated to equipping the next generation of African pioneers.
             </p>
