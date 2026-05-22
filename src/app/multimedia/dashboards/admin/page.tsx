@@ -43,7 +43,7 @@ export default async function MediaAdminDashboard() {
             { label: "New Booking Requests", value: bookingsCount, icon: <CalendarDays className="w-5 h-5" />, color: "text-amber-400" },
             { label: "Total Asset Catalog", value: assetsCount, icon: <Film className="w-5 h-5" />, color: "text-rose-400" },
             { label: "Pending Client Approvals", value: approvalsCount, icon: <BarChart3 className="w-5 h-5" />, color: "text-emerald-400" }
-          ].map((stat, i) => (
+          ].map((stat: any, i: any) => (
             <div key={i} className="p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md">
               <div className={`w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center mb-4 ${stat.color}`}>
                 {stat.icon}
@@ -65,7 +65,7 @@ export default async function MediaAdminDashboard() {
                 <p className="text-slate-500">No recent bookings.</p>
               ) : (
                 <ul className="space-y-4">
-                  {recentBookings.map(b => (
+                  {recentBookings.map((b: any) => (
                     <li key={b.id} className="flex items-center justify-between p-4 bg-black/40 rounded-xl border border-white/5">
                       <div>
                         <p className="font-bold text-white">{b.serviceType}</p>

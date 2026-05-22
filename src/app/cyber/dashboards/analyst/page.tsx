@@ -64,7 +64,7 @@ export default async function AnalystDashboard() {
                       <td colSpan={4} className="p-8 text-center text-slate-500">No open incidents in the queue.</td>
                     </tr>
                   ) : (
-                    openIncidents.map(incident => (
+                    openIncidents.map((incident: any) => (
                       <tr key={incident.id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
                         <td className="p-4 font-medium text-white flex items-center gap-3">
                           <ServerCrash className="w-4 h-4 text-slate-500" />

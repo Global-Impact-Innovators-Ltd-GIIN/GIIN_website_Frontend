@@ -70,7 +70,7 @@ export default async function CreatorDashboard() {
                       <td colSpan={4} className="p-8 text-center text-slate-500">No assets uploaded yet. Let's create!</td>
                     </tr>
                   ) : (
-                    assets.map(asset => (
+                    assets.map((asset: any) => (
                       <tr key={asset.id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
                         <td className="p-4 font-medium text-white flex items-center gap-3">
                           <FileVideo className="w-4 h-4 text-slate-500" />

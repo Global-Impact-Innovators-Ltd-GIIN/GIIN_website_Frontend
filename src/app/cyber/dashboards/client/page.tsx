@@ -97,7 +97,7 @@ export default async function CyberClientDashboard() {
               </div>
             ) : (
               <div className="grid gap-4">
-                {incidents.map(incident => (
+                {incidents.map((incident: any) => (
                   <div key={incident.id} className="p-6 border border-white/10 bg-black/40 rounded-2xl backdrop-blur-xl transition-all hover:border-red-500/30">
                     <div className="flex items-start justify-between mb-4">
                       <div>

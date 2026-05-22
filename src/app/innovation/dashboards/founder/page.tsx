@@ -22,7 +22,7 @@ export default async function FounderDashboard() {
 
   if (!user) redirect("/auth/login");
 
-  const startups = user.startupRoles.map(r => r.startup);
+  const startups = user.startupRoles.map((r: any) => r.startup);
   
   // For demo, fetch some open grants
   const grants = await prisma.grant.findMany({
@@ -52,7 +52,7 @@ export default async function FounderDashboard() {
               </div>
             ) : (
               <div className="grid gap-4">
-                {startups.map(startup => (
+                {startups.map((startup: any) => (
                   <div key={startup.id} className="p-6 border border-white/10 bg-black/40 rounded-2xl backdrop-blur-xl transition-all hover:border-emerald-500/30">
                     <div className="flex items-start justify-between mb-4">
                       <div>
@@ -98,7 +98,7 @@ export default async function FounderDashboard() {
                   <p className="text-sm text-slate-400">No active grants currently available.</p>
                 </div>
               ) : (
-                grants.map(grant => (
+                grants.map((grant: any) => (
                   <div key={grant.id} className="p-5 border border-white/10 bg-black/40 rounded-xl hover:border-amber-500/30 transition-colors">
                     <h4 className="font-bold text-white text-sm">{grant.title}</h4>
                     <div className="flex justify-between items-end mt-3">

@@ -25,7 +25,7 @@ export default async function ResearcherDashboard() {
 
   if (!user) redirect("/auth/login");
 
-  const papers = user.authoredPapers.map(p => p.paper);
+  const papers = user.authoredPapers.map((p: any) => p.paper);
   const projects = user.ledResearch;
 
   return (
@@ -60,7 +60,7 @@ export default async function ResearcherDashboard() {
               </div>
             ) : (
               <div className="grid gap-4">
-                {papers.map(paper => (
+                {papers.map((paper: any) => (
                   <div key={paper.id} className="p-6 border border-white/10 bg-black/40 rounded-2xl backdrop-blur-xl transition-all hover:border-blue-500/30">
                     <div className="flex justify-between items-start mb-2">
                       <h3 className="text-lg font-bold text-white">{paper.title}</h3>
@@ -88,7 +88,7 @@ export default async function ResearcherDashboard() {
                 </div>
               ) : (
                 <div className="grid gap-4">
-                  {projects.map(proj => (
+                  {projects.map((proj: any) => (
                     <div key={proj.id} className="p-4 border border-white/10 bg-black/40 rounded-xl">
                       <h4 className="font-bold text-white">{proj.title}</h4>
                       <p className="text-sm text-slate-400 mt-1">{proj.description}</p>

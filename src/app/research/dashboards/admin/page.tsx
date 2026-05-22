@@ -39,7 +39,7 @@ export default async function ResearchAdminDashboard() {
             { label: "Published Papers", value: papersCount, icon: <FileText className="w-5 h-5" />, color: "text-blue-400" },
             { label: "Active Courses", value: coursesCount, icon: <Library className="w-5 h-5" />, color: "text-violet-400" },
             { label: "Virtual Labs", value: projectsCount, icon: <Database className="w-5 h-5" />, color: "text-emerald-400" }
-          ].map((stat, i) => (
+          ].map((stat: any, i: any) => (
             <div key={i} className="p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md">
               <div className={`w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center mb-4 ${stat.color}`}>
                 {stat.icon}
@@ -60,7 +60,7 @@ export default async function ResearchAdminDashboard() {
                 <p className="text-slate-500">No papers submitted.</p>
               ) : (
                 <ul className="space-y-4">
-                  {recentPapers.map(p => (
+                  {recentPapers.map((p: any) => (
                     <li key={p.id} className="flex items-center justify-between p-4 bg-black/40 rounded-xl border border-white/5">
                       <div>
                         <p className="font-bold text-white">{p.title}</p>

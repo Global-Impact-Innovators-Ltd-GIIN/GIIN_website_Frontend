@@ -46,7 +46,7 @@ export default async function StudentDashboard() {
               </div>
             ) : (
               <div className="grid gap-4">
-                {enrollments.map(enrollment => (
+                {enrollments.map((enrollment: any) => (
                   <div key={enrollment.id} className="p-6 border border-white/10 bg-black/40 rounded-2xl backdrop-blur-xl transition-all hover:border-violet-500/30">
                     <div className="flex items-start justify-between mb-4">
                       <div>
