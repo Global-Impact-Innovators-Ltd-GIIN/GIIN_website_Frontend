@@ -3,6 +3,7 @@ import { Inter, Outfit } from "next/font/google";
 import { cookies } from "next/headers";
 import { JWTService } from "@/lib/security/jwt";
 import { Navbar } from "@/components/organisms/layout/Navbar";
+import { PageTransition } from "@/components/ui/PageTransition";
 import "./globals.css";
 
 const inter = Inter({
@@ -48,7 +49,7 @@ export default async function RootLayout({
     >
       <body className="min-h-screen bg-background text-foreground font-sans selection:bg-primary/30">
         <Navbar user={user} />
-        {children}
+        <PageTransition>{children}</PageTransition>
         <script
           dangerouslySetInnerHTML={{
             __html: `
