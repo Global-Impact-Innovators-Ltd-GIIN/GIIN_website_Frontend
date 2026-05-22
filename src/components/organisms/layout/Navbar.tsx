@@ -6,6 +6,8 @@ import { useRouter } from "next/navigation";
 import { LogOut } from "lucide-react";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 
+import Image from "next/image";
+
 interface NavbarProps {
   user: { email: string; role: string } | null;
 }
@@ -22,8 +24,20 @@ export function Navbar({ user }: NavbarProps) {
   return (
     <nav className="absolute top-0 left-0 w-full z-50 px-6 py-4 border-b border-border bg-background/50 backdrop-blur-md">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
-        <Link href="/" className="text-2xl font-bold tracking-tighter text-foreground">
-          GIIN <span className="text-primary">Ecosystem</span>
+        <Link href="/" className="flex items-center gap-3">
+          {/* Logo integration - assumes the user places logo.png in the public directory */}
+          <div className="relative w-10 h-10 flex-shrink-0">
+            <Image 
+              src="/logo.png" 
+              alt="GIIN Logo" 
+              fill
+              className="object-contain"
+              priority
+            />
+          </div>
+          <span className="text-2xl font-bold tracking-tighter text-foreground hidden sm:block">
+            GIIN <span className="text-primary">Ecosystem</span>
+          </span>
         </Link>
 
         <div className="flex items-center gap-6">
