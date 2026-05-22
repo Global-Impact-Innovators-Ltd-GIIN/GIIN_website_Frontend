@@ -16,8 +16,13 @@ export async function POST(req: Request) {
 
     const { title, severity, description } = await req.json();
 
-    const user = await prisma.user.findUnique({ where: { email: payload.email as string } });
-    if (!user || !user.organizationId) return NextResponse.json({ error: "User organization not found" }, { status: 404 });
+    const user = await prisma.user.findUnique({ 
+      where: { email: payload.email as string },
+      include: { organizations: true }
+    });
+    if (!user || user.organizations.length === 0) return NextResponse.json({ error: "User organization not found" }, { status: 404 });
+
+    const organizationId = user.organizations[0].organizationId;
 
     const incident = await prisma.incident.create({
       data: {
@@ -25,7 +30,7 @@ export async function POST(req: Request) {
         severity,
         description,
         status: "OPEN",
-        organizationId: user.organizationId,
+        organizationId: organizationId,
         reporterId: user.id
       }
     });
