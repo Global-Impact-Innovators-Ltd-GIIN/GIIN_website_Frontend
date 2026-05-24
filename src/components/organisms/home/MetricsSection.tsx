@@ -13,28 +13,28 @@ export function MetricsSection() {
   return (
     <section className="w-full border-t border-border/50 bg-background py-24">
       <div className="container mx-auto px-6 text-center">
-        <motion.h2 
-          className="mb-16 font-heading text-4xl font-bold md:text-5xl text-white"
+        <motion.h2
+          className="mb-16 font-heading text-4xl font-black md:text-6xl text-foreground tracking-tighter"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
         >
-          Impact at <span className="text-primary">Scale</span>
+          Impact at <span className="text-primary italic">Scale</span>
         </motion.h2>
 
         <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
           {metrics.map((metric, index) => (
             <motion.div
               key={index}
-              className="flex flex-col items-center justify-center space-y-4"
+              className="flex flex-col items-center justify-center space-y-2 p-8 rounded-3xl bg-card border border-border/10 group hover:border-primary/30 transition-all duration-500"
               initial={{ opacity: 0, scale: 0.8 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: index * 0.1 }}
             >
-              <h3 className="text-5xl font-extrabold text-white md:text-6xl">{metric.value}</h3>
-              <p className="text-lg font-medium text-muted-foreground uppercase tracking-wider">{metric.label}</p>
+              <h3 className="text-5xl font-black text-foreground md:text-7xl group-hover:text-primary transition-colors">{metric.value}</h3>
+              <p className="text-xs font-bold text-muted-foreground uppercase tracking-[0.2em]">{metric.label}</p>
             </motion.div>
           ))}
         </div>

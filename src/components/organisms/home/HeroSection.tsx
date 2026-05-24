@@ -65,7 +65,7 @@ export function HeroSection() {
         </motion.div>
 
         <motion.h1
-          className="mb-6 font-heading text-5xl font-black tracking-tighter sm:text-7xl md:text-8xl lg:text-9xl bg-clip-text text-transparent bg-gradient-to-br from-white via-white to-purple-500/50"
+          className="mb-6 font-heading text-5xl font-black tracking-tighter sm:text-7xl md:text-8xl lg:text-9xl bg-clip-text text-transparent bg-gradient-to-br from-foreground via-foreground to-primary/50"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 0.4, ease: "easeOut" }}

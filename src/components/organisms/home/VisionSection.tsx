@@ -22,7 +22,7 @@ export function VisionSection() {
                         <Eye className="w-3 h-3" />
                         Strategic Vision
                     </div>
-                    <h2 className="text-4xl md:text-7xl font-black text-white mb-8 tracking-tighter font-outfit text-balance">
+                    <h2 className="text-4xl md:text-7xl font-black text-foreground mb-8 tracking-tighter font-outfit text-balance">
                         A Blueprint for <span className="bg-clip-text text-transparent bg-gradient-to-r from-accent to-amber-500">Continental Sovereignty</span>.
                     </h2>
                     <p className="text-xl text-slate-400 leading-relaxed font-light text-balance">

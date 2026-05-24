@@ -22,7 +22,7 @@ export function MissionSection() {
                             <Target className="w-3 h-3" />
                             Strategic Mandate
                         </div>
-                        <h2 className="text-4xl md:text-6xl font-black text-white mb-8 leading-tight font-outfit tracking-tighter text-balance">
+                        <h2 className="text-4xl md:text-6xl font-black text-foreground mb-8 leading-tight font-outfit tracking-tighter text-balance">
                             Unifying Talent, Capital, and <span className="bg-clip-text text-transparent bg-gradient-to-r from-accent to-amber-500">Software</span>.
                         </h2>
                         <p className="text-xl text-slate-400 mb-10 leading-relaxed font-light">
