@@ -27,6 +27,37 @@ export function Navbar({ user }: NavbarProps) {
   const [scrolled, setScrolled] = useState(false);
   const headerRefs = useRef<Record<string, HTMLButtonElement | HTMLAnchorElement | null>>({});
   const dropdownRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const timeoutRef = useRef<any>(null);
+
+  // Clean up hover timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    };
+  }, []);
+
+  const handleMouseEnter = (menuLabel: string, isLink: boolean) => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
+    }
+    if (!isLink) {
+      setActiveMenu(menuLabel);
+    } else {
+      setActiveMenu(null);
+    }
+    setHoveredHeader(menuLabel);
+  };
+
+  const handleMouseLeave = () => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+    timeoutRef.current = setTimeout(() => {
+      setActiveMenu(null);
+      setHoveredHeader(null);
+    }, 200);
+  };
 
   // Detect scroll to style navbar background
   useEffect(() => {
@@ -150,10 +181,7 @@ export function Navbar({ user }: NavbarProps) {
         {/* DESKTOP MENU BUTTONS */}
         <nav 
           className="hidden md:flex items-center gap-1.5"
-          onMouseLeave={() => {
-            setActiveMenu(null);
-            setHoveredHeader(null);
-          }}
+          onMouseLeave={handleMouseLeave}
         >
           {navigationConfig.map((item) => {
             const isActive = isRouteActive(item);
@@ -164,14 +192,7 @@ export function Navbar({ user }: NavbarProps) {
               <div 
                 key={item.label} 
                 className="relative"
-                onMouseEnter={() => {
-                  if (item.type !== "link") {
-                    setActiveMenu(item.label);
-                  } else {
-                    setActiveMenu(null);
-                  }
-                  setHoveredHeader(item.label);
-                }}
+                onMouseEnter={() => handleMouseEnter(item.label, item.type === "link")}
               >
                 {item.type === "link" ? (
                   <Link
@@ -276,8 +297,15 @@ export function Navbar({ user }: NavbarProps) {
         <AnimatePresence>
           {activeMenu === "Ecosystem" && (
             <div 
-              className="hidden md:block absolute top-0 left-0 right-0 h-screen pointer-events-none z-40"
-              onMouseEnter={() => setActiveMenu("Ecosystem")}
+              className="hidden md:block absolute top-full left-0 right-0 pointer-events-none z-40"
+              onMouseEnter={() => {
+                if (timeoutRef.current) {
+                  clearTimeout(timeoutRef.current);
+                  timeoutRef.current = null;
+                }
+                setActiveMenu("Ecosystem");
+              }}
+              onMouseLeave={handleMouseLeave}
             >
               <div className="pointer-events-auto">
                 <MegaMenu

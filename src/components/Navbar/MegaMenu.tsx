@@ -61,7 +61,7 @@ export function MegaMenu({ sections, onClose }: MegaMenuProps) {
       initial="hidden"
       animate="visible"
       exit="exit"
-      className="absolute top-full left-0 right-0 mt-4 mx-auto max-w-7xl rounded-2xl border border-white/[0.08] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.8)] backdrop-blur-[25px] overflow-hidden z-50"
+      className="relative mt-4 mx-auto max-w-7xl rounded-2xl border border-white/[0.08] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.8)] backdrop-blur-[25px] overflow-hidden z-50"
       style={{
         background: "rgba(12, 12, 20, 0.72)",
       }}
