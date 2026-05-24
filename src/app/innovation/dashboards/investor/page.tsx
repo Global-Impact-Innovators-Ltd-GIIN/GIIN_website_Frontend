@@ -1,11 +1,10 @@
 import React from "react";
-import { PrismaClient } from "@prisma/client";
 import { cookies } from "next/headers";
 import { JWTService } from "@/lib/security/jwt";
 import { redirect } from "next/navigation";
 import { Activity, Target, Zap, Building2, TrendingUp } from "lucide-react";
 
-const prisma = new PrismaClient();
+import prisma from "@/lib/prisma";
 
 export default async function InvestorDashboard() {
   const cookieStore = await cookies();
@@ -62,7 +61,7 @@ export default async function InvestorDashboard() {
                       <td colSpan={5} className="p-8 text-center text-slate-500">No active startups in the incubator.</td>
                     </tr>
                   ) : (
-                    topStartups.map(startup => (
+                    topStartups.map((startup: any) => (
                       <tr key={startup.id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
                         <td className="p-4 font-medium text-white flex items-center gap-3">
                           <Building2 className="w-4 h-4 text-slate-500" />

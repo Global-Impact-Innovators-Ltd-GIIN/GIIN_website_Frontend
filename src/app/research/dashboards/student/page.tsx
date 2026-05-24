@@ -1,11 +1,10 @@
 import React from "react";
-import { PrismaClient } from "@prisma/client";
 import { cookies } from "next/headers";
 import { JWTService } from "@/lib/security/jwt";
 import { redirect } from "next/navigation";
 import { BookOpen, GraduationCap, PlayCircle, Award } from "lucide-react";
 
-const prisma = new PrismaClient();
+import prisma from "@/lib/prisma";
 
 export default async function StudentDashboard() {
   const cookieStore = await cookies();
@@ -47,7 +46,7 @@ export default async function StudentDashboard() {
               </div>
             ) : (
               <div className="grid gap-4">
-                {enrollments.map(enrollment => (
+                {enrollments.map((enrollment: any) => (
                   <div key={enrollment.id} className="p-6 border border-white/10 bg-black/40 rounded-2xl backdrop-blur-xl transition-all hover:border-violet-500/30">
                     <div className="flex items-start justify-between mb-4">
                       <div>
@@ -58,10 +57,10 @@ export default async function StudentDashboard() {
                     <div className="mt-4">
                       <div className="flex justify-between text-xs text-slate-400 mb-2">
                         <span>Progress</span>
-                        <span>{enrollment.progress}%</span>
+                        <span>0%</span>
                       </div>
                       <div className="w-full bg-white/10 rounded-full h-1.5">
-                        <div className="bg-violet-500 h-1.5 rounded-full" style={{ width: `${enrollment.progress}%` }}></div>
+                        <div className="bg-violet-500 h-1.5 rounded-full" style={{ width: `0%` }}></div>
                       </div>
                     </div>
                     <div className="mt-6 flex justify-end">

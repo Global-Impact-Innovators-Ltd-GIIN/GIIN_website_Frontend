@@ -1,11 +1,10 @@
 import React from "react";
-import { PrismaClient } from "@prisma/client";
 import { cookies } from "next/headers";
 import { JWTService } from "@/lib/security/jwt";
 import { redirect } from "next/navigation";
 import { GitBranch, Terminal, LayoutList, Bug, PlusCircle } from "lucide-react";
 
-const prisma = new PrismaClient();
+import prisma from "@/lib/prisma";
 
 export default async function DeveloperDashboard() {
   const cookieStore = await cookies();
@@ -76,7 +75,7 @@ export default async function DeveloperDashboard() {
                       <td colSpan={4} className="p-8 text-center text-slate-500">No active tasks assigned to you.</td>
                     </tr>
                   ) : (
-                    tasks.map(task => (
+                    tasks.map((task: any) => (
                       <tr key={task.id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
                         <td className="p-4 font-medium text-white">{task.title}</td>
                         <td className="p-4 text-slate-400">{task.project.name}</td>
@@ -106,7 +105,7 @@ export default async function DeveloperDashboard() {
                   <p className="text-sm text-slate-400">Zero inbox! No open tickets.</p>
                 </div>
               ) : (
-                tickets.map(ticket => (
+                tickets.map((ticket: any) => (
                   <div key={ticket.id} className="p-4 border border-white/10 bg-black/40 rounded-xl">
                     <h4 className="font-bold text-white text-sm truncate">{ticket.subject}</h4>
                     <div className="flex justify-between items-center mt-3">

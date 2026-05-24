@@ -1,11 +1,10 @@
 import React from "react";
-import { PrismaClient } from "@prisma/client";
 import { cookies } from "next/headers";
 import { JWTService } from "@/lib/security/jwt";
 import { redirect } from "next/navigation";
 import { ShieldAlert, FileSearch, ShieldCheck, Activity, BarChart3 } from "lucide-react";
 
-const prisma = new PrismaClient();
+import prisma from "@/lib/prisma";
 
 export default async function CyberClientDashboard() {
   const cookieStore = await cookies();
@@ -18,18 +17,19 @@ export default async function CyberClientDashboard() {
 
   const user = await prisma.user.findUnique({
     where: { email: payload.email as string },
-    include: { organization: true }
+    include: { organizations: true }
   });
 
-  if (!user || !user.organizationId) redirect("/auth/login");
+  if (!user || user.organizations.length === 0) redirect("/auth/login");
+  const organizationId = user.organizations[0].organizationId;
 
   const incidents = await prisma.incident.findMany({
-    where: { organizationId: user.organizationId },
+    where: { organizationId: organizationId },
     orderBy: { createdAt: "desc" }
   });
 
   const audits = await prisma.securityAudit.findMany({
-    where: { organizationId: user.organizationId },
+    where: { organizationId: organizationId },
     orderBy: { createdAt: "desc" }
   });
 
@@ -97,7 +97,7 @@ export default async function CyberClientDashboard() {
               </div>
             ) : (
               <div className="grid gap-4">
-                {incidents.map(incident => (
+                {incidents.map((incident: any) => (
                   <div key={incident.id} className="p-6 border border-white/10 bg-black/40 rounded-2xl backdrop-blur-xl transition-all hover:border-red-500/30">
                     <div className="flex items-start justify-between mb-4">
                       <div>

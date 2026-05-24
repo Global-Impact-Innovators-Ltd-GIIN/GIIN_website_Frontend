@@ -1,11 +1,10 @@
 import React from "react";
-import { PrismaClient } from "@prisma/client";
 import { cookies } from "next/headers";
 import { JWTService } from "@/lib/security/jwt";
 import { redirect } from "next/navigation";
 import { Calendar, Image as ImageIcon, Video, FileCheck, Clock } from "lucide-react";
 
-const prisma = new PrismaClient();
+import prisma from "@/lib/prisma";
 
 export default async function ClientMultimediaDashboard() {
   const cookieStore = await cookies();
@@ -21,7 +20,7 @@ export default async function ClientMultimediaDashboard() {
     include: { organizations: true }
   });
 
-  const orgIds = user?.organizations.map(o => o.organizationId) || [];
+  const orgIds = user?.organizations.map((o: any) => o.organizationId) || [];
 
   const bookings = await prisma.mediaBooking.findMany({
     where: { clientId: { in: orgIds } },
@@ -52,7 +51,7 @@ export default async function ClientMultimediaDashboard() {
               </div>
             ) : (
               <div className="grid gap-4">
-                {approvals.map(approval => (
+                {approvals.map((approval: any) => (
                   <div key={approval.id} className="p-6 border border-white/10 bg-black/40 rounded-2xl backdrop-blur-xl transition-all hover:border-rose-500/30 flex gap-6">
                     <div className="w-32 h-24 bg-white/5 rounded-xl flex items-center justify-center overflow-hidden relative group">
                       {approval.asset.type === 'VIDEO' ? <Video className="text-slate-500" /> : <ImageIcon className="text-slate-500" />}
@@ -98,7 +97,7 @@ export default async function ClientMultimediaDashboard() {
                   <p className="text-sm text-slate-400">No active studio bookings.</p>
                 </div>
               ) : (
-                bookings.map(booking => (
+                bookings.map((booking: any) => (
                   <div key={booking.id} className="p-4 border border-white/10 bg-black/40 rounded-xl">
                     <h4 className="font-bold text-white text-sm">{booking.serviceType}</h4>
                     <p className="text-xs text-slate-400 mt-1 flex items-center gap-1">
