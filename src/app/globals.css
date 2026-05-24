@@ -73,6 +73,10 @@
   --input: oklch(0.9 0.02 285);
   --ring: #7F4CA5;
   --radius: 1rem;
+  --primary-glow: rgba(75, 28, 113, 0.08);
+  --primary-border-glow: rgba(75, 28, 113, 0.12);
+  --accent-glow: rgba(245, 158, 11, 0.15);
+  --accent-border-glow: rgba(245, 158, 11, 0.25);
 }
 
 .dark {
@@ -98,6 +102,10 @@
   /* Purple-tinted border */
   --input: rgba(127, 76, 165, 0.2);
   --ring: #F59E0B;
+  --primary-glow: rgba(127, 76, 165, 0.15);
+  --primary-border-glow: rgba(127, 76, 165, 0.25);
+  --accent-glow: rgba(245, 158, 11, 0.25);
+  --accent-border-glow: rgba(245, 158, 11, 0.35);
 }
 
 @layer base {

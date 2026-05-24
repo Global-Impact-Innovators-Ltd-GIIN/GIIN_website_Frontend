@@ -3,6 +3,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { Eye, Globe, Cpu, Network } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export function VisionSection() {
     return (
@@ -25,7 +26,7 @@ export function VisionSection() {
                     <h2 className="text-4xl md:text-7xl font-black text-foreground mb-8 tracking-tighter font-outfit text-balance">
                         A Blueprint for <span className="bg-clip-text text-transparent bg-gradient-to-r from-accent to-amber-500">Continental Sovereignty</span>.
                     </h2>
-                    <p className="text-xl text-slate-400 leading-relaxed font-light text-balance">
+                    <p className="text-xl text-muted-foreground leading-relaxed font-light text-balance">
                         We envision a connected Africa where every nation operates on a unified, secure, and high-performance digital layer. Our vision transcends borders, building the systems that allow African intelligence to solve global challenges.
                     </p>
                 </motion.div>
@@ -78,7 +79,4 @@ export function VisionSection() {
     );
 }
 
-// Helper to handle class merging
-function cn(...inputs: any[]) {
-    return inputs.filter(Boolean).join(" ");
-}
+

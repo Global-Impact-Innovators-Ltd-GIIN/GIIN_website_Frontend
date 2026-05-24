@@ -38,10 +38,10 @@ export function MapSection() {
           transition={{ duration: 1, delay: 0.4 }}
         >
           {/* Simulated glowing nodes */}
-          <div className="absolute top-1/4 left-1/3 w-3 h-3 rounded-full bg-accent shadow-[0_0_20px_4px_rgba(245,158,11,0.5)] animate-pulse" />
-          <div className="absolute top-1/2 left-1/4 w-4 h-4 rounded-full bg-primary shadow-[0_0_20px_4px_rgba(127,76,165,0.5)] animate-pulse delay-75" />
-          <div className="absolute top-1/3 right-1/3 w-3 h-3 rounded-full bg-accent shadow-[0_0_20px_4px_rgba(245,158,11,0.5)] animate-pulse delay-150" />
-          <div className="absolute bottom-1/3 right-1/4 w-5 h-5 rounded-full bg-primary shadow-[0_0_20px_4px_rgba(127,76,165,0.5)] animate-pulse delay-300" />
+          <div className="absolute top-1/4 left-1/3 w-3 h-3 rounded-full bg-accent shadow-[0_0_20px_4px_var(--accent-glow)] animate-pulse" />
+          <div className="absolute top-1/2 left-1/4 w-4 h-4 rounded-full bg-primary shadow-[0_0_20px_4px_var(--primary-glow)] animate-pulse delay-75" />
+          <div className="absolute top-1/3 right-1/3 w-3 h-3 rounded-full bg-accent shadow-[0_0_20px_4px_var(--accent-glow)] animate-pulse delay-150" />
+          <div className="absolute bottom-1/3 right-1/4 w-5 h-5 rounded-full bg-primary shadow-[0_0_20px_4px_var(--primary-glow)] animate-pulse delay-300" />
 
           <h3 className="text-2xl font-black text-foreground/10 uppercase tracking-widest italic">Interactive Map Layer</h3>
         </motion.div>

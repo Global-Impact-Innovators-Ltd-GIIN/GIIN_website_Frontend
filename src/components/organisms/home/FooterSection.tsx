@@ -18,7 +18,7 @@ export function FooterSection() {
             <div className="flex items-center space-x-4">
               {/* Social icons placeholders */}
               {["X", "In", "Yt", "Ig"].map((social, i) => (
-                <a key={i} href="#" className="w-10 h-10 rounded-full border border-border/20 flex items-center justify-center text-foreground hover:bg-primary hover:text-white hover:border-primary transition-all duration-300">
+                <a key={i} href="#" className="w-10 h-10 rounded-full border border-border/50 flex items-center justify-center text-foreground hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all duration-300">
                   {social}
                 </a>
               ))}

@@ -223,7 +223,7 @@ export function Navbar({ user }: NavbarProps) {
                     <ChevronDown
                       className={cn(
                         "w-3.5 h-3.5 transition-transform duration-300",
-                        isMenuOpen && "rotate-180 text-blue-500"
+                        isMenuOpen && "rotate-180 text-primary"
                       )}
                     />
 
@@ -236,7 +236,7 @@ export function Navbar({ user }: NavbarProps) {
                     {isHovered && (
                       <motion.span
                         layoutId="headerHoverBg"
-                        className="absolute inset-0 bg-white/[0.04] rounded-lg -z-10 border border-white/[0.05]"
+                        className="absolute inset-0 bg-primary/5 rounded-lg -z-10 border border-primary/10"
                         transition={{ type: "spring", stiffness: 350, damping: 28 }}
                       />
                     )}
@@ -253,13 +253,10 @@ export function Navbar({ user }: NavbarProps) {
                       exit={{ opacity: 0, y: 10 }}
                       transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
                       onKeyDown={(e) => handleDropdownKeyDown(e, item.label)}
-                      className="absolute top-full left-0 mt-3 w-80 rounded-xl border border-white/[0.08] shadow-[0_20px_40px_rgba(0,0,0,0.6)] backdrop-blur-[25px] overflow-hidden z-50 p-3 flex flex-col gap-1"
-                      style={{
-                        background: "rgba(12, 12, 20, 0.72)",
-                      }}
+                      className="absolute top-full left-0 mt-3 w-80 rounded-xl border border-border/10 shadow-xl backdrop-blur-[25px] overflow-hidden z-50 p-3 flex flex-col gap-1 bg-card/90"
                     >
                       {/* Ambient background accent */}
-                      <div className="absolute inset-0 pointer-events-none bg-gradient-to-tr from-blue-500/5 to-transparent" />
+                      <div className="absolute inset-0 pointer-events-none bg-gradient-to-tr from-primary/5 to-transparent" />
 
                       {(item.items as NavLink[]).map((subLink, subIdx) => {
                         const DropdownIcon = getIcon(subLink.iconName);
@@ -267,17 +264,17 @@ export function Navbar({ user }: NavbarProps) {
                           <Link
                             key={subIdx}
                             href={subLink.href}
-                            className="group/item flex gap-3.5 items-start p-2.5 rounded-lg border border-transparent hover:border-blue-500/10 hover:bg-white/[0.03] transition-all duration-300 relative z-10"
+                            className="group/item flex gap-3.5 items-start p-2.5 rounded-lg border border-transparent hover:border-primary/10 hover:bg-primary/5 transition-all duration-300 relative z-10"
                           >
-                            <div className="p-1.5 rounded-md border border-white/5 bg-slate-900/60 text-slate-400 group-hover/item:text-blue-400 group-hover/item:border-blue-500/20 transition-all">
+                            <div className="p-1.5 rounded-md border border-border/10 bg-muted/50 text-muted-foreground group-hover/item:text-primary group-hover/item:border-primary/20 transition-all">
                               <DropdownIcon className="w-4 h-4" />
                             </div>
                             <div className="flex flex-col min-w-0">
-                              <span className="text-sm font-semibold text-slate-200 group-hover/item:text-white transition-colors">
+                              <span className="text-sm font-semibold text-foreground/80 group-hover/item:text-foreground transition-colors">
                                 {subLink.label}
                               </span>
                               {subLink.description && (
-                                <span className="text-xs text-slate-500 group-hover/item:text-slate-400 transition-colors mt-0.5 line-clamp-1 leading-normal font-light">
+                                <span className="text-xs text-muted-foreground group-hover/item:text-muted-foreground/80 transition-colors mt-0.5 line-clamp-1 leading-normal font-light">
                                   {subLink.description}
                                 </span>
                               )}
@@ -327,13 +324,13 @@ export function Navbar({ user }: NavbarProps) {
               {user.role === "ADMIN" && (
                 <Link
                   href="/admin"
-                  className="group/admin relative flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-blue-400 hover:text-white transition-colors duration-300 bg-blue-500/10 border border-blue-500/20 px-3.5 py-2 rounded-lg hover:bg-blue-500/20"
+                  className="group/admin relative flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-primary hover:text-primary/80 transition-colors duration-300 bg-primary/10 border border-primary/20 px-3.5 py-2 rounded-lg hover:bg-primary/20"
                 >
                   <span>Command Center</span>
                   <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover/admin:translate-x-0.5" />
                 </Link>
               )}
-              <span className="text-sm text-slate-400 font-mono pl-4 border-l border-white/10 max-w-[140px] truncate">
+              <span className="text-sm text-muted-foreground font-mono pl-4 border-l border-border/10 max-w-[140px] truncate">
                 {user.email}
               </span>
               <button
@@ -347,13 +344,13 @@ export function Navbar({ user }: NavbarProps) {
             <div className="flex items-center gap-3">
               <Link
                 href="/auth/login"
-                className="text-sm font-semibold tracking-wide text-slate-400 hover:text-white transition-colors px-3 py-2"
+                className="text-sm font-semibold tracking-wide text-muted-foreground hover:text-foreground transition-colors px-3 py-2"
               >
                 Login
               </Link>
               <Link
                 href="/auth/register"
-                className="group/cta relative inline-flex items-center gap-1.5 text-sm font-bold tracking-wide bg-accent text-black px-5 py-2.5 rounded-xl hover:bg-accent/90 transition-all shadow-[0_0_30px_-5px_rgba(245,158,11,0.4)] hover:shadow-[0_0_40px_-5px_rgba(245,158,11,0.6)]"
+                className="group/cta relative inline-flex items-center gap-1.5 text-sm font-bold tracking-wide bg-accent text-accent-foreground px-5 py-2.5 rounded-xl hover:bg-accent/90 transition-all shadow-[0_0_30px_-5px_rgba(245,158,11,0.4)] hover:shadow-[0_0_40px_-5px_rgba(245,158,11,0.6)]"
               >
                 <span>Initialize Access</span>
                 <ArrowRight className="w-4 h-4 transition-transform group-hover/cta:translate-x-0.5" />
@@ -361,7 +358,7 @@ export function Navbar({ user }: NavbarProps) {
             </div>
           )}
 
-          <div className="pl-4 border-l border-white/10">
+          <div className="pl-4 border-l border-border/10">
             <ThemeToggle />
           </div>
         </div>
@@ -370,7 +367,7 @@ export function Navbar({ user }: NavbarProps) {
         <div className="flex md:hidden items-center gap-3">
           <button
             onClick={() => setIsMobileOpen(true)}
-            className="p-2 rounded-lg border border-white/10 bg-white/5 text-slate-300 hover:text-white transition-colors"
+            className="p-2 rounded-lg border border-border/10 bg-muted/50 text-muted-foreground hover:text-foreground transition-colors"
             aria-label="Open mobile menu"
           >
             <Menu className="w-5 h-5" />

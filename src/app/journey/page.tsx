@@ -32,7 +32,7 @@ export default function JourneyPage() {
                             Impact Trajectory
                         </div>
                         <h1 className="text-5xl md:text-8xl font-black text-foreground mb-8 tracking-tighter font-outfit leading-[0.9] text-balance">
-                            The Global <br /> <span className="bg-clip-text text-transparent bg-gradient-to-r from-accent to-amber-500">Impact Journey</span>.
+                            The Global <br /> <span className="bg-clip-text text-transparent bg-gradient-to-r from-accent to-accent/60">Impact Journey</span>.
                         </h1>
                         <p className="text-xl md:text-2xl text-muted-foreground font-light leading-relaxed max-w-2xl text-balance">
                             From local labs to continental infrastructure, follow our documented path of transforming nations through engineering.
@@ -64,7 +64,7 @@ export default function JourneyPage() {
                                     </p>
                                 </div>
 
-                                <div className="w-12 h-12 rounded-full border-4 border-background bg-accent shadow-[0_0_20px_rgba(245,158,11,0.5)] z-10 flex-shrink-0" />
+                                <div className="w-12 h-12 rounded-full border-4 border-background bg-accent shadow-[0_0_20px_var(--primary-glow)] z-10 flex-shrink-0" />
 
                                 <div className="flex-1 hidden lg:block" />
                             </motion.div>
@@ -75,9 +75,9 @@ export default function JourneyPage() {
                 {/* Metrics Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-40">
                     {[
-                        { label: "Community", value: "50,000+", desc: "Visionary innovators connected", icon: Heart, color: "text-red-400", bg: "bg-red-500/10" },
+                        { label: "Community", value: "50,000+", desc: "Visionary innovators connected", icon: Heart, color: "text-destructive", bg: "bg-destructive/10" },
                         { label: "Sovereignty", value: "100%", desc: "Data and infrastructure autonomy", icon: Zap, color: "text-accent", bg: "bg-accent/10" },
-                        { label: "Recognition", value: "24", desc: "Global innovation awards bagged", icon: Award, color: "text-amber-400", bg: "bg-amber-500/10" },
+                        { label: "Recognition", value: "24", desc: "Global innovation awards bagged", icon: Award, color: "text-secondary", bg: "bg-secondary/10" },
                     ].map((item, i) => (
                         <div key={i} className="p-10 rounded-[2.5rem] bg-card border border-border/10 hover:border-accent/30 transition-all duration-500 group overflow-hidden relative">
                             <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-8 ${item.bg} ${item.color} group-hover:scale-110 transition-transform`}>

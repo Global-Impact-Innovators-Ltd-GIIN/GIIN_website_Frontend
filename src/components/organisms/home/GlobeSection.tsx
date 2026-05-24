@@ -4,10 +4,13 @@ import { useRef } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { Sphere, MeshDistortMaterial } from "@react-three/drei";
 
+import { useTheme } from "next-themes";
 import * as THREE from "three";
 
 function AnimatedGlobe() {
   const sphereRef = useRef<THREE.Mesh>(null);
+  const { resolvedTheme } = useTheme();
+  const globeColor = resolvedTheme === "dark" ? "#7F4CA5" : "#4B1C71";
 
   useFrame((state) => {
     if (sphereRef.current) {
@@ -18,7 +21,7 @@ function AnimatedGlobe() {
   return (
     <Sphere ref={sphereRef} args={[1, 64, 64]} scale={2.5}>
       <MeshDistortMaterial
-        color="#7F4CA5"
+        color={globeColor}
         attach="material"
         distort={0.2}
         speed={1.5}

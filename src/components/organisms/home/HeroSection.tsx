@@ -5,6 +5,7 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { Canvas } from "@react-three/fiber";
 import { Points, PointMaterial } from "@react-three/drei";
 import { useMemo } from "react";
+import { useTheme } from "next-themes";
 import * as THREE from "three";
 
 // Generate particle positions once outside the component
@@ -19,13 +20,15 @@ for (let i = 0; i < particleCount; i++) {
 // AI Particle Environment Component
 function ParticleEnvironment() {
   const ref = useRef<THREE.Points>(null);
+  const { resolvedTheme } = useTheme();
+  const particleColor = resolvedTheme === "dark" ? "#7F4CA5" : "#4B1C71";
 
   return (
     <group rotation={[0, 0, Math.PI / 4]}>
       <Points ref={ref} positions={particlePositions} stride={3} frustumCulled={false}>
         <PointMaterial
           transparent
-          color="#7F4CA5"
+          color={particleColor}
           size={0.02}
           sizeAttenuation={true}
           depthWrite={false}

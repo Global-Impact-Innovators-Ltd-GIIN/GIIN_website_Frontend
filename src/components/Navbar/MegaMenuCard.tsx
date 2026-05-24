@@ -69,7 +69,7 @@ export function MegaMenuCard({ item, onHover, onLeave }: MegaMenuCardProps) {
       <div
         className="pointer-events-none absolute -inset-px opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl"
         style={{
-          background: `radial-gradient(180px circle at var(--mouse-x, 0px) var(--mouse-y, 0px), rgba(127, 76, 165, 0.08), transparent 80%)`
+          background: `radial-gradient(180px circle at var(--mouse-x, 0px) var(--mouse-y, 0px), var(--primary-glow), transparent 80%)`
         }}
       />
 
@@ -77,7 +77,7 @@ export function MegaMenuCard({ item, onHover, onLeave }: MegaMenuCardProps) {
       <div
         className="pointer-events-none absolute -inset-px opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl"
         style={{
-          background: `radial-gradient(100px circle at var(--mouse-x, 0px) var(--mouse-y, 0px), rgba(127, 76, 165, 0.15), transparent 80%)`,
+          background: `radial-gradient(100px circle at var(--mouse-x, 0px) var(--mouse-y, 0px), var(--primary-border-glow), transparent 80%)`,
           padding: "1px",
           WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
           WebkitMaskComposite: "xor",
@@ -86,7 +86,7 @@ export function MegaMenuCard({ item, onHover, onLeave }: MegaMenuCardProps) {
       />
 
       <Link href={item.href} className="flex gap-4 items-start relative z-10">
-        <div className="flex-shrink-0 p-2.5 rounded-lg border border-border/10 bg-background text-muted-foreground group-hover:text-primary group-hover:border-primary/20 group-hover:shadow-[0_0_15px_rgba(127,76,165,0.1)] transition-all">
+        <div className="flex-shrink-0 p-2.5 rounded-lg border border-border/10 bg-background text-muted-foreground group-hover:text-primary group-hover:border-primary/20 group-hover:shadow-[0_0_15px_var(--primary-glow)] transition-all">
           <Icon className="w-5 h-5" />
         </div>
         <div className="flex-1 min-w-0">

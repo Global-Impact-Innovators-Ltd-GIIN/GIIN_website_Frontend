@@ -61,11 +61,11 @@ export function MegaMenu({ sections, onClose }: MegaMenuProps) {
       initial="hidden"
       animate="visible"
       exit="exit"
-      className="relative mt-4 mx-auto max-w-7xl rounded-2xl border border-border/10 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.5)] dark:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.8)] backdrop-blur-[25px] overflow-hidden z-50 bg-card/80 dark:bg-slate-950/80"
+      className="relative mt-4 mx-auto max-w-7xl rounded-2xl border border-border/10 shadow-xl backdrop-blur-[25px] overflow-hidden z-50 bg-card/80"
       onMouseLeave={() => setActiveItem(null)}
     >
       {/* Immersive background aura */}
-      <div className="absolute inset-0 pointer-events-none bg-gradient-to-tr from-blue-500/5 via-transparent to-purple-500/5" />
+      <div className="absolute inset-0 pointer-events-none bg-gradient-to-tr from-primary/5 via-transparent to-secondary/5" />
 
       <div className="relative z-10 grid grid-cols-1 lg:grid-cols-5 p-8 gap-8">
 
@@ -74,7 +74,7 @@ export function MegaMenu({ sections, onClose }: MegaMenuProps) {
 
           {/* Column 1: Innovation Platforms */}
           <motion.div variants={itemVariants} className="flex flex-col gap-4">
-            <h3 className="text-xs uppercase font-mono tracking-widest text-blue-500 font-bold border-b border-white/5 pb-2">
+            <h3 className="text-xs uppercase font-mono tracking-widest text-primary font-bold border-b border-border/10 pb-2">
               {col1.title}
             </h3>
             <div className="flex flex-col gap-3">
@@ -91,7 +91,7 @@ export function MegaMenu({ sections, onClose }: MegaMenuProps) {
 
           {/* Column 2: Leadership Ecosystem */}
           <motion.div variants={itemVariants} className="flex flex-col gap-4">
-            <h3 className="text-xs uppercase font-mono tracking-widest text-blue-500 font-bold border-b border-white/5 pb-2">
+            <h3 className="text-xs uppercase font-mono tracking-widest text-primary font-bold border-b border-border/10 pb-2">
               {col2.title}
             </h3>
             <div className="flex flex-col gap-3">
@@ -108,7 +108,7 @@ export function MegaMenu({ sections, onClose }: MegaMenuProps) {
 
           {/* Column 3: Technology Division */}
           <motion.div variants={itemVariants} className="flex flex-col gap-4">
-            <h3 className="text-xs uppercase font-mono tracking-widest text-blue-500 font-bold border-b border-white/5 pb-2">
+            <h3 className="text-xs uppercase font-mono tracking-widest text-primary font-bold border-b border-border/10 pb-2">
               {col3.title}
             </h3>
             <div className="flex flex-col gap-3">
@@ -128,7 +128,7 @@ export function MegaMenu({ sections, onClose }: MegaMenuProps) {
 
             {/* Media Division */}
             <div className="flex flex-col gap-4">
-              <h3 className="text-xs uppercase font-mono tracking-widest text-blue-500 font-bold border-b border-white/5 pb-2">
+              <h3 className="text-xs uppercase font-mono tracking-widest text-primary font-bold border-b border-border/10 pb-2">
                 {col4[0].title}
               </h3>
               <div className="flex flex-col gap-3">
@@ -145,7 +145,7 @@ export function MegaMenu({ sections, onClose }: MegaMenuProps) {
 
             {/* Community & Impact */}
             <div className="flex flex-col gap-4">
-              <h3 className="text-xs uppercase font-mono tracking-widest text-blue-500 font-bold border-b border-white/5 pb-2">
+              <h3 className="text-xs uppercase font-mono tracking-widest text-primary font-bold border-b border-border/10 pb-2">
                 {col4[1].title}
               </h3>
               <div className="flex flex-col gap-3">
