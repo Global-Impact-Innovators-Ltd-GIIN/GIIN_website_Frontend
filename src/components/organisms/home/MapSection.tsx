@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import Map, { Marker, NavigationControl, Popup, MapLayerMouseEvent, ViewStateChangeEvent } from "react-map-gl";
+import Map, { Marker, NavigationControl, Popup, MapMouseEvent, ViewStateChangeEvent, MarkerEvent } from "react-map-gl/mapbox";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { Sparkles, MapPin, Info } from "lucide-react";
 
@@ -81,8 +81,8 @@ export function MapSection() {
                 longitude={hub.coords[0]}
                 latitude={hub.coords[1]}
                 anchor="bottom"
-                onClick={(e: MapLayerMouseEvent) => {
-                  e.originalEvent.stopPropagation();
+                onClick={(e: MarkerEvent<MouseEvent>) => {
+                  if (e.originalEvent) e.originalEvent.stopPropagation();
                   setSelectedHub(hub);
                 }}
               >
