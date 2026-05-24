@@ -49,56 +49,68 @@
 }
 
 :root {
-  --background: oklch(0.995 0 0); /* Ultra light gray/off-white */
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0); /* Pure white */
-  --card-foreground: oklch(0.145 0 0);
+  --background: oklch(0.99 0.01 270);
+  /* Softest lavender white */
+  --foreground: oklch(0.12 0.04 285);
+  /* Deep midnight purple */
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.12 0.04 285);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.488 0.243 264.376); /* Royal Purple */
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.962 0 0);
-  --secondary-foreground: oklch(0.145 0 0);
-  --muted: oklch(0.962 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.75 0.18 86.0); /* Gold */
-  --accent-foreground: oklch(0.145 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.92 0 0);
-  --input: oklch(0.92 0 0);
-  --ring: oklch(0.488 0.243 264.376);
-  --radius: 0.75rem;
+  --popover-foreground: oklch(0.12 0.04 285);
+  --primary: #4B1C71;
+  /* Deep Sovereign Purple */
+  --primary-foreground: oklch(0.99 0 0);
+  --secondary: #7F4CA5;
+  /* Amethyst Secondary */
+  --secondary-foreground: oklch(0.99 0 0);
+  --muted: oklch(0.96 0.01 285);
+  --muted-foreground: oklch(0.45 0.04 285);
+  --accent: #F59E0B;
+  /* Amber Gold Accent (Captivating) */
+  --accent-foreground: oklch(0.12 0.04 285);
+  --destructive: oklch(0.6 0.2 25);
+  --border: oklch(0.9 0.02 285);
+  --input: oklch(0.9 0.02 285);
+  --ring: #7F4CA5;
+  --radius: 1rem;
 }
 
 .dark {
-  --background: oklch(0.145 0 0); /* Dark by default as requested */
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.488 0.243 264.376); /* Royal Purple */
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.75 0.18 86.0); /* Gold */
-  --accent-foreground: oklch(0.145 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.488 0.243 264.376);
+  --background: #020205;
+  /* Midnight Abyss */
+  --foreground: #F8FAFC;
+  --card: #0A0A12;
+  --card-foreground: #F8FAFC;
+  --popover: #0A0A12;
+  --popover-foreground: #F8FAFC;
+  --primary: #7F4CA5;
+  /* Amethyst for visibility in dark mode */
+  --primary-foreground: #FFFFFF;
+  --secondary: #4B1C71;
+  --secondary-foreground: #FFFFFF;
+  --muted: #1E1E2E;
+  --muted-foreground: #94A3B8;
+  --accent: #F59E0B;
+  /* Golden Amber Pop */
+  --accent-foreground: #020205;
+  --destructive: oklch(0.4 0.2 25);
+  --border: rgba(127, 76, 165, 0.15);
+  /* Purple-tinted border */
+  --input: rgba(127, 76, 165, 0.2);
+  --ring: #F59E0B;
 }
 
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
+
   html {
     @apply font-sans;
+    scroll-behavior: smooth;
   }
 }

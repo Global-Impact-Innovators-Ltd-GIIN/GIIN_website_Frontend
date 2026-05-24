@@ -94,11 +94,11 @@ export function Navbar({ user }: NavbarProps) {
   const isRouteActive = (item: NavItem) => {
     if (item.href === "/" && pathname === "/") return true;
     if (item.href && item.href !== "/" && pathname.startsWith(item.href)) return true;
-    
+
     // Check nested links
     if (item.items) {
       if (item.type === "megamenu") {
-        return (item.items as MegaMenuSection[]).some(sec => 
+        return (item.items as MegaMenuSection[]).some(sec =>
           sec.items.some(link => link.href !== "/" && pathname.startsWith(link.href))
         );
       } else {
@@ -110,7 +110,7 @@ export function Navbar({ user }: NavbarProps) {
 
   const handleHeaderKeyDown = (e: React.KeyboardEvent, item: NavItem) => {
     const currentIndex = navigationConfig.indexOf(item);
-    
+
     if (e.key === "ArrowDown" || e.key === "Enter" || e.key === " ") {
       e.preventDefault();
       if (item.type !== "link") {
@@ -174,12 +174,12 @@ export function Navbar({ user }: NavbarProps) {
       )}
     >
       <div className="max-w-7xl mx-auto flex items-center justify-between">
-        
+
         {/* LOGO */}
         <Logo size="md" className="transition-transform duration-300 hover:scale-[1.02]" />
 
         {/* DESKTOP MENU BUTTONS */}
-        <nav 
+        <nav
           className="hidden md:flex items-center gap-1.5"
           onMouseLeave={handleMouseLeave}
         >
@@ -189,8 +189,8 @@ export function Navbar({ user }: NavbarProps) {
             const isHovered = hoveredHeader === item.label;
 
             return (
-              <div 
-                key={item.label} 
+              <div
+                key={item.label}
                 className="relative"
                 onMouseEnter={() => handleMouseEnter(item.label, item.type === "link")}
               >
@@ -226,7 +226,7 @@ export function Navbar({ user }: NavbarProps) {
                         isMenuOpen && "rotate-180 text-blue-500"
                       )}
                     />
-                    
+
                     {/* Route Active Underline */}
                     {isActive && (
                       <AnimatedUnderline layoutId="desktopActiveUnderline" />
@@ -296,7 +296,7 @@ export function Navbar({ user }: NavbarProps) {
         {/* Flagship Mega Menu Container Overlay (Ecosystem Item) */}
         <AnimatePresence>
           {activeMenu === "Ecosystem" && (
-            <div 
+            <div
               className="hidden md:block absolute top-full left-0 right-0 pointer-events-none z-40"
               onMouseEnter={() => {
                 if (timeoutRef.current) {
@@ -353,7 +353,7 @@ export function Navbar({ user }: NavbarProps) {
               </Link>
               <Link
                 href="/auth/register"
-                className="group/cta relative inline-flex items-center gap-1.5 text-sm font-semibold tracking-wide bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors shadow-[0_0_20px_-5px_rgba(59,130,246,0.6)]"
+                className="group/cta relative inline-flex items-center gap-1.5 text-sm font-bold tracking-wide bg-accent text-black px-5 py-2.5 rounded-xl hover:bg-accent/90 transition-all shadow-[0_0_30px_-5px_rgba(245,158,11,0.4)] hover:shadow-[0_0_40px_-5px_rgba(245,158,11,0.6)]"
               >
                 <span>Initialize Access</span>
                 <ArrowRight className="w-4 h-4 transition-transform group-hover/cta:translate-x-0.5" />

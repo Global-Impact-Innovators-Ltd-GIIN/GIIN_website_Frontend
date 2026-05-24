@@ -30,17 +30,17 @@ export function Logo({ className, showText = true, size = "md", href = "/" }: Lo
   return (
     <Link href={href} className={cn("flex items-center gap-3", className)}>
       <div className={cn("relative flex-shrink-0", sizeClasses[size])}>
-        <Image 
-          src="/logo.png" 
-          alt="GIIN Logo" 
+        <Image
+          src="/logo.png"
+          alt="GIIN Logo"
           fill
           className="object-contain"
           priority
         />
       </div>
       {showText && (
-        <span className={cn("font-bold tracking-tighter text-foreground hidden sm:block", textClasses[size])}>
-          GIIN <span className="text-primary">Ecosystem</span>
+        <span className={cn("font-bold tracking-tighter text-white hidden sm:block", textClasses[size])}>
+          GIIN <span className="text-accent italic font-light">Ecosystem</span>
         </span>
       )}
     </Link>
