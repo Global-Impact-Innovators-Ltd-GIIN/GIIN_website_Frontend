@@ -61,20 +61,17 @@ export function MegaMenu({ sections, onClose }: MegaMenuProps) {
       initial="hidden"
       animate="visible"
       exit="exit"
-      className="relative mt-4 mx-auto max-w-7xl rounded-2xl border border-white/[0.08] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.8)] backdrop-blur-[25px] overflow-hidden z-50"
-      style={{
-        background: "rgba(12, 12, 20, 0.72)",
-      }}
+      className="relative mt-4 mx-auto max-w-7xl rounded-2xl border border-border/10 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.5)] dark:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.8)] backdrop-blur-[25px] overflow-hidden z-50 bg-card/80 dark:bg-slate-950/80"
       onMouseLeave={() => setActiveItem(null)}
     >
       {/* Immersive background aura */}
       <div className="absolute inset-0 pointer-events-none bg-gradient-to-tr from-blue-500/5 via-transparent to-purple-500/5" />
-      
+
       <div className="relative z-10 grid grid-cols-1 lg:grid-cols-5 p-8 gap-8">
-        
+
         {/* Left 4 Columns of Grid */}
         <div className="lg:col-span-4 grid grid-cols-1 md:grid-cols-4 gap-6">
-          
+
           {/* Column 1: Innovation Platforms */}
           <motion.div variants={itemVariants} className="flex flex-col gap-4">
             <h3 className="text-xs uppercase font-mono tracking-widest text-blue-500 font-bold border-b border-white/5 pb-2">
@@ -86,7 +83,7 @@ export function MegaMenu({ sections, onClose }: MegaMenuProps) {
                   key={idx}
                   item={item}
                   onHover={setActiveItem}
-                  onLeave={() => {}}
+                  onLeave={() => { }}
                 />
               ))}
             </div>
@@ -103,7 +100,7 @@ export function MegaMenu({ sections, onClose }: MegaMenuProps) {
                   key={idx}
                   item={item}
                   onHover={setActiveItem}
-                  onLeave={() => {}}
+                  onLeave={() => { }}
                 />
               ))}
             </div>
@@ -120,7 +117,7 @@ export function MegaMenu({ sections, onClose }: MegaMenuProps) {
                   key={idx}
                   item={item}
                   onHover={setActiveItem}
-                  onLeave={() => {}}
+                  onLeave={() => { }}
                 />
               ))}
             </div>
@@ -128,7 +125,7 @@ export function MegaMenu({ sections, onClose }: MegaMenuProps) {
 
           {/* Column 4: Media Division + Community & Impact (Stacked) */}
           <motion.div variants={itemVariants} className="flex flex-col gap-6">
-            
+
             {/* Media Division */}
             <div className="flex flex-col gap-4">
               <h3 className="text-xs uppercase font-mono tracking-widest text-blue-500 font-bold border-b border-white/5 pb-2">
@@ -140,7 +137,7 @@ export function MegaMenu({ sections, onClose }: MegaMenuProps) {
                     key={idx}
                     item={item}
                     onHover={setActiveItem}
-                    onLeave={() => {}}
+                    onLeave={() => { }}
                   />
                 ))}
               </div>
@@ -157,7 +154,7 @@ export function MegaMenu({ sections, onClose }: MegaMenuProps) {
                     key={idx}
                     item={item}
                     onHover={setActiveItem}
-                    onLeave={() => {}}
+                    onLeave={() => { }}
                   />
                 ))}
               </div>
@@ -168,8 +165,8 @@ export function MegaMenu({ sections, onClose }: MegaMenuProps) {
         </div>
 
         {/* Right 5th Column: Preview Panel */}
-        <motion.div 
-          variants={itemVariants} 
+        <motion.div
+          variants={itemVariants}
           className="lg:col-span-1 border-t lg:border-t-0 pt-6 lg:pt-0"
         >
           <NavPreviewPanel activeItem={activeItem} />

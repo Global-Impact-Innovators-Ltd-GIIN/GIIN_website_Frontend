@@ -34,12 +34,12 @@ export function Logo({ className, showText = true, size = "md", href = "/" }: Lo
           src="/logo.png"
           alt="GIIN Logo"
           fill
-          className="object-contain"
+          className="object-contain dark:invert-0 invert transition-all duration-500"
           priority
         />
       </div>
       {showText && (
-        <span className={cn("font-bold tracking-tighter text-white hidden sm:block", textClasses[size])}>
+        <span className={cn("font-bold tracking-tighter text-foreground selection:text-white hidden sm:block", textClasses[size])}>
           GIIN <span className="text-accent italic font-light">Ecosystem</span>
         </span>
       )}

@@ -29,7 +29,7 @@ export function MegaMenuCard({ item, onHover, onLeave }: MegaMenuCardProps) {
     if (!cardRef.current) return;
     const card = cardRef.current;
     const rect = card.getBoundingClientRect();
-    
+
     // Spotlight glow tracking coordinates
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
@@ -58,7 +58,7 @@ export function MegaMenuCard({ item, onHover, onLeave }: MegaMenuCardProps) {
       onMouseEnter={() => onHover(item)}
       onMouseLeave={handleMouseLeave}
       className={cn(
-        "group relative overflow-hidden rounded-xl border border-white/5 bg-white/[0.02] p-4 transition-all duration-300 hover:border-blue-500/30 hover:bg-white/[0.04] cursor-pointer"
+        "group relative overflow-hidden rounded-xl border border-border/10 bg-card/50 p-4 transition-all duration-300 hover:border-primary/30 hover:bg-card cursor-pointer shadow-sm"
       )}
       style={{
         transform: `perspective(600px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`,
@@ -66,18 +66,18 @@ export function MegaMenuCard({ item, onHover, onLeave }: MegaMenuCardProps) {
       }}
     >
       {/* Background Spotlight Glow (Powered by CSS Variables) */}
-      <div 
+      <div
         className="pointer-events-none absolute -inset-px opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl"
         style={{
-          background: `radial-gradient(180px circle at var(--mouse-x, 0px) var(--mouse-y, 0px), rgba(59, 130, 246, 0.12), transparent 80%)`
+          background: `radial-gradient(180px circle at var(--mouse-x, 0px) var(--mouse-y, 0px), rgba(127, 76, 165, 0.08), transparent 80%)`
         }}
       />
-      
+
       {/* Border Spotlight Glow */}
-      <div 
+      <div
         className="pointer-events-none absolute -inset-px opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl"
         style={{
-          background: `radial-gradient(100px circle at var(--mouse-x, 0px) var(--mouse-y, 0px), rgba(59, 130, 246, 0.25), transparent 80%)`,
+          background: `radial-gradient(100px circle at var(--mouse-x, 0px) var(--mouse-y, 0px), rgba(127, 76, 165, 0.15), transparent 80%)`,
           padding: "1px",
           WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
           WebkitMaskComposite: "xor",
@@ -86,21 +86,21 @@ export function MegaMenuCard({ item, onHover, onLeave }: MegaMenuCardProps) {
       />
 
       <Link href={item.href} className="flex gap-4 items-start relative z-10">
-        <div className="flex-shrink-0 p-2.5 rounded-lg border border-white/5 bg-slate-900/60 text-slate-400 group-hover:text-blue-400 group-hover:border-blue-500/20 group-hover:shadow-[0_0_15px_rgba(59,130,246,0.15)] transition-all">
+        <div className="flex-shrink-0 p-2.5 rounded-lg border border-border/10 bg-background text-muted-foreground group-hover:text-primary group-hover:border-primary/20 group-hover:shadow-[0_0_15px_rgba(127,76,165,0.1)] transition-all">
           <Icon className="w-5 h-5" />
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
-            <h4 className="text-sm font-semibold font-heading text-slate-200 group-hover:text-white transition-colors truncate">
+            <h4 className="text-sm font-bold font-heading text-foreground group-hover:text-primary transition-colors truncate">
               {item.label}
             </h4>
             {item.badge && (
-              <span className="text-[10px] uppercase font-mono tracking-widest text-purple-400 bg-purple-500/10 px-1.5 py-0.2 rounded border border-purple-500/20">
+              <span className="text-[10px] uppercase font-bold tracking-widest text-primary bg-primary/5 px-1.5 py-0.2 rounded border border-primary/10">
                 {item.badge}
               </span>
             )}
           </div>
-          <p className="text-xs text-slate-500 group-hover:text-slate-400 transition-colors line-clamp-2 mt-1 leading-normal font-light">
+          <p className="text-xs text-muted-foreground group-hover:text-foreground transition-colors line-clamp-2 mt-1 leading-normal font-light">
             {item.description}
           </p>
         </div>

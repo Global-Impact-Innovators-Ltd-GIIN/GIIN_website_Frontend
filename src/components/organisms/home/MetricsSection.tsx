@@ -27,7 +27,7 @@ export function MetricsSection() {
           {metrics.map((metric, index) => (
             <motion.div
               key={index}
-              className="flex flex-col items-center justify-center space-y-2 p-8 rounded-3xl bg-card border border-border/10 group hover:border-primary/30 transition-all duration-500"
+              className="flex flex-col items-center justify-center space-y-2 p-10 rounded-[2.5rem] bg-card border border-border/20 dark:border-border/10 group hover:border-primary/40 transition-all duration-500 shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:shadow-2xl"
               initial={{ opacity: 0, scale: 0.8 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}

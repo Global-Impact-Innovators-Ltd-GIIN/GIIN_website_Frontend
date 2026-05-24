@@ -37,21 +37,21 @@ export function VisionSection() {
                             title: "Unified Ecosystem",
                             desc: "A singular network connecting innovators, researchers, and venture capital from Cairo to Cape Town.",
                             color: "text-accent",
-                            bg: "bg-accent/5"
+                            bg: "bg-accent/5 focus:bg-accent/10"
                         },
                         {
                             icon: Cpu,
                             title: "Technological Autonomy",
                             desc: "Building proprietary AI models and server infrastructures that keep African data and decision-making sovereign.",
                             color: "text-primary",
-                            bg: "bg-primary/10"
+                            bg: "bg-primary/10 focus:bg-primary/20"
                         },
                         {
                             icon: Network,
                             title: "Socio-Economic Mesh",
                             desc: "Integrating fintech, edtech, and agrotech into a primary system that drives nationwide transformations.",
                             color: "text-accent",
-                            bg: "bg-accent/5"
+                            bg: "bg-accent/5 focus:bg-accent/10"
                         }
                     ].map((card, i) => (
                         <motion.div
@@ -60,13 +60,13 @@ export function VisionSection() {
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                             transition={{ duration: 0.6, delay: i * 0.1 }}
-                            className="group p-10 rounded-[3rem] bg-white/[0.02] border border-white/5 hover:border-accent/30 transition-all duration-500 text-left relative overflow-hidden"
+                            className="group p-10 rounded-[3rem] bg-card border border-border/10 hover:border-accent/30 transition-all duration-500 text-left relative overflow-hidden shadow-sm hover:shadow-2xl"
                         >
                             <div className={cn("inline-flex w-14 h-14 rounded-2xl items-center justify-center mb-8 group-hover:scale-110 transition-transform shadow-lg", card.bg, card.color)}>
                                 <card.icon className="w-7 h-7" />
                             </div>
-                            <h3 className="text-2xl font-bold text-white mb-4 group-hover:text-accent transition-colors tracking-tight">{card.title}</h3>
-                            <p className="text-slate-500 text-sm leading-relaxed group-hover:text-slate-400 transition-colors">{card.desc}</p>
+                            <h3 className="text-2xl font-black text-foreground mb-4 group-hover:text-accent transition-colors tracking-tight">{card.title}</h3>
+                            <p className="text-muted-foreground text-sm leading-relaxed group-hover:text-foreground transition-colors">{card.desc}</p>
 
                             {/* Subtle hover reveal element */}
                             <div className="absolute bottom-0 left-0 h-1 w-0 bg-accent group-hover:w-full transition-all duration-700" />

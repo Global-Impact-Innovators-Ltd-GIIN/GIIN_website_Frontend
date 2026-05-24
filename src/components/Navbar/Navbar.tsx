@@ -169,7 +169,7 @@ export function Navbar({ user }: NavbarProps) {
       className={cn(
         "fixed top-0 left-0 w-full z-50 transition-all duration-500 px-6 py-4",
         scrolled
-          ? "bg-slate-950/70 border-b border-white/[0.06] backdrop-blur-[16px] py-3 shadow-[0_4px_30px_rgba(0,0,0,0.4)]"
+          ? "bg-background/80 border-b border-border/10 backdrop-blur-[16px] py-3 shadow-lg"
           : "bg-transparent border-b border-transparent py-4"
       )}
     >
@@ -200,7 +200,7 @@ export function Navbar({ user }: NavbarProps) {
                     ref={(el) => { headerRefs.current[item.label] = el; }}
                     onKeyDown={(e) => handleHeaderKeyDown(e, item)}
                     className={cn(
-                      "relative px-4 py-2 text-sm font-medium tracking-wide rounded-lg text-slate-400 hover:text-white transition-colors duration-300 flex items-center gap-1.5"
+                      "relative px-4 py-2 text-sm font-bold tracking-wide rounded-lg text-muted-foreground hover:text-foreground transition-colors duration-300 flex items-center gap-1.5"
                     )}
                   >
                     <span>{item.label}</span>
@@ -216,7 +216,7 @@ export function Navbar({ user }: NavbarProps) {
                     aria-label={`${item.label} menu`}
                     onKeyDown={(e) => handleHeaderKeyDown(e, item)}
                     className={cn(
-                      "relative px-4 py-2 text-sm font-medium tracking-wide rounded-lg text-slate-400 hover:text-white transition-colors duration-300 flex items-center gap-1.5 focus:outline-none"
+                      "relative px-4 py-2 text-sm font-bold tracking-wide rounded-lg text-muted-foreground hover:text-foreground transition-colors duration-300 flex items-center gap-1.5 focus:outline-none"
                     )}
                   >
                     <span>{item.label}</span>
