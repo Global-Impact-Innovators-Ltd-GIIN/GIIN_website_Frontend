@@ -3,8 +3,19 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowRight, Loader2, User, Mail, Lock, ShieldCheck, AlertCircle } from "lucide-react";
-import { motion } from "framer-motion";
+import {
+  ArrowRight,
+  Loader2,
+  User,
+  Mail,
+  Lock,
+  ShieldCheck,
+  AlertCircle,
+  Component,
+  Globe2,
+  Sparkles
+} from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -35,7 +46,7 @@ export default function RegisterPage() {
         throw new Error(data.error || "Registration failed");
       }
 
-      router.push("/leadership");
+      router.push("/leadership/programs");
       router.refresh();
 
     } catch (err: any) {
@@ -45,130 +56,182 @@ export default function RegisterPage() {
     }
   };
 
+  const containerVariants = {
+    hidden: { opacity: 0, scale: 0.95 },
+    visible: {
+      opacity: 1,
+      scale: 1,
+      transition: {
+        duration: 0.6,
+        ease: [0.22, 1, 0.36, 1],
+        staggerChildren: 0.08
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, x: 20 },
+    visible: {
+      opacity: 1,
+      x: 0,
+      transition: { duration: 0.5, ease: "easeOut" }
+    }
+  };
+
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, ease: "easeOut" }}
-      className="bg-[#0a0a12]/80 backdrop-blur-2xl border border-white/10 rounded-[2.5rem] p-10 shadow-2xl relative overflow-hidden"
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+      className="bg-card/40 backdrop-blur-3xl border border-white/5 rounded-[3rem] p-8 md:p-12 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.5)] relative overflow-hidden"
     >
-      {/* Decorative inner elements */}
-      <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 blur-3xl rounded-full -mr-16 -mt-16 pointer-events-none" />
-      <div className="absolute bottom-0 left-0 w-32 h-32 bg-indigo-500/10 blur-3xl rounded-full -ml-16 -mb-16 pointer-events-none" />
+      {/* High-tech background accents */}
+      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary/50 to-transparent opacity-50" />
+      <div className="absolute top-0 left-0 w-64 h-64 bg-indigo-500/10 blur-[100px] rounded-full -ml-32 -mt-32 pointer-events-none" />
+      <div className="absolute bottom-0 right-0 w-64 h-64 bg-primary/10 blur-[100px] rounded-full -mr-32 -mb-32 pointer-events-none" />
 
       <div className="relative z-10">
-        <div className="mb-8 overflow-hidden">
-          <h2 className="text-xl font-bold text-white mb-2">Request Onboarding</h2>
-          <p className="text-slate-400 text-sm">Create your enterprise identity to join the GIIN ecosystem.</p>
-        </div>
+        <motion.div variants={itemVariants} className="mb-10">
+          <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent/10 border border-accent/20 text-accent text-[9px] font-black uppercase tracking-[0.2em] mb-6">
+            <Sparkles className="w-3 h-3 fill-accent" />
+            Strategic Enrollment
+          </span>
+          <h2 className="text-3xl md:text-4xl font-black text-foreground mb-3 tracking-tighter italic font-outfit uppercase">
+            Protocol <span className="text-accent not-italic">Onboarding</span>
+          </h2>
+          <p className="text-muted-foreground text-sm font-medium leading-relaxed max-w-[320px]">
+            Begin your generational transformation by establishing your enterprise node today.
+          </p>
+        </motion.div>
 
-        <form onSubmit={handleRegister} className="flex flex-col gap-6">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2 group">
-              <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest pl-1">First Name</label>
+        <form onSubmit={handleRegister} className="space-y-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <motion.div variants={itemVariants} className="space-y-2 group">
+              <label className="text-[10px] font-black text-muted-foreground/60 uppercase tracking-[0.2em] pl-1">Forename</label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-500 group-focus-within:text-blue-400 transition-colors">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-muted-foreground group-focus-within:text-accent transition-colors">
                   <User className="w-4 h-4" />
                 </div>
                 <input
                   type="text"
                   value={formData.firstName}
                   onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
-                  className="w-full bg-white/[0.03] border border-white/5 rounded-2xl pl-10 pr-4 py-3.5 text-white placeholder:text-slate-600 focus:outline-none focus:border-blue-500/50 focus:bg-white/[0.05] transition-all text-sm"
-                  placeholder="John"
+                  className="w-full bg-white/[0.03] border border-white/5 rounded-2xl pl-11 pr-4 py-4 text-foreground placeholder:text-muted-foreground/10 focus:outline-none focus:border-accent/40 focus:bg-white/[0.05] transition-all text-sm"
+                  placeholder="Amina"
                   required
                 />
               </div>
-            </div>
-            <div className="space-y-2 group">
-              <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest pl-1">Last Name</label>
+            </motion.div>
+            <motion.div variants={itemVariants} className="space-y-2 group">
+              <label className="text-[10px] font-black text-muted-foreground/60 uppercase tracking-[0.2em] pl-1">Surname</label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-500 group-focus-within:text-blue-400 transition-colors">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-muted-foreground group-focus-within:text-accent transition-colors">
                   <User className="w-4 h-4" />
                 </div>
                 <input
                   type="text"
                   value={formData.lastName}
                   onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
-                  className="w-full bg-white/[0.03] border border-white/5 rounded-2xl pl-10 pr-4 py-3.5 text-white placeholder:text-slate-600 focus:outline-none focus:border-blue-500/50 focus:bg-white/[0.05] transition-all text-sm"
-                  placeholder="Doe"
+                  className="w-full bg-white/[0.03] border border-white/5 rounded-2xl pl-11 pr-4 py-4 text-foreground placeholder:text-muted-foreground/10 focus:outline-none focus:border-accent/40 focus:bg-white/[0.05] transition-all text-sm"
+                  placeholder="Keita"
                   required
                 />
               </div>
-            </div>
+            </motion.div>
           </div>
 
-          <div className="space-y-2 group">
-            <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest pl-1">Enterprise Email</label>
+          <motion.div variants={itemVariants} className="space-y-2 group">
+            <label className="text-[10px] font-black text-muted-foreground/60 uppercase tracking-[0.2em] pl-1">Network Identity (Email)</label>
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-500 group-focus-within:text-blue-400 transition-colors">
+              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-muted-foreground group-focus-within:text-accent transition-colors">
                 <Mail className="w-4 h-4" />
               </div>
               <input
                 type="email"
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className="w-full bg-white/[0.03] border border-white/5 rounded-2xl pl-10 pr-4 py-3.5 text-white placeholder:text-slate-600 focus:outline-none focus:border-blue-500/50 focus:bg-white/[0.05] transition-all text-sm"
+                className="w-full bg-white/[0.03] border border-white/5 rounded-2xl pl-11 pr-4 py-4 text-foreground placeholder:text-muted-foreground/10 focus:outline-none focus:border-accent/40 focus:bg-white/[0.05] transition-all text-sm"
                 placeholder="identity@giin.tech"
                 required
               />
             </div>
-          </div>
+          </motion.div>
 
-          <div className="space-y-2 group">
-            <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest pl-1">Secret Keyword</label>
+          <motion.div variants={itemVariants} className="space-y-2 group">
+            <label className="text-[10px] font-black text-muted-foreground/60 uppercase tracking-[0.2em] pl-1">Secure Passkey</label>
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-500 group-focus-within:text-blue-400 transition-colors">
+              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-muted-foreground group-focus-within:text-accent transition-colors">
                 <Lock className="w-4 h-4" />
               </div>
               <input
                 type="password"
                 value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                className="w-full bg-white/[0.03] border border-white/5 rounded-2xl pl-10 pr-4 py-3.5 text-white placeholder:text-slate-600 focus:outline-none focus:border-blue-500/50 focus:bg-white/[0.05] transition-all text-sm"
-                placeholder="••••••••"
+                className="w-full bg-white/[0.03] border border-white/5 rounded-2xl pl-11 pr-4 py-4 text-foreground placeholder:text-muted-foreground/10 focus:outline-none focus:border-accent/40 focus:bg-white/[0.05] transition-all text-sm"
+                placeholder="••••••••••••"
                 required
               />
             </div>
-          </div>
+          </motion.div>
 
-          {error && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="p-4 bg-red-500/5 border border-red-500/20 rounded-2xl text-red-400 text-xs font-medium flex items-center gap-3"
-            >
-              <AlertCircle className="w-4 h-4 flex-shrink-0" />
-              {error}
-            </motion.div>
-          )}
+          <AnimatePresence>
+            {error && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                className="p-5 bg-red-500/10 border border-red-500/20 rounded-2xl text-red-400 text-xs font-bold flex items-center gap-4"
+              >
+                <AlertCircle className="w-5 h-5 flex-shrink-0 animate-pulse" />
+                <div>
+                  <span className="block text-[8px] uppercase tracking-widest opacity-60 mb-1">Onboarding Error</span>
+                  {error}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
-          <button
+          <motion.button
+            variants={itemVariants}
             type="submit"
             disabled={loading}
-            className="group relative mt-2 w-full overflow-hidden rounded-2xl p-[1px] transition-all active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed"
+            className="group relative mt-4 w-full h-16 overflow-hidden rounded-[1.25rem] transition-all active:scale-95 disabled:opacity-50"
           >
-            <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-indigo-600" />
-            <div className="relative flex items-center justify-center gap-2 bg-[#0a0a12] rounded-[calc(1rem-1px)] py-4 transition-all group-hover:bg-transparent">
+            <div className="absolute inset-0 bg-gradient-to-r from-accent to-primary animate-gradient-x" />
+            <div className="relative h-full flex items-center justify-center gap-3 bg-card/70 backdrop-blur-md m-[1px] rounded-[calc(1.25rem-1px)] transition-all group-hover:bg-transparent">
               {loading ? (
-                <Loader2 className="w-5 h-5 animate-spin text-blue-400" />
+                <Loader2 className="w-5 h-5 animate-spin text-accent" />
               ) : (
                 <>
-                  <span className="text-sm font-bold text-white uppercase tracking-widest">Initialize Protocol</span>
-                  <ShieldCheck className="w-5 h-5 text-blue-400 group-hover:text-white transition-colors" />
+                  <span className="text-xs font-black text-foreground uppercase tracking-[0.3em] group-hover:text-white transition-colors">Initialize Access</span>
+                  <Globe2 className="w-6 h-6 text-accent group-hover:text-white transition-all group-hover:rotate-12" />
                 </>
               )}
             </div>
-          </button>
+          </motion.button>
         </form>
 
-        <div className="mt-8 text-center text-xs text-slate-500 font-medium">
-          Already a member?{" "}
-          <Link href="/auth/login" className="text-blue-400 hover:text-blue-300 transition-colors font-bold uppercase tracking-tight ml-1">
-            Authenticate
-          </Link>
-        </div>
+        <motion.div variants={itemVariants} className="mt-10 text-center">
+          <p className="text-[10px] text-muted-foreground font-black uppercase tracking-[0.2em]">
+            Existing Personnel?{" "}
+            <Link href="/auth/login" className="text-accent hover:text-white transition-colors ml-2">
+              Authenticate
+            </Link>
+          </p>
+        </motion.div>
       </div>
+
+      <style jsx>{`
+        @keyframes gradient-x {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
+        }
+        .animate-gradient-x {
+          background-size: 200% 200%;
+          animation: gradient-x 15s ease infinite;
+        }
+      `}</style>
     </motion.div>
   );
 }

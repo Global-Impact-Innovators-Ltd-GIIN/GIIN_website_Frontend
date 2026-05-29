@@ -41,8 +41,13 @@ export async function POST(req: Request) {
     });
 
     return response;
-  } catch (error) {
-    return NextResponse.json({ error: "Login failed" }, { status: 500 });
+  } catch (error: any) {
+    console.error("CRITICAL AUTH ERROR:", error);
+    return NextResponse.json({
+      error: "Authentication service unavailable",
+      details: process.env.NODE_ENV === "development" ? error.message : undefined,
+      code: error.code
+    }, { status: 500 });
   }
 }
 

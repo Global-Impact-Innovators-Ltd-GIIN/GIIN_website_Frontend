@@ -3,8 +3,18 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowRight, Loader2, Mail, Lock, ShieldCheck, AlertCircle } from "lucide-react";
-import { motion } from "framer-motion";
+import {
+  ArrowRight,
+  Loader2,
+  Mail,
+  Lock,
+  ShieldCheck,
+  AlertCircle,
+  Fingerprint,
+  Zap,
+  Cpu
+} from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -47,107 +57,165 @@ export default function LoginPage() {
     }
   };
 
+  const containerVariants = {
+    hidden: { opacity: 0, scale: 0.95 },
+    visible: {
+      opacity: 1,
+      scale: 1,
+      transition: {
+        duration: 0.6,
+        ease: [0.22, 1, 0.36, 1],
+        staggerChildren: 0.1
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 15 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.5, ease: "easeOut" }
+    }
+  };
+
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, ease: "easeOut" }}
-      className="bg-card/80 backdrop-blur-2xl border border-border/10 rounded-[2.5rem] p-10 shadow-2xl relative overflow-hidden"
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+      className="bg-card/40 backdrop-blur-3xl border border-white/5 rounded-[3rem] p-8 md:p-12 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.5)] relative overflow-hidden group"
     >
-      {/* Decorative inner elements */}
-      <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 blur-3xl rounded-full -mr-16 -mt-16 pointer-events-none" />
-      <div className="absolute bottom-0 left-0 w-32 h-32 bg-secondary/10 blur-3xl rounded-full -ml-16 -mb-16 pointer-events-none" />
+      {/* Dynamic Background Effects */}
+      <div className="absolute top-0 right-0 w-64 h-64 bg-primary/20 blur-[100px] rounded-full -mr-32 -mt-32 animate-pulse pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-64 h-64 bg-accent/20 blur-[100px] rounded-full -ml-32 -mb-32 animate-pulse pointer-events-none" />
+
+      {/* Mesh lines effect */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:32px_32px] pointer-events-none" />
 
       <div className="relative z-10">
-        <div className="mb-8 overflow-hidden">
-          <h2 className="text-xl font-bold text-foreground mb-2">Initialize Identity</h2>
-          <p className="text-muted-foreground text-sm">Enter your enterprise credentials to access the ecosystem.</p>
-        </div>
+        <motion.div variants={itemVariants} className="mb-10 text-center md:text-left">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] font-black uppercase tracking-[0.2em] mb-6">
+            <Zap className="w-3 h-3 fill-primary" />
+            Vanguard Protocol
+          </div>
+          <h2 className="text-3xl md:text-4xl font-black text-foreground mb-3 tracking-tighter italic font-outfit uppercase">
+            Initialize <span className="text-primary not-italic">Identity</span>
+          </h2>
+          <p className="text-muted-foreground text-sm font-medium leading-relaxed max-w-[280px]">
+            Input your authorized enterprise credentials to establish a secure link.
+          </p>
+        </motion.div>
 
-        <form onSubmit={handleLogin} className="flex flex-col gap-6">
-          <div className="space-y-2 group">
-            <label className="text-xs font-bold text-muted-foreground/60 uppercase tracking-widest pl-1">Enterprise Email</label>
+        <form onSubmit={handleLogin} className="space-y-6">
+          <motion.div variants={itemVariants} className="space-y-2 group">
+            <label className="text-[10px] font-black text-muted-foreground/60 uppercase tracking-[0.2em] pl-1">Command Email</label>
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-muted-foreground group-focus-within:text-primary transition-colors">
+              <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none text-muted-foreground group-focus-within:text-primary transition-all duration-300">
                 <Mail className="w-5 h-5" />
               </div>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full bg-muted/50 border border-border/10 rounded-2xl pl-12 pr-4 py-4 text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:border-primary/50 focus:bg-background transition-all"
-                placeholder="identity@giin.tech"
+                className="w-full bg-white/[0.03] border border-white/5 rounded-2xl pl-14 pr-5 py-5 text-foreground placeholder:text-muted-foreground/20 focus:outline-none focus:border-primary/40 focus:bg-white/[0.05] transition-all duration-300 shadow-inner"
+                placeholder="operator@giin.tech"
                 required
               />
             </div>
-          </div>
+          </motion.div>
 
-          <div className="space-y-2 group">
+          <motion.div variants={itemVariants} className="space-y-2 group">
             <div className="flex items-center justify-between pl-1">
-              <label className="text-xs font-bold text-muted-foreground/60 uppercase tracking-widest">Secret Keyword</label>
-              <Link href="/auth/forgot" className="text-[10px] font-bold text-muted-foreground/40 hover:text-primary uppercase tracking-tighter transition-colors">Recover Access</Link>
+              <label className="text-[10px] font-black text-muted-foreground/60 uppercase tracking-[0.2em]">Coded Passkey</label>
+              <Link href="/auth/forgot" className="text-[10px] font-black text-primary/40 hover:text-primary uppercase tracking-widest transition-colors">Access Recovery</Link>
             </div>
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-muted-foreground group-focus-within:text-primary transition-colors">
+              <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none text-muted-foreground group-focus-within:text-primary transition-all duration-300">
                 <Lock className="w-5 h-5" />
               </div>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full bg-muted/50 border border-border/10 rounded-2xl pl-12 pr-4 py-4 text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:border-primary/50 focus:bg-background transition-all"
-                placeholder="••••••••"
+                className="w-full bg-white/[0.03] border border-white/5 rounded-2xl pl-14 pr-5 py-5 text-foreground placeholder:text-muted-foreground/20 focus:outline-none focus:border-primary/40 focus:bg-white/[0.05] transition-all duration-300 shadow-inner"
+                placeholder="••••••••••••"
                 required
               />
             </div>
-          </div>
+          </motion.div>
 
-          <div className="flex items-center gap-2 px-1">
-            <div className="w-4 h-4 rounded border border-border/20 bg-muted flex items-center justify-center cursor-pointer hover:border-primary/50 transition-colors">
-              <div className="w-2 h-2 rounded-sm bg-primary opacity-0" />
-            </div>
-            <span className="text-xs text-muted-foreground font-medium select-none">Remember this terminal session</span>
-          </div>
+          <motion.div variants={itemVariants} className="flex items-center gap-3 px-1">
+            <label className="relative flex items-center cursor-pointer">
+              <input type="checkbox" className="sr-only peer" />
+              <div className="w-5 h-5 bg-white/5 border border-white/10 rounded-lg peer-checked:bg-primary peer-checked:border-primary transition-all" />
+              <ShieldCheck className="absolute w-3 h-3 text-white opacity-0 peer-checked:opacity-100 left-1 transition-opacity pointer-events-none" />
+            </label>
+            <span className="text-[11px] text-muted-foreground font-bold uppercase tracking-widest">Maintain Station link</span>
+          </motion.div>
 
-          {error && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="p-4 bg-destructive/5 border border-destructive/20 rounded-2xl text-destructive text-xs font-medium flex items-center gap-3"
-            >
-              <AlertCircle className="w-4 h-4 flex-shrink-0" />
-              {error}
-            </motion.div>
-          )}
+          <AnimatePresence>
+            {error && (
+              <motion.div
+                initial={{ opacity: 0, height: 0, marginTop: 0 }}
+                animate={{ opacity: 1, height: "auto", marginTop: 24 }}
+                exit={{ opacity: 0, height: 0, marginTop: 0 }}
+                className="p-5 bg-destructive/10 border border-destructive/20 rounded-2xl text-destructive text-xs font-bold flex items-center gap-4"
+              >
+                <div className="w-8 h-8 rounded-full bg-destructive/20 flex items-center justify-center flex-shrink-0 animate-bounce">
+                  <AlertCircle className="w-5 h-5" />
+                </div>
+                <div>
+                  <span className="block text-[10px] uppercase tracking-widest opacity-60 mb-1">Transmission Failure</span>
+                  {error}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
-          <button
+          <motion.button
+            variants={itemVariants}
             type="submit"
             disabled={loading}
-            className="group relative mt-2 w-full overflow-hidden rounded-2xl p-[1px] transition-all active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed"
+            className="group relative mt-4 w-full h-16 overflow-hidden rounded-[1.25rem] transition-all active:scale-95 disabled:opacity-50"
           >
-            <div className="absolute inset-0 bg-gradient-to-r from-primary to-secondary" />
-            <div className="relative flex items-center justify-center gap-2 bg-card rounded-[calc(1rem-1px)] py-4 transition-all group-hover:bg-transparent">
+            <div className="absolute inset-0 bg-gradient-to-r from-primary via-accent to-primary bg-size-200 group-hover:bg-pos-100 transition-all duration-500" />
+            <div className="relative h-full flex items-center justify-center gap-3 bg-card/60 backdrop-blur-md m-[1px] rounded-[calc(1.25rem-1px)] transition-all group-hover:bg-transparent">
               {loading ? (
-                <Loader2 className="w-5 h-5 animate-spin text-primary" />
+                <div className="flex items-center gap-3">
+                  <Loader2 className="w-5 h-5 animate-spin text-primary" />
+                  <span className="text-xs font-black uppercase tracking-[0.2em] text-primary">Encrypting...</span>
+                </div>
               ) : (
                 <>
-                  <span className="text-sm font-bold text-foreground uppercase tracking-widest group-hover:text-primary-foreground transition-colors">Connect to Network</span>
-                  <ShieldCheck className="w-5 h-5 text-primary group-hover:text-primary-foreground transition-colors" />
+                  <span className="text-xs font-black text-foreground uppercase tracking-[0.3em] group-hover:text-white transition-colors">Establish Connection</span>
+                  <Fingerprint className="w-6 h-6 text-primary group-hover:text-white transition-all group-hover:scale-110" />
                 </>
               )}
             </div>
-          </button>
+          </motion.button>
         </form>
 
-        <div className="mt-8 text-center">
-          <p className="text-xs text-muted-foreground font-medium">
-            New to the ecosystem?{" "}
-            <Link href="/auth/register" className="text-primary hover:text-primary/80 transition-colors font-bold uppercase tracking-tight">
-              Request Onboarding
+        <motion.div variants={itemVariants} className="mt-12 text-center">
+          <div className="h-px w-full bg-gradient-to-r from-transparent via-white/5 to-transparent mb-8" />
+          <p className="text-[10px] text-muted-foreground font-black uppercase tracking-[0.2em]">
+            Unidentified Personnel?{" "}
+            <Link href="/auth/register" className="text-primary hover:text-accent transition-all ml-2 underline decoration-primary/20 underline-offset-4">
+              Request Clearance
             </Link>
           </p>
-        </div>
+          <div className="flex justify-center gap-8 mt-10 opacity-20 group-hover:opacity-40 transition-opacity">
+            <Cpu className="w-5 h-5" />
+            <Fingerprint className="w-5 h-5" />
+            <Lock className="w-5 h-5" />
+          </div>
+        </motion.div>
       </div>
+
+      <style jsx>{`
+        .bg-size-200 { background-size: 200% 100%; }
+        .bg-pos-100 { background-position: 100% 0; }
+      `}</style>
     </motion.div>
   );
 }
