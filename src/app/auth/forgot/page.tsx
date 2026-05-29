@@ -2,7 +2,6 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import {
     ArrowLeft,
     Loader2,
@@ -11,7 +10,7 @@ import {
     AlertCircle,
     CheckCircle2
 } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, Variants } from "framer-motion";
 
 export default function ForgotPasswordPage() {
     const [email, setEmail] = useState("");
@@ -27,15 +26,16 @@ export default function ForgotPasswordPage() {
         try {
             // Mocking for now as we don't have a forgot password API yet
             await new Promise(resolve => setTimeout(resolve, 2000));
+            if (!email.includes("@")) throw new Error("Invalid network identifier format");
             setIsSuccess(true);
         } catch (err: any) {
-            setError("Unable to process request. Please contact GIIN support.");
+            setError(err.message || "Unable to process request. Please contact GIIN support.");
         } finally {
             setLoading(false);
         }
     };
 
-    const containerVariants = {
+    const containerVariants: Variants = {
         hidden: { opacity: 0, scale: 0.95 },
         visible: {
             opacity: 1,
@@ -48,7 +48,7 @@ export default function ForgotPasswordPage() {
         }
     };
 
-    const itemVariants = {
+    const itemVariants: Variants = {
         hidden: { opacity: 0, y: 15 },
         visible: {
             opacity: 1,
@@ -71,13 +71,15 @@ export default function ForgotPasswordPage() {
                 <div className="space-y-4">
                     <h2 className="text-3xl font-black text-foreground tracking-tighter uppercase italic">Link <span className="text-primary not-italic">Broadcasted</span></h2>
                     <p className="text-muted-foreground text-sm leading-relaxed max-w-[280px] mx-auto">
-                        Recovery instructions have been dispatched to 14.7.2.1. Check your terminal for further action.
+                        Recovery instructions have been dispatched to {email}. Check your terminal for further action.
                     </p>
                 </div>
-                <Link href="/auth/login" className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-widest text-primary hover:text-white transition-all group">
-                    <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-                    Back to Authentication
-                </Link>
+                <div className="pt-4">
+                    <Link href="/auth/login" className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-widest text-primary hover:text-white transition-all group">
+                        <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+                        Back to Authentication
+                    </Link>
+                </div>
             </motion.div>
         );
     }
