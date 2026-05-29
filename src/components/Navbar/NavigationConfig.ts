@@ -105,6 +105,14 @@ export const navigationConfig: NavItem[] = [
             ctaText: "Launch AI",
             badge: "Active",
           },
+          {
+            label: "Capital Access",
+            href: "/loan",
+            description: "Sovereign innovation loans and capital solutions for high-impact African startups.",
+            iconName: "Wallet",
+            ctaText: "Get Funding",
+            badge: "New",
+          },
         ],
       },
       {

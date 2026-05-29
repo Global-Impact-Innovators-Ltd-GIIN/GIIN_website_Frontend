@@ -3,12 +3,16 @@
  * Defines roles and checks permissions across the enterprise platform.
  */
 
-export type Role = 'SUPER_ADMIN' | 'ADMIN' | 'EDITOR' | 'USER' | 'GUEST';
+export type Role = 'SUPER_ADMIN' | 'ADMIN' | 'LOAN_OFFICER' | 'CASHIER' | 'RECOVERY_OFFICER' | 'AUDITOR' | 'EDITOR' | 'USER' | 'GUEST';
 
 const RoleHierarchy: Record<Role, number> = {
   SUPER_ADMIN: 100,
   ADMIN: 80,
-  EDITOR: 50,
+  AUDITOR: 70,
+  LOAN_OFFICER: 60,
+  CASHIER: 50,
+  RECOVERY_OFFICER: 40,
+  EDITOR: 30,
   USER: 10,
   GUEST: 0
 };

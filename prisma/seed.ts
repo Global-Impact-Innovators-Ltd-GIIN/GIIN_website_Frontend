@@ -110,6 +110,20 @@ async function main() {
     },
   });
 
+  // 6. Loan Settings
+  await prisma.loanSettings.upsert({
+    where: { key: 'INTEREST_RATES' },
+    update: {},
+    create: {
+      key: 'INTEREST_RATES',
+      value: {
+        "1": 0.15,
+        "2": 0.25,
+        "default_increment": 0.05
+      }
+    }
+  });
+
   console.log('Seeding complete! Ready for demo.');
 }
 

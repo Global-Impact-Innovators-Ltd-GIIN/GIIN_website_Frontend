@@ -18,6 +18,7 @@ model User {
   lastName      String?
   avatarUrl     String?
   isSuperAdmin  Boolean   @default(false)
+  role          String    @default("USER") // SUPER_ADMIN, ADMIN, LOAN_OFFICER, CASHIER, RECOVERY_OFFICER, AUDITOR, USER
   
   // Unified Profile
   bio           String?
@@ -69,7 +70,12 @@ model User {
   conductedAudits SecurityAudit[]   @relation("Auditor")
   reportedIncidents Incident[]      @relation("IncidentReporter")
   consultantProfile ConsultantProfile? @relation("ConsultantProfile")
+
+  // Loan Service Relations
+  borrowerProfile Borrower?
+  loanActivities  LoanActivityLog[]
 }
+
 
 enum OrgType {
   CLIENT
@@ -794,4 +800,153 @@ model Assessment {
   
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
+}
+
+// ==========================================
+// 13. GIIN Loan Service
+// ==========================================
+
+enum LoanStatus {
+  PENDING
+  ACTIVE
+  PARTIAL
+  COMPLETED
+  OVERDUE
+  DEFAULTED
+}
+
+enum CollateralType {
+  DEVICE
+  VEHICLE
+  PROPERTY
+  OTHER
+}
+
+model Borrower {
+  id             String   @id @default(uuid())
+  userId         String?  @unique // Link to core User if they have an account
+  user           User?    @relation(fields: [userId], references: [id])
+  
+  fullName       String
+  nationalId     String   @unique
+  studentId      String?  @unique
+  phone          String
+  email          String
+  address        String?
+  
+  loans          Loan[]
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model Loan {
+  id              String      @id @default(uuid())
+  borrowerId      String
+  borrower        Borrower    @relation(fields: [borrowerId], references: [id])
+  
+  amount          Float
+  durationWeeks   Int
+  interestRate    Float       // e.g., 0.15 for 15%
+  totalRepayment  Float
+  outstandingBalance Float
+  
+  currency        String      @default("RWF") // RWF, USD
+  status          LoanStatus  @default(PENDING)
+  
+  purpose         String?
+  startDate       DateTime?
+  dueDate         DateTime?
+  
+  collateral      Collateral[]
+  repayments      Repayment[]
+  invoices        Invoice[]
+  activityLogs    LoanActivityLog[]
+  
+  loanOfficerId   String?     // Link to User with Loan Officer role
+  recoveryOfficerId String?   // Link to User with Recovery Officer role
+  
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+}
+
+model Collateral {
+  id              String         @id @default(uuid())
+  loanId          String
+  loan            Loan           @relation(fields: [loanId], references: [id], onDelete: Cascade)
+  
+  type            CollateralType
+  description     String         @db.Text
+  details         Json?          // Device details (IMEI, model, etc.)
+  value           Float?
+  
+  images          String[]       // URLs to images
+  status          String         @default("HELD") // HELD, RELEASED, SOLD
+  
+  // Security
+  devicePasswordEncrypted String?
+  qrCodeTag       String?        @unique
+  storageLocation String?
+  condition       String?
+  
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+}
+
+model Repayment {
+  id              String   @id @default(uuid())
+  loanId          String
+  loan            Loan     @relation(fields: [loanId], references: [id])
+  
+  amountPaid      Float
+  paymentMethod   String   // CASH, BANK_TRANSFER, MOMO
+  transactionRef  String?  @unique
+  
+  receipts        Receipt[]
+  
+  paidAt          DateTime @default(now())
+  processedById   String?  // Cashier User ID
+}
+
+model Invoice {
+  id              String   @id @default(uuid())
+  loanId          String
+  loan            Loan     @relation(fields: [loanId], references: [id])
+  
+  invoiceNumber   String   @unique
+  amount          Float
+  dueDate         DateTime
+  status          String   @default("UNPAID") // UNPAID, PAID, OVERDUE
+  
+  createdAt       DateTime @default(now())
+}
+
+model Receipt {
+  id              String    @id @default(uuid())
+  repaymentId     String
+  repayment       Repayment @relation(fields: [repaymentId], references: [id])
+  
+  receiptNumber   String    @unique
+  pdfUrl          String?
+  issuedById      String?
+  
+  createdAt       DateTime  @default(now())
+}
+
+model LoanSettings {
+  id              String   @id @default(uuid())
+  key             String   @unique
+  value           Json
+  updatedAt       DateTime @updatedAt
+}
+
+model LoanActivityLog {
+  id              String   @id @default(uuid())
+  loanId          String?
+  loan            Loan?    @relation(fields: [loanId], references: [id])
+  userId          String?
+  user            User?    @relation(fields: [userId], references: [id])
+  action          String
+  details         Json?
+  ipAddress       String?
+  createdAt       DateTime @default(now())
 }
