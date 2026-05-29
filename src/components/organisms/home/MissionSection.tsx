@@ -2,7 +2,7 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { Target, Shield, Zap } from "lucide-react";
+import { Target, Shield, Zap, Wallet } from "lucide-react";
 
 export function MissionSection() {
     return (
@@ -32,7 +32,8 @@ export function MissionSection() {
                         <div className="space-y-6">
                             {[
                                 { icon: Shield, title: "Sovereign Infrastructure", desc: "Building localized systems that ensure data and economic independence." },
-                                { icon: Zap, title: "Accelerated Deployment", desc: "Rapidly scaling high-impact software solutions across critical sectors." }
+                                { icon: Zap, title: "Accelerated Deployment", desc: "Rapidly scaling high-impact software solutions across critical sectors." },
+                                { icon: Wallet, title: "Financial Resilience", desc: "Providing the capital fuels required for localized innovation at scale." }
                             ].map((item, i) => (
                                 <div key={i} className="flex gap-4 group">
                                     <div className="w-12 h-12 rounded-xl bg-accent/5 border border-accent/10 flex items-center justify-center flex-shrink-0 text-accent group-hover:bg-accent/20 transition-colors">

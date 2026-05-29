@@ -54,6 +54,7 @@ export default function Home() {
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
             {[
               { title: "Leadership Institute", desc: "Forging the next generation of visionary leaders through elite curricula.", href: "/leadership", color: "from-accent/20" },
+              { title: "Capital Access", desc: "Decentralized financing and micro-credit ecosystem for emerging pioneers.", href: "/loan", color: "from-amber-500/20" },
               { title: "Technology Company", desc: "Sovereign application engineering and node infrastructure development.", href: "/technology", color: "from-primary/30" },
               { title: "Multimedia Studio", desc: "Crafting narratives that shift paradigms and represent the African future.", href: "/multimedia", color: "from-accent/20" },
               { title: "Innovation Lab", desc: "Incubating bleeding-edge concepts into market-ready technologies.", href: "/innovation", color: "from-primary/30" },

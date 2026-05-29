@@ -252,6 +252,32 @@ export const navigationConfig: NavItem[] = [
     ] as MegaMenuSection[],
   },
   {
+    label: "Capital",
+    type: "dropdown",
+    items: [
+      {
+        label: "Loan Service",
+        href: "/loan",
+        description: "Access sovereign innovation funding for high-impact African startups and creators.",
+        iconName: "Wallet",
+        ctaText: "Get Funding",
+      },
+      {
+        label: "Investment Portal",
+        href: "/innovation/dashboards/investor",
+        description: "Strategic investment opportunities within the GIIN ecosystem of vetted startups.",
+        iconName: "TrendingUp",
+        ctaText: "Explore Portfolio",
+      },
+      {
+        label: "Grant Opportunities",
+        href: "/research",
+        description: "R&D grants for scientific breakthroughs and continental development blueprints.",
+        iconName: "Landmark",
+      },
+    ],
+  },
+  {
     label: "Solutions",
     type: "dropdown",
     items: [

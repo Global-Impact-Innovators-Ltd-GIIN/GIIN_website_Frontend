@@ -4,9 +4,11 @@ import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Canvas } from "@react-three/fiber";
 import { Points, PointMaterial } from "@react-three/drei";
-import { useMemo } from "react";
 import { useTheme } from "next-themes";
 import * as THREE from "three";
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
+import { useAuth } from "@/components/providers/auth-provider";
 
 // Generate particle positions once outside the component
 const particleCount = 5000;
@@ -39,6 +41,7 @@ function ParticleEnvironment() {
 }
 
 export function HeroSection() {
+  const { user } = useAuth();
   const { scrollYProgress } = useScroll();
   const y = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
   const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
@@ -85,6 +88,33 @@ export function HeroSection() {
           Leading Innovation. Transforming Nations.
           Building the ecosystem for the next generation of pioneers.
         </motion.p>
+
+        <motion.div
+          className="mt-12 flex flex-col sm:flex-row gap-6 items-center"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, delay: 0.8, ease: "easeOut" }}
+        >
+          <Link
+            href={user ? "/loan" : "/signup"}
+            className="group relative px-10 py-5 bg-primary text-white font-black uppercase tracking-widest text-xs rounded-2xl overflow-hidden shadow-2xl shadow-primary/40 hover:scale-105 active:scale-95 transition-all"
+          >
+            <span className="relative z-10 flex items-center gap-3 text-white">
+              {user ? "Access Capital" : "Join the Network"}
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </span>
+            <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
+          </Link>
+
+          {!user && (
+            <Link
+              href="/login"
+              className="px-10 py-5 border border-white/10 bg-white/5 hover:bg-white/10 text-white font-black uppercase tracking-widest text-[10px] rounded-2xl backdrop-blur-md transition-all"
+            >
+              Sign In
+            </Link>
+          )}
+        </motion.div>
       </motion.div>
 
       {/* Scroll indicator */}

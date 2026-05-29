@@ -3,6 +3,7 @@ import { Inter, Outfit } from "next/font/google";
 import { cookies } from "next/headers";
 import { JWTService } from "@/lib/security/jwt";
 import { Navbar } from "@/components/organisms/layout/Navbar";
+import { AuthProvider } from "@/components/providers/auth-provider";
 import { PageTransition } from "@/components/ui/PageTransition";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import "./globals.css";
@@ -50,15 +51,17 @@ export default async function RootLayout({
       suppressHydrationWarning
     >
       <body className="min-h-screen bg-background text-foreground font-sans selection:bg-primary/30">
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <Navbar user={user} />
-          <PageTransition>{children}</PageTransition>
-        </ThemeProvider>
+        <AuthProvider user={user}>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <Navbar user={user} />
+            <PageTransition>{children}</PageTransition>
+          </ThemeProvider>
+        </AuthProvider>
         <script
           dangerouslySetInnerHTML={{
             __html: `
