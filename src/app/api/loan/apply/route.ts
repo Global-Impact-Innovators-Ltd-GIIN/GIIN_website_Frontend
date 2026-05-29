@@ -30,17 +30,24 @@ export async function POST(req: Request) {
             if (payload) userId = payload.sub as string;
         }
 
+        const sanitizedNationalId = nationalId?.trim();
+        const sanitizedStudentId = studentId?.trim() || null;
+
+        if (!sanitizedNationalId) {
+            return NextResponse.json({ error: "National ID is required" }, { status: 400 });
+        }
+
         // 1. Find or create borrower
         let borrower = await prisma.borrower.findUnique({
-            where: { nationalId }
+            where: { nationalId: sanitizedNationalId }
         });
 
         if (!borrower) {
             borrower = await prisma.borrower.create({
                 data: {
                     fullName,
-                    nationalId,
-                    studentId,
+                    nationalId: sanitizedNationalId,
+                    studentId: sanitizedStudentId,
                     phone,
                     email,
                     userId // Link if logged in
@@ -48,7 +55,7 @@ export async function POST(req: Request) {
             });
         }
 
-        // 2. Calculate interest (15% for 1 week, 25% for 2 weeks, etc.)
+        // 2. Calculate interest
         const getRate = (weeks: number) => {
             if (weeks === 1) return 0.15;
             if (weeks === 2) return 0.25;
@@ -97,8 +104,12 @@ export async function POST(req: Request) {
             message: "Application submitted successfully."
         });
 
-    } catch (error) {
-        console.error("Loan application error:", error);
-        return NextResponse.json({ error: "Failed to submit application" }, { status: 500 });
+    } catch (error: any) {
+        console.error("Loan application error full stack:", error);
+        return NextResponse.json({
+            error: "Failed to submit application",
+            message: error.message,
+            code: error.code // Prisma error codes are useful
+        }, { status: 500 });
     }
 }

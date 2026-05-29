@@ -96,7 +96,7 @@ export function HeroSection() {
           transition={{ duration: 1, delay: 0.8, ease: "easeOut" }}
         >
           <Link
-            href={user ? "/loan" : "/signup"}
+            href={user ? "/loan" : "/auth/register"}
             className="group relative px-10 py-5 bg-primary text-white font-black uppercase tracking-widest text-xs rounded-2xl overflow-hidden shadow-2xl shadow-primary/40 hover:scale-105 active:scale-95 transition-all"
           >
             <span className="relative z-10 flex items-center gap-3 text-white">
@@ -108,7 +108,7 @@ export function HeroSection() {
 
           {!user && (
             <Link
-              href="/login"
+              href="/auth/login"
               className="px-10 py-5 border border-white/10 bg-white/5 hover:bg-white/10 text-white font-black uppercase tracking-widest text-[10px] rounded-2xl backdrop-blur-md transition-all"
             >
               Sign In
