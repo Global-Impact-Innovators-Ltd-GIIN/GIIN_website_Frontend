@@ -2,114 +2,135 @@ import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { cookies } from "next/headers";
 import { JWTService } from "@/lib/security/jwt";
+import { AssetCondition } from "@prisma/client";
 
+/**
+ * GIIN Loan Application Submission Engine
+ * Converts high-fidelity portal data into permanent database records.
+ */
 export async function POST(req: Request) {
     try {
         const data = await req.json();
-        const {
-            fullName,
-            nationalId,
-            studentId,
-            phone,
-            email,
-            requestedAmount,
-            loanDuration,
-            collateralType,
-            deviceDetails,
-            imei,
-            images
-        } = data;
 
-        // Optional: Check if user is logged in to link profile
+        // 1. Authenticate (Optional link to User account)
         const cookieStore = await cookies();
         const token = cookieStore.get("next-auth.session-token");
-        let userId: string | undefined;
+        let sessionUserId: string | undefined;
 
         if (token) {
             const payload = await JWTService.verify(token.value);
-            if (payload) userId = payload.sub as string;
+            if (payload) sessionUserId = payload.sub as string;
         }
 
-        const sanitizedNationalId = nationalId?.trim();
-        const sanitizedStudentId = studentId?.trim() || null;
+        // 2. Generation of Sequential Application Code
+        const year = new Date().getFullYear();
+        const count = await prisma.loanApplication.count();
+        const appCode = `GIIN-APP-${year}-${(count + 1).toString().padStart(6, '0')}`;
 
-        if (!sanitizedNationalId) {
-            return NextResponse.json({ error: "National ID is required" }, { status: 400 });
-        }
-
-        // 1. Find or create borrower
+        // 3. Borrower Identification (Find or Create)
         let borrower = await prisma.borrower.findUnique({
-            where: { nationalId: sanitizedNationalId }
+            where: { nationalId: data.nationalId }
         });
 
         if (!borrower) {
+            const borrowerCount = await prisma.borrower.count();
+            const bCode = `BOR-${year}-${(borrowerCount + 1).toString().padStart(4, '0')}`;
+
             borrower = await prisma.borrower.create({
                 data: {
-                    fullName,
-                    nationalId: sanitizedNationalId,
-                    studentId: sanitizedStudentId,
-                    phone,
-                    email,
-                    userId // Link if logged in
+                    borrowerCode: bCode,
+                    userId: sessionUserId,
+                    fullName: data.fullName,
+                    nationalId: data.nationalId,
+                    passportNumber: data.passportNumber,
+                    studentId: data.studentId,
+                    phoneNumber: data.phone,
+                    email: data.email,
+                    gender: data.gender,
+                    occupation: data.occupation,
+                    status: "ACTIVE"
                 }
             });
         }
 
-        // 2. Calculate interest
-        const getRate = (weeks: number) => {
-            if (weeks === 1) return 0.15;
-            if (weeks === 2) return 0.25;
-            return 0.25 + (weeks - 2) * 0.05;
-        };
+        // 4. Create Loan Application
+        const application = await prisma.loanApplication.create({
+            data: {
+                applicationCode: appCode,
+                borrowerId: borrower.id,
+                requestedAmount: data.requestedAmount,
+                requestedDuration: data.loanDuration,
+                purposeOfLoan: data.purpose || "Business Growth",
+                status: "PENDING",
+            }
+        });
 
-        const rate = getRate(loanDuration);
-        const totalRepayment = requestedAmount + (requestedAmount * rate);
+        // 5. Initialize Collateral Record (Pre-verification)
+        // Note: We don't link to a 'Loan' yet because it's just an application.
+        // However, we want to store the details. We'll store it as metadata or extended schema.
+        // The user schema has Collateral linked to Loan. 
+        // For Phase 4, we'll store collateral details in the application Remarks or a separate TEMP table if needed.
+        // Actually, let's create a Loan in PENDING status immediately as per GIIN logic flow.
 
-        // 3. Create Loan Request
+        const rate = data.loanDuration === 1 ? 0.15 : 0.25;
+        const interest = data.requestedAmount * rate;
+        const total = data.requestedAmount + interest;
+        const loanCode = `LN-${year}-${Math.random().toString(36).substring(2, 7).toUpperCase()}`;
+
         const loan = await prisma.loan.create({
             data: {
+                loanCode: loanCode,
                 borrowerId: borrower.id,
-                amount: requestedAmount,
-                durationWeeks: loanDuration,
+                applicationId: application.id,
+                principalAmount: data.requestedAmount,
                 interestRate: rate,
-                totalRepayment,
-                outstandingBalance: totalRepayment,
+                interestAmount: interest,
+                totalRepayment: total,
+                outstandingBalance: total,
+                durationWeeks: data.loanDuration,
                 status: "PENDING",
-                purpose: "Innovation Capital",
                 collateral: {
                     create: {
-                        type: collateralType,
-                        description: deviceDetails,
-                        details: { imei },
-                        images: images || [],
-                        status: "HELD"
+                        collateralCode: `COL-${loanCode}`,
+                        itemType: data.collateralType,
+                        brand: data.brand,
+                        model: data.model,
+                        serialNumber: data.serialNumber,
+                        encryptedDevicePassword: data.devicePassword,
+                        estimatedValue: data.estimatedValue,
+                        conditionStatus: (data.condition as AssetCondition) || "GOOD",
+                        images: {
+                            create: (data.images || ["/placeholder.png"]).map((url: string) => ({
+                                imageUrl: url,
+                                uploadedAt: new Date()
+                            }))
+                        }
                     }
                 }
             }
         });
 
-        // 4. Log Activity
-        await prisma.loanActivityLog.create({
+        // 6. Final Audit Log
+        await prisma.loanAuditLog.create({
             data: {
                 loanId: loan.id,
-                userId: userId,
-                action: "LOAN_APPLICATION_SUBMITTED",
-                details: { amount: requestedAmount, borrowerId: borrower.id }
+                userId: sessionUserId,
+                actionType: "LOAN_APPLICATION_SUBMITTED",
+                details: { appCode, amount: data.requestedAmount }
             }
         });
 
         return NextResponse.json({
             success: true,
-            loanId: loan.id,
-            message: "Application submitted successfully."
+            applicationCode: appCode,
+            loanId: loan.id
         });
 
     } catch (error: any) {
-        console.error("Loan application error full stack:", error);
+        console.error("Submission Engine Failure:", error);
         return NextResponse.json({
-            error: "Failed to submit application",
-            message: error.message,
-            code: error.code // Prisma error codes are useful
+            error: "Protocol Submission Failed",
+            details: error.message
         }, { status: 500 });
     }
 }
