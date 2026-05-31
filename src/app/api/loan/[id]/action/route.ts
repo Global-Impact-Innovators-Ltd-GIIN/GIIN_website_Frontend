@@ -1,8 +1,12 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
-import { cookies } from "next/headers";
-import { JWTService } from "@/lib/security/jwt";
+import { authenticate, authorizePermission, forbiddenResponse, unauthorizedResponse } from "@/lib/security/middleware";
+import { AuditLogger } from "@/lib/audit";
 
+/**
+ * GIIN Loan Action Controller
+ * Handles Approvals, Rejections, and Cancellations.
+ */
 export async function POST(
     req: Request,
     { params }: { params: Promise<{ id: string }> }
@@ -10,43 +14,55 @@ export async function POST(
     try {
         const { id } = await params;
         const { action, notes } = await req.json();
+
+        // 1. Authenticate & Authorize
+        const session = await authenticate();
+        if (!session) return unauthorizedResponse();
+
+        const userId = session.sub as string;
         const loanId = id;
 
-        const cookieStore = await cookies();
-        const token = cookieStore.get("next-auth.session-token");
-        if (!token) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
-        const payload = await JWTService.verify(token.value);
-        if (!payload || (payload.role !== "ADMIN" && payload.role !== "SUPER_ADMIN" && payload.role !== "LOAN_OFFICER")) {
-            return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+        // 2. Permission Check
+        const requiredPermission = action === "APPROVE" || action === "REJECT" ? "loan.approve" : "loan.delete";
+        if (!authorizePermission(session, requiredPermission)) {
+            return forbiddenResponse();
         }
 
-        const userId = payload.sub as string;
-
+        // 3. Determine New Status
         let status: any;
-        if (action === "APPROVE") status = "ACTIVE";
-        else if (action === "REJECT") status = "DEFAULTED"; // Or another status for rejected
-        else if (action === "CANCEL") status = "DEFAULTED";
-        else return NextResponse.json({ error: "Invalid action" }, { status: 400 });
+        let auditAction: any;
 
+        if (action === "APPROVE") {
+            status = "ACTIVE";
+            auditAction = "LOAN_APPROVED";
+        } else if (action === "REJECT") {
+            status = "CANCELLED"; // Or REJECTED if using Application model
+            auditAction = "LOAN_REJECTED";
+        } else if (action === "CANCEL") {
+            status = "CANCELLED";
+            auditAction = "LOAN_REJECTED";
+        } else {
+            return NextResponse.json({ error: "Invalid action" }, { status: 400 });
+        }
+
+        // 4. Update Database
         const loan = await prisma.loan.update({
             where: { id: loanId },
             data: {
                 status,
                 loanOfficerId: userId,
                 startDate: action === "APPROVE" ? new Date() : undefined,
-                dueDate: action === "APPROVE" ? new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) : undefined, // Placeholder 1 week
+                dueDate: action === "APPROVE" ? new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) : undefined, // 1 week default
             },
         });
 
-        // Log Activity
-        await prisma.loanActivityLog.create({
-            data: {
-                loanId,
-                userId,
-                action: `LOAN_${action}`,
-                details: { notes }
-            }
+        // 5. Persistent Audit Log
+        await AuditLogger.logEvent({
+            userId,
+            loanId,
+            action: auditAction,
+            details: { notes, oldStatus: "PENDING", newStatus: status },
+            affectedRecord: "Loan"
         });
 
         return NextResponse.json({ success: true, loan });
