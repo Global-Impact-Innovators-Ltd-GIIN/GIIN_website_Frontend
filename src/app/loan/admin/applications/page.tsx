@@ -7,9 +7,9 @@ import {
     XCircle,
     Search,
     Filter,
-    ChevronRight,
     ArrowUpRight,
-    Loader2
+    Loader2,
+    AlertCircle
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -35,6 +35,13 @@ export default function AdminApplicationsPage() {
         app.applicationCode.toLowerCase().includes(searchTerm.toLowerCase()) ||
         app.borrower.fullName.toLowerCase().includes(searchTerm.toLowerCase())
     );
+
+    const stats = [
+        { label: "Pending Protocol", count: apps.filter(a => a.status === "PENDING").length, icon: <Clock className="w-4 h-4" />, color: "text-amber-500", bg: "bg-amber-500/10" },
+        { label: "Under Assessment", count: apps.filter(a => a.status === "UNDER_REVIEW").length, icon: <AlertCircle className="w-4 h-4" />, color: "text-indigo-400", bg: "bg-indigo-400/10" },
+        { label: "Approved (Active)", count: apps.filter(a => a.status === "APPROVED").length, icon: <CheckCircle2 className="w-4 h-4" />, color: "text-emerald-500", bg: "bg-emerald-500/10" },
+        { label: "Final Rejections", count: apps.filter(a => a.status === "REJECTED").length, icon: <XCircle className="w-4 h-4" />, color: "text-red-500", bg: "bg-red-500/10" },
+    ];
 
     if (loading) {
         return (
@@ -63,10 +70,22 @@ export default function AdminApplicationsPage() {
                                 className="pl-12 h-14 bg-white/5 border-white/5 rounded-2xl focus:bg-white/10 transition-all font-mono"
                             />
                         </div>
-                        <Button variant="outline" className="h-14 w-14 rounded-2xl border-white/5 bg-white/5 p-0">
-                            <Filter className="w-5 h-5" />
-                        </Button>
                     </div>
+                </div>
+
+                {/* Summary Cards */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+                    {stats.map((stat, i) => (
+                        <div key={i} className="bg-white/[0.02] border border-white/5 rounded-3xl p-6 flex items-center justify-between group hover:bg-white/[0.04] transition-all">
+                            <div>
+                                <span className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground block mb-1">{stat.label}</span>
+                                <span className="text-3xl font-black tracking-tight">{stat.count}</span>
+                            </div>
+                            <div className={cn("p-4 rounded-2xl", stat.bg, stat.color)}>
+                                {stat.icon}
+                            </div>
+                        </div>
+                    ))}
                 </div>
 
                 <div className="bg-card/20 backdrop-blur-3xl border border-white/5 rounded-[2.5rem] overflow-hidden">
@@ -94,20 +113,21 @@ export default function AdminApplicationsPage() {
                                             </div>
                                             <div>
                                                 <span className="block text-sm font-bold text-white">{app.borrower.fullName}</span>
-                                                <span className="text-[10px] text-muted-foreground tracking-widest">{app.borrower.borrowerCode}</span>
+                                                <span className="text-[10px] text-muted-foreground tracking-widest text-[9px]">{app.borrower.borrowerCode}</span>
                                             </div>
                                         </div>
                                     </td>
                                     <td className="px-8 py-6">
-                                        <span className="block text-sm font-black font-mono text-white">{app.requestedAmount.toLocaleString()} RWF</span>
+                                        <span className="block text-sm font-black font-mono text-white">{(app.loan?.principalAmount || app.requestedAmount).toLocaleString()} RWF</span>
                                         <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-widest">{app.requestedDuration} Week(s) Term</span>
                                     </td>
                                     <td className="px-8 py-6">
                                         <span className={cn(
                                             "inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest border",
                                             app.status === "PENDING" ? "bg-amber-500/10 border-amber-500/20 text-amber-500" :
-                                                app.status === "APPROVED" ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-500" :
-                                                    "bg-white/5 border-white/5 text-muted-foreground"
+                                                app.status === "UNDER_REVIEW" ? "bg-indigo-500/10 border-indigo-500/20 text-indigo-400" :
+                                                    app.status === "APPROVED" ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-500" :
+                                                        "bg-white/5 border-white/5 text-muted-foreground"
                                         )}>
                                             {app.status === "PENDING" && <Clock className="w-3 h-3" />}
                                             {app.status === "APPROVED" && <CheckCircle2 className="w-3 h-3" />}
