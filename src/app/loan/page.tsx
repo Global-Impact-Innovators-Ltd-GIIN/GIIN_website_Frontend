@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { ArrowRight, ShieldCheck, Zap, Globe } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { LoanCalculator } from "@/components/organisms/loan/LoanCalculator";
+import { LoanCalculator } from "@/modules/loan-service/components/LoanCalculator";
 
 export default function LoanLandingPage() {
     return (
