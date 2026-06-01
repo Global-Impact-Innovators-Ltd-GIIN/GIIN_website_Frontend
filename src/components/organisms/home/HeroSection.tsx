@@ -48,8 +48,21 @@ export function HeroSection() {
 
   return (
     <section className="relative h-screen w-full overflow-hidden bg-background transition-colors duration-500">
-      {/* 3D Background */}
+      {/* Background Image Layer */}
       <div className="absolute inset-0 z-0">
+        <div className="absolute inset-0 bg-black/60 z-10" /> {/* Dark tint for visibility */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-background z-20" /> {/* Depth gradient */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.4)_100%)] z-30" /> {/* Vignette */}
+
+        <img
+          src="/images/hero-bg.jpg"
+          alt="GIIN Innovation Team"
+          className="w-full h-full object-cover opacity-80"
+        />
+      </div>
+
+      {/* 3D Particle Layer (Toned down) */}
+      <div className="absolute inset-0 z-40 pointer-events-none opacity-40">
         <Canvas camera={{ position: [0, 0, 5] }}>
           <ParticleEnvironment />
         </Canvas>
@@ -58,7 +71,7 @@ export function HeroSection() {
       {/* Overlay Content */}
       <motion.div
         style={{ y, opacity }}
-        className="relative z-10 flex h-full flex-col items-center justify-center px-6 text-center"
+        className="relative z-50 flex h-full flex-col items-center justify-center px-6 text-center"
       >
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -71,7 +84,7 @@ export function HeroSection() {
         </motion.div>
 
         <motion.h1
-          className="mb-6 font-heading text-5xl font-black tracking-tighter sm:text-7xl md:text-8xl lg:text-9xl bg-clip-text text-transparent bg-gradient-to-br from-foreground via-foreground to-primary/50"
+          className="mb-6 font-heading text-5xl font-black tracking-tighter sm:text-7xl md:text-8xl lg:text-9xl bg-clip-text text-transparent bg-gradient-to-br from-white via-white/90 to-primary/40 drop-shadow-[0_10px_30px_rgba(0,0,0,0.5)]"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 0.4, ease: "easeOut" }}
@@ -80,7 +93,7 @@ export function HeroSection() {
         </motion.h1>
 
         <motion.p
-          className="mx-auto max-w-2xl text-lg text-muted-foreground sm:text-xl md:text-2xl"
+          className="mx-auto max-w-2xl text-lg text-white/80 sm:text-xl md:text-2xl drop-shadow-md font-medium"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 0.6, ease: "easeOut" }}
