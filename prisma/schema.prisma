@@ -73,7 +73,7 @@ model User {
 
   // Loan Service Relations
   borrowerProfile Borrower?
-  loanActivities  LoanActivityLog[]
+  loanAuditLogs   LoanAuditLog[]
 }
 
 
@@ -803,150 +803,262 @@ model Assessment {
 }
 
 // ==========================================
-// 13. GIIN Loan Service
+// 13. GIIN Loan Service Subsystem
 // ==========================================
+
+enum AssetCondition {
+  NEW
+  EXCELLENT
+  GOOD
+  FAIR
+  POOR
+}
+
+enum ApplicationStatus {
+  PENDING
+  UNDER_REVIEW
+  APPROVED
+  REJECTED
+  MIGRATED
+}
 
 enum LoanStatus {
   PENDING
+  APPROVED
+  DISBURSED
   ACTIVE
   PARTIAL
-  COMPLETED
   OVERDUE
   DEFAULTED
+  REPAID
+  CANCELLED
 }
 
-enum CollateralType {
-  DEVICE
-  VEHICLE
-  PROPERTY
-  OTHER
+model LoanApplication {
+  id                String            @id @default(uuid())
+  applicationCode   String            @unique @map("application_code")
+  borrowerId        String            @map("borrower_id")
+  borrower          Borrower          @relation(fields: [borrowerId], references: [id])
+  
+  requestedAmount   Float             @map("requested_amount")
+  requestedDuration Int               @map("requested_duration") // weeks
+  purposeOfLoan     String?           @map("purpose_of_loan")
+  
+  status            ApplicationStatus @default(PENDING)
+  applicationDate   DateTime          @default(now()) @map("application_date")
+  
+  reviewedBy        String?           @map("reviewed_by")
+  reviewedAt        DateTime?         @map("reviewed_at")
+  remarks           String?
+  
+  loan              Loan?             // Link if converted to loan
+  
+  createdAt         DateTime          @default(now()) @map("created_at")
+  updatedAt         DateTime          @updatedAt @map("updated_at")
+  deletedAt         DateTime?         @map("deleted_at")
+
+  @@index([applicationCode])
+  @@index([status])
+  @@map("loan_applications")
 }
 
 model Borrower {
-  id             String   @id @default(uuid())
-  userId         String?  @unique // Link to core User if they have an account
-  user           User?    @relation(fields: [userId], references: [id])
+  id               String            @id @default(uuid())
+  borrowerCode     String            @unique @map("borrower_code")
+  userId           String?           @unique @map("user_id")
+  user             User?             @relation(fields: [userId], references: [id])
   
-  fullName       String
-  nationalId     String   @unique
-  studentId      String?  @unique
-  phone          String
-  email          String
-  address        String?
+  fullName         String            @map("full_name")
+  nationalId       String            @unique @map("national_id")
+  passportNumber   String?           @map("passport_number")
+  studentId        String?           @unique @map("student_id")
   
-  loans          Loan[]
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  phoneNumber      String            @map("phone_number")
+  email            String
+  address          String?
+  gender           String?
+  occupation       String?
+  emergencyContact String?           @map("emergency_contact")
+  
+  status           String            @default("ACTIVE") @map("borrower_status")
+  
+  applications     LoanApplication[]
+  loans            Loan[]
+  
+  createdAt        DateTime          @default(now()) @map("created_at")
+  updatedAt        DateTime          @updatedAt @map("updated_at")
+  deletedAt        DateTime?         @map("deleted_at")
+
+  @@index([borrowerCode])
+  @@index([nationalId])
+  @@index([phoneNumber])
+  @@map("borrowers")
 }
 
 model Loan {
-  id              String      @id @default(uuid())
-  borrowerId      String
-  borrower        Borrower    @relation(fields: [borrowerId], references: [id])
+  id                 String            @id @default(uuid())
+  loanCode           String            @unique @map("loan_code")
+  borrowerId         String            @map("borrower_id")
+  borrower           Borrower          @relation(fields: [borrowerId], references: [id])
   
-  amount          Float
-  durationWeeks   Int
-  interestRate    Float       // e.g., 0.15 for 15%
-  totalRepayment  Float
-  outstandingBalance Float
+  applicationId      String?           @unique @map("application_id")
+  application        LoanApplication?  @relation(fields: [applicationId], references: [id])
   
-  currency        String      @default("RWF") // RWF, USD
-  status          LoanStatus  @default(PENDING)
+  principalAmount    Float             @map("principal_amount")
+  interestRate       Float             @map("interest_rate")
+  interestAmount     Float             @map("interest_amount")
+  totalRepayment     Float             @map("total_repayment")
+  amountPaid         Float             @default(0) @map("amount_paid")
+  outstandingBalance Float             @map("outstanding_balance")
   
-  purpose         String?
-  startDate       DateTime?
-  dueDate         DateTime?
+  currency           String            @default("RWF")
+  durationWeeks      Int               @map("duration")
   
-  collateral      Collateral[]
-  repayments      Repayment[]
-  invoices        Invoice[]
-  activityLogs    LoanActivityLog[]
+  loanDate           DateTime          @default(now()) @map("loan_date")
+  dueDate            DateTime?         @map("due_date")
+  completionDate     DateTime?         @map("completion_date")
   
-  loanOfficerId   String?     // Link to User with Loan Officer role
-  recoveryOfficerId String?   // Link to User with Recovery Officer role
+  status             LoanStatus        @default(PENDING) @map("loan_status")
+  approvedBy         String?           @map("approved_by")
   
-  createdAt       DateTime    @default(now())
-  updatedAt       DateTime    @updatedAt
+  collateral         Collateral?       // User requested "Has One"
+  repayments         Repayment[]
+  invoice            Invoice?          // User requested "Has One"
+  receipts           Receipt[]
+  activityLogs       LoanAuditLog[]
+  
+  loanOfficerId      String?           @map("loan_officer_id")
+  recoveryOfficerId  String?           @map("recovery_officer_id")
+  
+  createdAt          DateTime          @default(now()) @map("created_at")
+  updatedAt          DateTime          @updatedAt @map("updated_at")
+  deletedAt          DateTime?         @map("deleted_at")
+
+  @@index([loanCode])
+  @@index([status])
+  @@index([dueDate])
+  @@map("loans")
 }
 
 model Collateral {
-  id              String         @id @default(uuid())
-  loanId          String
-  loan            Loan           @relation(fields: [loanId], references: [id], onDelete: Cascade)
+  id                      String            @id @default(uuid())
+  loanId                  String            @unique @map("loan_id")
+  loan                    Loan              @relation(fields: [loanId], references: [id], onDelete: Cascade)
   
-  type            CollateralType
-  description     String         @db.Text
-  details         Json?          // Device details (IMEI, model, etc.)
-  value           Float?
+  collateralCode          String            @unique @map("collateral_code")
+  itemType                String            @map("item_type")
+  brand                   String?
+  model                   String?
+  serialNumber            String?           @map("serial_number")
+  encryptedDevicePassword String?           @map("encrypted_device_password")
+  description             String?           @db.Text
   
-  images          String[]       // URLs to images
-  status          String         @default("HELD") // HELD, RELEASED, SOLD
+  estimatedValue          Float             @map("estimated_value")
+  storageLocation         String?           @map("storage_location")
+  conditionStatus         AssetCondition    @default(GOOD) @map("condition_status")
+  releaseStatus           String            @default("HELD") @map("release_status")
   
-  // Security
-  devicePasswordEncrypted String?
-  qrCodeTag       String?        @unique
-  storageLocation String?
-  condition       String?
+  images                  CollateralImage[]
   
-  createdAt       DateTime       @default(now())
-  updatedAt       DateTime       @updatedAt
+  createdAt               DateTime          @default(now()) @map("created_at")
+  updatedAt               DateTime          @updatedAt @map("updated_at")
+  deletedAt               DateTime?         @map("deleted_at")
+
+  @@index([collateralCode])
+  @@map("collateral")
+}
+
+model CollateralImage {
+  id           String     @id @default(uuid())
+  collateralId String     @map("collateral_id")
+  collateral   Collateral @relation(fields: [collateralId], references: [id], onDelete: Cascade)
+  
+  imageUrl     String     @map("image_url")
+  uploadedBy   String?    @map("uploaded_by")
+  uploadedAt   DateTime   @default(now()) @map("uploaded_at")
+  
+  @@map("collateral_images")
 }
 
 model Repayment {
-  id              String   @id @default(uuid())
-  loanId          String
-  loan            Loan     @relation(fields: [loanId], references: [id])
+  id               String    @id @default(uuid())
+  repaymentCode    String    @unique @map("repayment_code")
+  loanId           String    @map("loan_id")
+  loan             Loan      @relation(fields: [loanId], references: [id])
   
-  amountPaid      Float
-  paymentMethod   String   // CASH, BANK_TRANSFER, MOMO
-  transactionRef  String?  @unique
+  amountPaid       Float     @map("amount_paid")
+  remainingBalance Float     @map("remaining_balance")
   
-  receipts        Receipt[]
+  paymentMethod    String    @map("payment_method") // CASH, MOMO, BANK
+  paymentReference String?   @map("payment_reference")
+  receivedBy       String?   @map("received_by")
+  paymentDate      DateTime  @default(now()) @map("payment_date")
+  notes            String?
   
-  paidAt          DateTime @default(now())
-  processedById   String?  // Cashier User ID
+  createdAt        DateTime  @default(now()) @map("created_at")
+  deletedAt        DateTime? @map("deleted_at")
+
+  @@index([repaymentCode])
+  @@index([paymentDate])
+  @@map("repayments")
 }
 
 model Invoice {
-  id              String   @id @default(uuid())
-  loanId          String
-  loan            Loan     @relation(fields: [loanId], references: [id])
+  id             String    @id @default(uuid())
+  invoiceNumber  String    @unique @map("invoice_number")
+  loanId         String    @unique @map("loan_id")
+  loan           Loan      @relation(fields: [loanId], references: [id])
   
-  invoiceNumber   String   @unique
-  amount          Float
-  dueDate         DateTime
-  status          String   @default("UNPAID") // UNPAID, PAID, OVERDUE
+  generatedBy    String?   @map("generated_by")
+  pdfUrl         String?   @map("pdf_url")
+  generatedAt    DateTime  @default(now()) @map("generated_at")
   
-  createdAt       DateTime @default(now())
+  deletedAt      DateTime? @map("deleted_at")
+
+  @@map("invoices")
 }
 
 model Receipt {
-  id              String    @id @default(uuid())
-  repaymentId     String
-  repayment       Repayment @relation(fields: [repaymentId], references: [id])
+  id            String    @id @default(uuid())
+  receiptNumber String    @unique @map("receipt_number")
+  loanId        String    @map("loan_id")
+  loan          Loan      @relation(fields: [loanId], references: [id])
   
-  receiptNumber   String    @unique
-  pdfUrl          String?
-  issuedById      String?
+  generatedBy   String?   @map("generated_by")
+  pdfUrl        String?   @map("pdf_url")
+  generatedAt   DateTime  @default(now()) @map("generated_at")
   
-  createdAt       DateTime  @default(now())
+  deletedAt     DateTime? @map("deleted_at")
+
+  @@map("receipts")
+}
+
+model LoanAuditLog {
+  id             String    @id @default(uuid())
+  loanId         String?   @map("loan_id")
+  loan           Loan?     @relation(fields: [loanId], references: [id])
+  
+  userId         String?   @map("user_id")
+  user           User?     @relation(fields: [userId], references: [id])
+  
+  actionType     String    @map("action_type")
+  affectedRecord String?   @map("affected_record")
+  oldValue       Json?     @map("old_value")
+  newValue       Json?     @map("new_value")
+  
+  ipAddress      String?   @map("ip_address")
+  timestamp      DateTime  @default(now())
+  
+  @@map("loan_audit_logs")
 }
 
 model LoanSettings {
-  id              String   @id @default(uuid())
-  key             String   @unique
-  value           Json
-  updatedAt       DateTime @updatedAt
-}
+  id             String   @id @default(uuid())
+  duration       Int      // weeks
+  interestRate   Float    @map("interest_rate")
+  exchangeRate   Float    @default(1.0) @map("exchange_rate")
+  overduePenalty Float    @default(0) @map("overdue_penalty")
+  activeStatus   Boolean  @default(true) @map("active_status")
 
-model LoanActivityLog {
-  id              String   @id @default(uuid())
-  loanId          String?
-  loan            Loan?    @relation(fields: [loanId], references: [id])
-  userId          String?
-  user            User?    @relation(fields: [userId], references: [id])
-  action          String
-  details         Json?
-  ipAddress       String?
-  createdAt       DateTime @default(now())
+  @@map("loan_settings")
 }

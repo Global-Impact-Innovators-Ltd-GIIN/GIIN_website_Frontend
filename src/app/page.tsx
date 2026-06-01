@@ -19,7 +19,7 @@ export default function Home() {
     <main className="flex min-h-screen flex-col items-center justify-start bg-background text-foreground selection:bg-primary/30 transition-colors duration-500">
 
       {/* 1. Hero Section (Overview Target) */}
-      <div id="overview">
+      <div id="overview" className="w-full">
         <HeroSection />
       </div>
 

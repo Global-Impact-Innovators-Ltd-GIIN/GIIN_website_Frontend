@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { BorrowerApplicationForm } from "@/components/organisms/loan/BorrowerApplicationForm";
+import { BorrowerApplicationForm } from "@/modules/loan-service/components/BorrowerApplicationForm";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
