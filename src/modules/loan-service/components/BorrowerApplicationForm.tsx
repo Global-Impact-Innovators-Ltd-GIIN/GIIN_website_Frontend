@@ -86,9 +86,9 @@ export function BorrowerApplicationForm() {
     const [isSuccess, setIsSuccess] = useState(false);
     const [appCode, setAppCode] = useState("");
     const [error, setError] = useState("");
+    const [uploading, setUploading] = useState<string | null>(null);
 
     const [formData, setFormData] = useState<LoanFormData>({
-        // Personal
         fullName: "",
         nationalId: "",
         passportNumber: "",
@@ -100,14 +100,10 @@ export function BorrowerApplicationForm() {
         email: "",
         address: "",
         occupation: "",
-
-        // Loan
         requestedAmount: 50000,
         currency: "RWF",
-        loanDuration: 1, // weeks
+        loanDuration: 1,
         purpose: "",
-
-        // Collateral
         collateralType: "SMARTPHONE",
         brand: "",
         model: "",
@@ -115,23 +111,16 @@ export function BorrowerApplicationForm() {
         devicePassword: "",
         estimatedValue: 0,
         condition: "GOOD",
-
-        // Evidence
         evidence: {
             front: null,
             rear: null,
             sides: null,
             accessories: null,
         },
-
-        // Protocol
         signedName: "",
         agreedToTerms: false,
     });
 
-    const [uploading, setUploading] = useState<string | null>(null);
-
-    // Interest Calculation Logic
     const [calculations, setCalculations] = useState({
         interestRate: 0.15,
         interestAmount: 7500,
@@ -143,7 +132,6 @@ export function BorrowerApplicationForm() {
         const rate = formData.loanDuration === 1 ? 0.15 : 0.25;
         const interest = formData.requestedAmount * rate;
         const total = formData.requestedAmount + interest;
-
         const date = new Date();
         date.setDate(date.getDate() + (formData.loanDuration * 7));
 
@@ -155,7 +143,7 @@ export function BorrowerApplicationForm() {
         });
     }, [formData.requestedAmount, formData.loanDuration]);
 
-    const updateForm = (fields: Partial<typeof formData>) => {
+    const updateForm = (fields: Partial<LoanFormData>) => {
         setFormData(prev => ({ ...prev, ...fields }));
     };
 
@@ -166,7 +154,6 @@ export function BorrowerApplicationForm() {
         const file = e.target.files?.[0];
         if (!file) return;
 
-        // Validation
         if (file.size > 10 * 1024 * 1024) {
             setError("Image size exceeds 10MB limit.");
             return;
@@ -175,26 +162,43 @@ export function BorrowerApplicationForm() {
         setUploading(slot);
 
         try {
-            // In a production app, we would upload to S3/Cloudinary here.
-            // For this high-fidelity demo, we'll use local previews 
-            // and simulate a protocol upload delay.
             const reader = new FileReader();
             reader.onloadend = () => {
-                setFormData(prev => ({
-                    ...prev,
-                    evidence: {
-                        ...prev.evidence,
-                        [slot]: reader.result as string
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const MAX_WIDTH = 1200;
+                    const MAX_HEIGHT = 1200;
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > height) {
+                        if (width > MAX_WIDTH) {
+                            height *= MAX_WIDTH / width;
+                            width = MAX_WIDTH;
+                        }
+                    } else {
+                        if (height > MAX_HEIGHT) {
+                            width *= MAX_HEIGHT / height;
+                            height = MAX_HEIGHT;
+                        }
                     }
-                }));
-                setUploading(null);
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx?.drawImage(img, 0, 0, width, height);
+
+                    const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+                    setFormData(prev => ({
+                        ...prev,
+                        evidence: { ...prev.evidence, [slot]: dataUrl }
+                    }));
+                    setUploading(null);
+                };
+                img.src = reader.result as string;
             };
-
-            // Simulate network latency for the "Protocol Injection" feel
-            setTimeout(() => {
-                reader.readAsDataURL(file);
-            }, 1200);
-
+            reader.readAsDataURL(file);
         } catch (err) {
             setError("Failed to process image protocol.");
             setUploading(null);
@@ -204,10 +208,7 @@ export function BorrowerApplicationForm() {
     const removeImage = (slot: string) => {
         setFormData(prev => ({
             ...prev,
-            evidence: {
-                ...prev.evidence,
-                [slot]: null
-            }
+            evidence: { ...prev.evidence, [slot]: null }
         }));
     };
 
@@ -215,7 +216,6 @@ export function BorrowerApplicationForm() {
         setIsSubmitting(true);
         setError("");
         try {
-            // Flatten evidence object into images array for API compatibility
             const images = Object.values(formData.evidence).filter(v => v !== null) as string[];
 
             const response = await fetch("/api/loan/apply", {
@@ -233,50 +233,14 @@ export function BorrowerApplicationForm() {
                 setAppCode(data.applicationCode);
                 setIsSuccess(true);
             } else {
-                setError(data.error || "Failed to submit application.");
+                setError(`${data.error || "Submission Failed"} ${data.details ? `(Target: ${JSON.stringify(data.details)})` : ""}`);
             }
         } catch (err) {
-            setError("Network protocol failure. Please reconnect.");
+            setError("Network protocol failure. Payload may be oversized or server connection lost.");
         } finally {
             setIsSubmitting(false);
         }
     };
-
-    if (isSuccess) {
-        return (
-            <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="text-center p-12 md:p-20 bg-card/40 backdrop-blur-3xl border border-white/5 rounded-[3rem] shadow-[0_32px_64px_-16px_rgba(0,0,0,0.5)] relative overflow-hidden"
-            >
-                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary/50 to-transparent opacity-50" />
-                <div className="w-24 h-24 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-8 animate-pulse">
-                    <CheckCircle2 className="w-12 h-12 text-primary" />
-                </div>
-                <h2 className="text-4xl font-black tracking-tighter uppercase mb-4 italic font-outfit">Application <span className="text-primary not-italic">Synchronized</span></h2>
-                <div className="bg-primary/5 border border-primary/20 rounded-2xl p-6 max-w-sm mx-auto mb-8">
-                    <span className="block text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground mb-2">Application Identifier</span>
-                    <span className="text-2xl font-mono font-bold text-primary tracking-widest">{appCode}</span>
-                </div>
-                <p className="text-muted-foreground max-w-md mx-auto leading-relaxed text-sm mb-10">
-                    Your request has been injected into the GIIN verification queue.
-                    A loan officer will conduct a physical inspection of your collateral within 24 hours.
-                </p>
-                <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                    <Link href="/loan/track">
-                        <Button className="rounded-xl h-14 px-10 bg-primary hover:bg-primary/90 text-primary-foreground font-black uppercase text-xs tracking-widest">
-                            Track Real-time
-                        </Button>
-                    </Link>
-                    <Link href="/loan">
-                        <Button variant="outline" className="rounded-xl h-14 px-10 border-white/10 hover:bg-white/5 font-black uppercase text-xs tracking-widest">
-                            Exit Portal
-                        </Button>
-                    </Link>
-                </div>
-            </motion.div>
-        );
-    }
 
     const renderStep = () => {
         switch (currentStep) {
@@ -290,19 +254,19 @@ export function BorrowerApplicationForm() {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div className="space-y-2">
                                 <Label className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground/60">Full Legal Name</Label>
-                                <Input placeholder="Amina Keita" value={formData.fullName} onChange={(e) => updateForm({ fullName: e.target.value })} className="bg-white/5 border-white/5 h-14 rounded-2xl focus:border-primary/40 focus:bg-white/10" />
+                                <Input placeholder="Amina Keita" value={formData.fullName} onChange={(e) => updateForm({ fullName: e.target.value })} className="bg-white/5 border-white/5 h-14 rounded-2xl" />
                             </div>
                             <div className="space-y-2">
                                 <Label className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground/60">Email Address</Label>
-                                <Input type="email" placeholder="amina@giin.tech" value={formData.email} onChange={(e) => updateForm({ email: e.target.value })} className="bg-white/5 border-white/5 h-14 rounded-2xl focus:border-primary/40 focus:bg-white/10" />
+                                <Input type="email" placeholder="amina@giin.tech" value={formData.email} onChange={(e) => updateForm({ email: e.target.value })} className="bg-white/5 border-white/5 h-14 rounded-2xl" />
                             </div>
                             <div className="space-y-2">
                                 <Label className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground/60">National ID (NID)</Label>
-                                <Input placeholder="1 0000 0 0000000 00" value={formData.nationalId} onChange={(e) => updateForm({ nationalId: e.target.value })} className="bg-white/5 border-white/5 h-14 rounded-2xl focus:border-primary/40 focus:bg-white/10" />
+                                <Input placeholder="1 0000 0 0000000 00" value={formData.nationalId} onChange={(e) => updateForm({ nationalId: e.target.value })} className="bg-white/5 border-white/5 h-14 rounded-2xl" />
                             </div>
                             <div className="space-y-2">
                                 <Label className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground/60">Primary Phone</Label>
-                                <Input placeholder="+250 780 000 000" value={formData.phone} onChange={(e) => updateForm({ phone: e.target.value })} className="bg-white/5 border-white/5 h-14 rounded-2xl focus:border-primary/40 focus:bg-white/10" />
+                                <Input placeholder="+250 780 000 000" value={formData.phone} onChange={(e) => updateForm({ phone: e.target.value })} className="bg-white/5 border-white/5 h-14 rounded-2xl" />
                             </div>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -336,7 +300,6 @@ export function BorrowerApplicationForm() {
                             <h3 className="text-xl font-bold uppercase tracking-tight font-outfit italic">Financial Request</h3>
                             <p className="text-xs text-muted-foreground uppercase tracking-widest opacity-60">Step 02: Amount & Terms</p>
                         </div>
-
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                             <div className="space-y-6">
                                 <div className="space-y-2">
@@ -355,7 +318,7 @@ export function BorrowerApplicationForm() {
                                                 type="button"
                                                 onClick={() => updateForm({ loanDuration: opt.value })}
                                                 className={cn(
-                                                    "p-6 rounded-2xl border transition-all text-left group",
+                                                    "p-6 rounded-2xl border transition-all text-left",
                                                     formData.loanDuration === opt.value
                                                         ? "bg-primary/20 border-primary shadow-[0_0_20px_rgba(var(--primary-rgb),0.1)]"
                                                         : "bg-white/5 border-white/5 hover:bg-white/10"
@@ -368,12 +331,8 @@ export function BorrowerApplicationForm() {
                                     </div>
                                 </div>
                             </div>
-
-                            <div className="bg-white/5 rounded-3xl p-8 border border-white/5 relative overflow-hidden flex flex-col justify-between">
-                                <div className="absolute top-0 right-0 p-4 opacity-10">
-                                    <Info size={120} />
-                                </div>
-                                <div className="space-y-4 relative z-10">
+                            <div className="bg-white/5 rounded-3xl p-8 border border-white/5 flex flex-col justify-between">
+                                <div className="space-y-4">
                                     <div className="flex justify-between items-center text-xs text-muted-foreground uppercase tracking-widest font-bold">
                                         <span>Interest Accrual</span>
                                         <span className="text-primary">+{calculations.interestRate * 100}%</span>
@@ -388,7 +347,7 @@ export function BorrowerApplicationForm() {
                                     </div>
                                     <div className="pt-4 flex items-center gap-2 text-xs text-muted-foreground">
                                         <ShieldCheck className="w-4 h-4 text-emerald-500" />
-                                        <span>Repayment Due by: <strong className="text-white">{calculations.dueDate}</strong></span>
+                                        <span>Repayment Due: <strong className="text-white">{calculations.dueDate}</strong></span>
                                     </div>
                                 </div>
                             </div>
@@ -402,7 +361,6 @@ export function BorrowerApplicationForm() {
                             <h3 className="text-xl font-bold uppercase tracking-tight font-outfit italic">Asset Security</h3>
                             <p className="text-xs text-muted-foreground uppercase tracking-widest opacity-60">Step 03: Collateral Specification</p>
                         </div>
-
                         <div className="space-y-2">
                             <Label className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground/60">Asset Category</Label>
                             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
@@ -424,26 +382,14 @@ export function BorrowerApplicationForm() {
                                 ))}
                             </div>
                         </div>
-
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div className="space-y-2">
                                 <Label className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground/60">Brand & Model</Label>
-                                <Input placeholder="Apple iPhone 15 Pro Max" value={formData.brand} onChange={(e) => updateForm({ brand: e.target.value })} className="bg-white/5 border-white/5 h-14 rounded-2xl" />
+                                <Input value={formData.brand} onChange={(e) => updateForm({ brand: e.target.value })} className="bg-white/5 border-white/5 h-14 rounded-2xl" />
                             </div>
                             <div className="space-y-2">
-                                <Label className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground/60">Serial / IMEI Number</Label>
-                                <Input placeholder="Unique Product Identifier" value={formData.serialNumber} onChange={(e) => updateForm({ serialNumber: e.target.value })} className="bg-white/5 border-white/5 h-14 rounded-2xl" />
-                            </div>
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div className="space-y-2">
-                                <Label className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground/60">Security Passcode (Optional)</Label>
-                                <Input type="password" placeholder="••••••••" value={formData.devicePassword} onChange={(e) => updateForm({ devicePassword: e.target.value })} className="bg-white/5 border-white/5 h-14 rounded-2xl" />
-                            </div>
-                            <div className="space-y-2">
-                                <Label className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground/60">Estimated Market Value (RWF)</Label>
-                                <Input type="number" placeholder="450,000" value={formData.estimatedValue} onChange={(e) => updateForm({ estimatedValue: Number(e.target.value) })} className="bg-white/5 border-white/5 h-14 rounded-2xl" />
+                                <Label className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground/60">Serial / IMEI</Label>
+                                <Input value={formData.serialNumber} onChange={(e) => updateForm({ serialNumber: e.target.value })} className="bg-white/5 border-white/5 h-14 rounded-2xl" />
                             </div>
                         </div>
                     </motion.div>
@@ -453,119 +399,55 @@ export function BorrowerApplicationForm() {
                     <motion.div key="step3" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-6">
                         <div className="text-left mb-8">
                             <h3 className="text-xl font-bold uppercase tracking-tight font-outfit italic">Visual Evidence</h3>
-                            <p className="text-xs text-muted-foreground uppercase tracking-widest opacity-60">Step 04: Digital Inspection Photos</p>
                         </div>
-
-                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-                            {[
-                                { key: "front", label: "Front Profile" },
-                                { key: "rear", label: "Rear Profile" },
-                                { key: "sides", label: "Sides / Ports" },
-                                { key: "accessories", label: "Accessory Set" }
-                            ].map((slot) => (
-                                <div key={slot.key} className="relative group">
-                                    {formData.evidence[slot.key as keyof typeof formData.evidence] ? (
-                                        <div className="aspect-square rounded-3xl overflow-hidden border-2 border-primary/50 relative">
-                                            <img
-                                                src={formData.evidence[slot.key as keyof typeof formData.evidence]!}
-                                                alt={slot.label}
-                                                className="w-full h-full object-cover"
-                                            />
-                                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                                                <Button
-                                                    size="icon"
-                                                    variant="destructive"
-                                                    className="rounded-full w-8 h-8"
-                                                    onClick={() => removeImage(slot.key)}
-                                                >
-                                                    <AlertCircle className="w-4 h-4" />
-                                                </Button>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            {Object.keys(formData.evidence).map((key) => {
+                                const slot = key as keyof typeof formData.evidence;
+                                return (
+                                    <div key={slot} className="relative aspect-square">
+                                        {formData.evidence[slot] ? (
+                                            <div className="group relative w-full h-full rounded-2xl overflow-hidden border-2 border-primary">
+                                                <img src={formData.evidence[slot]!} className="w-full h-full object-cover" />
+                                                <button onClick={() => removeImage(slot)} className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all">
+                                                    <AlertCircle className="text-red-500" />
+                                                </button>
                                             </div>
-                                        </div>
-                                    ) : (
-                                        <label className={cn(
-                                            "aspect-square rounded-3xl border-2 border-dashed border-white/5 bg-white/[0.02] flex flex-col items-center justify-center gap-3 hover:bg-white/5 hover:border-primary/30 cursor-pointer transition-all group",
-                                            uploading === slot.key && "animate-pulse border-primary/50"
-                                        )}>
-                                            <input
-                                                type="file"
-                                                accept="image/*"
-                                                capture="environment"
-                                                className="hidden"
-                                                onChange={(e) => handleImageUpload(slot.key, e)}
-                                                disabled={uploading !== null}
-                                            />
-                                            <div className="p-3 rounded-full bg-primary/10 text-primary transition-transform group-hover:scale-110">
-                                                {uploading === slot.key ? (
-                                                    <Loader2 className="w-6 h-6 animate-spin" />
-                                                ) : (
-                                                    <Camera className="w-6 h-6" />
-                                                )}
-                                            </div>
-                                            <span className="text-[9px] font-black uppercase tracking-widest text-muted-foreground group-hover:text-primary transition-colors">
-                                                {uploading === slot.key ? "Uploading..." : slot.label}
-                                            </span>
-                                        </label>
-                                    )}
-                                </div>
-                            ))}
-                        </div>
-
-                        <div className="p-6 rounded-2xl bg-amber-500/5 border border-amber-500/20 flex gap-4 items-start">
-                            <Info className="w-5 h-5 text-amber-500 shrink-0 mt-1" />
-                            <p className="text-[11px] text-amber-200/60 leading-relaxed font-medium lowercase first-letter:uppercase">
-                                images must be high resolution (max 10mb) and show the device screen active to verify hardware integrity. blurred or low-light images will result in automatic protocol rejection.
-                            </p>
+                                        ) : (
+                                            <label className="flex flex-col items-center justify-center w-full h-full rounded-2xl border-2 border-dashed border-white/10 bg-white/5 hover:border-primary/50 cursor-pointer transition-all">
+                                                <input type="file" accept="image/*" className="hidden" onChange={(e) => handleImageUpload(slot, e)} />
+                                                {uploading === slot ? <Loader2 className="animate-spin text-primary" /> : <Camera className="text-muted-foreground" />}
+                                                <span className="text-[8px] mt-2 uppercase font-black">{slot}</span>
+                                            </label>
+                                        )}
+                                    </div>
+                                );
+                            })}
                         </div>
                     </motion.div>
                 );
             case 4:
                 return (
                     <motion.div key="step4" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-8">
-                        <div className="text-left mb-8">
-                            <h3 className="text-xl font-bold uppercase tracking-tight font-outfit italic">Consent Protocol</h3>
-                            <p className="text-xs text-muted-foreground uppercase tracking-widest opacity-60">Step 05: Final Review & Authorization</p>
-                        </div>
-
-                        <div className="space-y-4">
-                            <div className="bg-white/5 border border-white/5 rounded-3xl overflow-hidden">
-                                <div className="px-6 py-4 bg-white/5 border-b border-white/5 flex justify-between items-center">
-                                    <span className="text-[10px] font-black uppercase tracking-[0.2em]">Application Summary</span>
-                                    <ShieldCheck className="w-4 h-4 text-primary" />
-                                </div>
-                                <div className="p-6 space-y-3">
-                                    <div className="flex justify-between text-xs">
-                                        <span className="text-muted-foreground">Principal Credit</span>
-                                        <span className="font-bold text-white font-mono">{formData.requestedAmount.toLocaleString()} RWF</span>
-                                    </div>
-                                    <div className="flex justify-between text-xs">
-                                        <span className="text-muted-foreground">Repayment Liability</span>
-                                        <span className="font-bold text-primary font-mono">{calculations.totalRepayment.toLocaleString()} RWF</span>
-                                    </div>
-                                    <div className="flex justify-between text-xs">
-                                        <span className="text-muted-foreground">Pledged Collateral</span>
-                                        <span className="font-bold text-white uppercase">{formData.brand} {formData.model}</span>
-                                    </div>
-                                </div>
+                        <div className="bg-white/5 border border-white/5 rounded-3xl p-8 space-y-4">
+                            <div className="flex justify-between text-xs">
+                                <span className="text-muted-foreground italic">Principal Request</span>
+                                <span className="font-bold font-mono">{formData.requestedAmount.toLocaleString()} RWF</span>
+                            </div>
+                            <div className="flex justify-between text-xs">
+                                <span className="text-muted-foreground italic">Total Liability</span>
+                                <span className="font-bold text-primary font-mono">{calculations.totalRepayment.toLocaleString()} RWF</span>
+                            </div>
+                            <div className="flex justify-between text-xs">
+                                <span className="text-muted-foreground italic">Pledged Asset</span>
+                                <span className="font-bold uppercase">{formData.brand} {formData.model}</span>
                             </div>
                         </div>
-
-                        <div className="space-y-6">
-                            <label className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground/60">Digital Signature Auth</label>
-                            <Input placeholder="Type Your Full Legal Name to Sign" value={formData.signedName} onChange={(e) => updateForm({ signedName: e.target.value })} className="bg-white/5 border-white/5 h-16 rounded-2xl text-xl font-serif italic text-primary" />
-
-                            <div className="flex items-start gap-4 p-6 rounded-2xl border border-white/5 bg-white/[0.02]">
-                                <input
-                                    type="checkbox"
-                                    id="consent"
-                                    checked={formData.agreedToTerms}
-                                    onChange={(e) => updateForm({ agreedToTerms: e.target.checked })}
-                                    className="mt-1 w-5 h-5 rounded-lg border-white/10 bg-white/5 text-primary focus:ring-primary focus:ring-offset-0"
-                                />
-                                <Label htmlFor="consent" className="text-[11px] text-muted-foreground leading-relaxed cursor-pointer select-none">
-                                    I hereby authorize GIIN Loan Service to verify my identification and inspect the pledged collateral. I understand that physical possession of the collateral is required for loan disbursement and failure to repay will result in total loss of ownership as per the
-                                    <span className="text-primary font-bold ml-1 hover:underline">Sovereign Financial Agreement</span>.
-                                </Label>
+                        <div className="space-y-4">
+                            <Label className="text-[10px] font-black uppercase text-primary">Final Signature Auth</Label>
+                            <Input placeholder="Type Name to Sign" value={formData.signedName} onChange={(e) => updateForm({ signedName: e.target.value })} className="h-16 rounded-2xl bg-white/5 text-xl italic text-primary" />
+                            <div className="flex gap-3 p-4 bg-white/5 rounded-xl border border-white/5">
+                                <input type="checkbox" checked={formData.agreedToTerms} onChange={(e) => updateForm({ agreedToTerms: e.target.checked })} />
+                                <span className="text-[10px] text-muted-foreground">I agree to the GIIN Sovereign Financial Protocols and authorize collateral inspection.</span>
                             </div>
                         </div>
                     </motion.div>
@@ -575,87 +457,47 @@ export function BorrowerApplicationForm() {
         }
     };
 
+    if (isSuccess) {
+        return (
+            <div className="text-center p-20 bg-card rounded-[3rem] border border-white/5 shadow-2xl">
+                <CheckCircle2 className="w-16 h-16 text-primary mx-auto mb-6" />
+                <h2 className="text-3xl font-black uppercase tracking-tighter mb-4 italic">Injection Success</h2>
+                <div className="bg-primary/10 p-4 rounded-xl mb-6">
+                    <span className="text-primary font-mono font-bold text-xl">{appCode}</span>
+                </div>
+                <p className="text-muted-foreground text-sm mb-8">Protocol active. Proceed to physical inspection terminal.</p>
+                <Link href="/loan"><Button className="rounded-xl px-12 uppercase font-black text-xs">Return to Home</Button></Link>
+            </div>
+        );
+    }
+
     return (
-        <div className="max-w-5xl mx-auto px-4">
-            {/* Step Indicator */}
-            <div className="flex justify-between mb-16 relative">
-                <div className="absolute top-7 left-0 w-full h-[1px] bg-white/5 z-0" />
-                {STEPS.map((step, i) => (
-                    <div key={step.id} className="relative z-10 flex flex-col items-center gap-3">
-                        <div
-                            className={cn(
-                                "w-14 h-14 rounded-2xl flex items-center justify-center transition-all duration-700 border-2",
-                                i < currentStep ? "bg-primary border-primary text-primary-foreground rotate-[360deg]" :
-                                    i === currentStep ? "bg-primary/20 border-primary text-primary shadow-[0_0_20px_rgba(var(--primary-rgb),0.3)]" :
-                                        "bg-background/80 border-white/5 text-muted-foreground backdrop-blur-md"
-                            )}
-                        >
-                            {i < currentStep ? <CheckCircle2 className="w-6 h-6" /> : step.icon}
-                        </div>
-                        <span className={cn(
-                            "text-[8px] font-black uppercase tracking-[0.2em] transition-colors duration-500",
-                            i <= currentStep ? "text-primary" : "text-muted-foreground"
-                        )}>
-                            {step.title}
-                        </span>
+        <div className="max-w-4xl mx-auto py-12">
+            <div className="flex justify-between mb-12 relative px-4">
+                <div className="absolute top-1/2 left-0 w-full h-[1px] bg-white/5 -z-10" />
+                {STEPS.map((s, i) => (
+                    <div key={s.id} className={cn("px-4 py-2 rounded-xl text-[8px] font-black uppercase tracking-widest border transition-all", i <= currentStep ? "bg-primary border-primary text-white" : "bg-background border-white/5 text-muted-foreground")}>
+                        {s.title}
                     </div>
                 ))}
             </div>
 
-            {/* Container */}
-            <div className="bg-card/30 backdrop-blur-3xl border border-white/5 rounded-[3.5rem] p-8 md:p-16 shadow-[0_48px_96px_-24px_rgba(0,0,0,0.6)] relative overflow-hidden">
-                <div className="absolute -top-12 -right-12 w-48 h-48 bg-primary/10 blur-[100px] rounded-full pointer-events-none" />
-                <div className="absolute -bottom-12 -left-12 w-48 h-48 bg-indigo-500/10 blur-[100px] rounded-full pointer-events-none" />
+            <div className="bg-card/40 backdrop-blur-3xl border border-white/5 rounded-[3rem] p-12 shadow-2xl relative overflow-hidden">
+                <AnimatePresence mode="wait">{renderStep()}</AnimatePresence>
 
-                <AnimatePresence mode="wait">
-                    {renderStep()}
-                </AnimatePresence>
+                {error && <div className="mt-8 p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-500 text-[10px] uppercase font-bold">{error}</div>}
 
-                {error && (
-                    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mt-8 p-6 bg-red-500/5 border border-red-500/20 rounded-2xl flex gap-4 items-center">
-                        <AlertCircle className="w-5 h-5 text-red-400" />
-                        <span className="text-xs font-bold text-red-400 uppercase tracking-widest">{error}</span>
-                    </motion.div>
-                )}
-
-                {/* Nav */}
-                <div className="flex flex-col sm:flex-row items-center justify-between mt-16 pt-12 border-t border-white/5 gap-6">
-                    <Button
-                        variant="ghost"
-                        onClick={prevStep}
-                        disabled={currentStep === 0 || isSubmitting}
-                        className="rounded-2xl h-16 px-10 font-black uppercase tracking-[0.2em] text-[10px] gap-3 hover:bg-white/5"
-                    >
-                        <ArrowLeft className="w-4 h-4" />
-                        Abort / Return
-                    </Button>
-
+                <div className="flex justify-between mt-12 pt-12 border-t border-white/5">
+                    <Button variant="ghost" onClick={prevStep} disabled={currentStep === 0 || isSubmitting} className="uppercase font-black text-[10px]">Back</Button>
                     {currentStep === STEPS.length - 1 ? (
-                        <Button
-                            onClick={handleSubmit}
-                            disabled={!formData.agreedToTerms || !formData.signedName || isSubmitting}
-                            className="w-full sm:w-auto rounded-2xl h-16 px-16 bg-gradient-to-r from-primary to-indigo-600 hover:scale-[1.02] active:scale-95 transition-all text-white font-black uppercase tracking-[0.3em] text-[10px] shadow-2xl shadow-primary/20"
-                        >
-                            {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : "Authorize Request"}
+                        <Button onClick={handleSubmit} disabled={!formData.agreedToTerms || !formData.signedName || isSubmitting} className="px-12 rounded-xl uppercase font-black text-[10px]">
+                            {isSubmitting ? <Loader2 className="animate-spin" /> : "Authorize"}
                         </Button>
                     ) : (
-                        <Button
-                            onClick={nextStep}
-                            className="w-full sm:w-auto rounded-2xl h-16 px-16 bg-white text-black hover:bg-white/90 font-black uppercase tracking-[0.3em] text-[10px] gap-3 group shadow-2xl active:scale-95 transition-all"
-                        >
-                            Next Protocol
-                            <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-                        </Button>
+                        <Button onClick={nextStep} className="px-12 rounded-xl uppercase font-black text-[10px]">Next Protocol</Button>
                     )}
                 </div>
             </div>
-
-            <style jsx global>{`
-                @font-face {
-                    font-family: 'Outfit';
-                    src: url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&display=swap');
-                }
-            `}</style>
         </div>
     );
 }

@@ -10,7 +10,20 @@ import { AssetCondition } from "@prisma/client";
  */
 export async function POST(req: Request) {
     try {
-        const data = await req.json();
+        const rawData = await req.json();
+
+        // Data Normalization (Empty strings to null for unique/optional constraints)
+        const data = {
+            ...rawData,
+            studentId: rawData.studentId?.trim() === "" ? null : rawData.studentId,
+            passportNumber: rawData.passportNumber?.trim() === "" ? null : rawData.passportNumber,
+            email: rawData.email?.toLowerCase().trim() || "no-email@giin.com",
+            nationalId: rawData.nationalId?.toUpperCase().trim(),
+        };
+
+        if (!data.nationalId || !data.fullName) {
+            return NextResponse.json({ error: "Missing identity protocol signatures." }, { status: 400 });
+        }
 
         // 1. Authenticate (Optional link to User account)
         const cookieStore = await cookies();
@@ -18,8 +31,12 @@ export async function POST(req: Request) {
         let sessionUserId: string | undefined;
 
         if (token) {
-            const payload = await JWTService.verify(token.value);
-            if (payload) sessionUserId = payload.sub as string;
+            try {
+                const payload = await JWTService.verify(token.value);
+                if (payload) sessionUserId = payload.sub as string;
+            } catch (e) {
+                console.warn("Auth token invalid during submission - continuing as guest.");
+            }
         }
 
         // 2. Generation of Sequential Application Code
@@ -27,101 +44,115 @@ export async function POST(req: Request) {
         const count = await prisma.loanApplication.count();
         const appCode = `GIIN-APP-${year}-${(count + 1).toString().padStart(6, '0')}`;
 
-        // 3. Borrower Identification (Find or Create)
-        let borrower = await prisma.borrower.findUnique({
-            where: { nationalId: data.nationalId }
-        });
+        // 3. Start Transaction for Atomic Operations
+        const result = await prisma.$transaction(async (tx) => {
+            // A. Borrower Identification (Find or Create)
+            let borrower = await tx.borrower.findUnique({
+                where: { nationalId: data.nationalId }
+            });
 
-        if (!borrower) {
-            const borrowerCount = await prisma.borrower.count();
-            const bCode = `BOR-${year}-${(borrowerCount + 1).toString().padStart(4, '0')}`;
+            if (!borrower) {
+                const borrowerCount = await tx.borrower.count();
+                const bCode = `BOR-${year}-${(borrowerCount + 1).toString().padStart(4, '0')}`;
 
-            borrower = await prisma.borrower.create({
+                borrower = await tx.borrower.create({
+                    data: {
+                        borrowerCode: bCode,
+                        userId: sessionUserId,
+                        fullName: data.fullName,
+                        nationalId: data.nationalId,
+                        passportNumber: data.passportNumber,
+                        studentId: data.studentId,
+                        phoneNumber: data.phone || data.phoneNumber || "0000000000",
+                        email: data.email,
+                        gender: data.gender,
+                        occupation: data.occupation,
+                        status: "ACTIVE"
+                    }
+                });
+            }
+
+            // B. Create Loan Application
+            const application = await tx.loanApplication.create({
                 data: {
-                    borrowerCode: bCode,
-                    userId: sessionUserId,
-                    fullName: data.fullName,
-                    nationalId: data.nationalId,
-                    passportNumber: data.passportNumber,
-                    studentId: data.studentId,
-                    phoneNumber: data.phone,
-                    email: data.email,
-                    gender: data.gender,
-                    occupation: data.occupation,
-                    status: "ACTIVE"
+                    applicationCode: appCode,
+                    borrowerId: borrower.id,
+                    requestedAmount: Number(data.requestedAmount),
+                    requestedDuration: Number(data.loanDuration),
+                    purposeOfLoan: data.purpose || "Business Growth",
+                    status: "PENDING",
                 }
             });
-        }
 
-        // 4. Create Loan Application
-        const application = await prisma.loanApplication.create({
-            data: {
-                applicationCode: appCode,
-                borrowerId: borrower.id,
-                requestedAmount: data.requestedAmount,
-                requestedDuration: data.loanDuration,
-                purposeOfLoan: data.purpose || "Business Growth",
-                status: "PENDING",
-            }
-        });
+            // C. Initialize Loan & Collateral record
+            const rate = Number(data.loanDuration) === 1 ? 0.15 : 0.25;
+            const interest = Number(data.requestedAmount) * rate;
+            const total = Number(data.requestedAmount) + interest;
+            const loanCode = `LN-${year}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
 
-        // 5. Initialize Loan & Collateral record
-        const rate = data.loanDuration === 1 ? 0.15 : 0.25;
-        const interest = data.requestedAmount * rate;
-        const total = data.requestedAmount + interest;
-        const loanCode = `LN-${year}-${Math.random().toString(36).substring(2, 7).toUpperCase()}`;
-
-        const loan = await prisma.loan.create({
-            data: {
-                loanCode: loanCode,
-                borrowerId: borrower.id,
-                applicationId: application.id,
-                principalAmount: data.requestedAmount,
-                interestRate: rate,
-                interestAmount: interest,
-                totalRepayment: total,
-                outstandingBalance: total,
-                durationWeeks: data.loanDuration,
-                status: "PENDING",
-                collateral: {
-                    create: {
-                        collateralCode: `COL-${loanCode}`,
-                        itemType: data.collateralType,
-                        brand: data.brand,
-                        model: data.model,
-                        serialNumber: data.serialNumber,
-                        encryptedDevicePassword: data.devicePassword,
-                        estimatedValue: data.estimatedValue,
-                        conditionStatus: (data.condition as AssetCondition) || "GOOD",
-                        images: {
-                            create: (data.images || ["/placeholder.png"]).map((url: string) => ({
-                                imageUrl: url,
-                                uploadedAt: new Date()
-                            }))
+            const loan = await tx.loan.create({
+                data: {
+                    loanCode: loanCode,
+                    borrowerId: borrower.id,
+                    applicationId: application.id,
+                    principalAmount: Number(data.requestedAmount),
+                    interestRate: rate,
+                    interestAmount: interest,
+                    totalRepayment: total,
+                    outstandingBalance: total,
+                    durationWeeks: Number(data.loanDuration),
+                    status: "PENDING",
+                    collateral: {
+                        create: {
+                            collateralCode: `COL-${loanCode}`,
+                            itemType: data.collateralType,
+                            brand: data.brand,
+                            model: data.model,
+                            serialNumber: data.serialNumber,
+                            encryptedDevicePassword: data.devicePassword,
+                            estimatedValue: Number(data.estimatedValue) || 0,
+                            conditionStatus: (data.condition as AssetCondition) || "GOOD",
+                            images: {
+                                create: (data.images || ["/placeholder.png"]).map((url: string) => ({
+                                    imageUrl: url,
+                                    uploadedAt: new Date()
+                                }))
+                            }
                         }
                     }
                 }
-            }
-        });
+            });
 
-        // 6. Final Audit Log
-        await prisma.loanAuditLog.create({
-            data: {
-                loanId: loan.id,
-                userId: sessionUserId,
-                actionType: "LOAN_APPLICATION_SUBMITTED",
-                newValue: { appCode, amount: data.requestedAmount } // Fixed field name
-            }
+            // D. Audit Log Entry
+            await tx.loanAuditLog.create({
+                data: {
+                    loanId: loan.id,
+                    userId: sessionUserId,
+                    actionType: "LOAN_APPLICATION_SUBMITTED",
+                    newValue: { appCode, amount: data.requestedAmount }
+                }
+            });
+
+            return { appCode, loanId: loan.id };
         });
 
         return NextResponse.json({
             success: true,
-            applicationCode: appCode,
-            loanId: loan.id
+            applicationCode: result.appCode,
+            loanId: result.loanId
         });
 
     } catch (error: any) {
-        console.error("Submission Engine Failure:", error);
+        console.error("CRITICAL: Submission Engine failure >>", error);
+
+        // Identify specific database errors
+        if (error.code === 'P2002') {
+            return NextResponse.json({
+                error: "Duplicate constraint failure. Identity or serial number already registered.",
+                details: error.meta?.target
+            }, { status: 409 });
+        }
+
         return NextResponse.json({
             error: "Protocol Submission Failed",
             details: error.message
