@@ -30,16 +30,16 @@ export function Logo({ className, showText = true, size = "md", href = "/" }: Lo
   return (
     <Link href={href} className={cn("flex items-center gap-5 group", className)}>
       <div className={cn("relative flex-shrink-0", sizeClasses[size])}>
-        {/* Constant Animated Orbital Glow */}
-        <div className="absolute inset--3 rounded-full bg-gradient-to-tr from-primary/30 via-accent/20 to-secondary/30 blur-2xl animate-spin-slow opacity-60" />
-        <div className="absolute inset-0 rounded-full bg-gradient-to-br from-accent/20 to-transparent blur-lg animate-glow-pulse" />
+        {/* Constant Animated Orbital Glow - Enhanced Visibility */}
+        <div className="absolute -inset-4 rounded-full bg-gradient-to-tr from-primary via-accent to-secondary blur-2xl animate-spin-slow opacity-80 z-0 scale-125" />
+        <div className="absolute -inset-1 rounded-full bg-gradient-to-br from-accent to-transparent blur-md animate-glow-pulse z-0" />
 
         <div className="relative z-10 w-full h-full flex items-center justify-center p-1">
           <Image
             src="/logo.png"
             alt="GIIN Logo"
             fill
-            className="object-contain transition-all duration-700 group-hover:scale-110 drop-shadow-lg"
+            className="object-contain transition-all duration-700 group-hover:scale-110 drop-shadow-2xl"
             priority
           />
         </div>
