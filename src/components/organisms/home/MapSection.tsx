@@ -43,14 +43,14 @@ export function MapSection() {
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
           >
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent/10 border border-accent/20 text-accent text-[10px] font-bold uppercase tracking-[0.2em] mb-6">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/5 border border-primary/20 text-primary dark:text-secondary text-[10px] font-bold uppercase tracking-[0.2em] mb-6">
               <Sparkles className="w-3 h-3" />
               Sovereign Footprint
             </div>
-            <h2 className="mb-6 font-heading text-4xl font-black md:text-7xl text-foreground tracking-tighter">
-              Innovation Map of <span className="text-primary italic">Africa</span>
+            <h2 className="mb-4 font-heading text-3xl font-black md:text-5xl text-foreground tracking-tighter">
+              Innovation Map of <span className="text-primary dark:text-secondary italic">Africa</span>
             </h2>
-            <p className="mx-auto max-w-2xl text-lg text-muted-foreground font-light text-balance">
+            <p className="mx-auto max-w-2xl text-base text-muted-foreground font-light text-balance">
               Building a connected continental layer. Zoom in to explore our integrated nodes, hubs, and
               strategic infrastructure reaching every community.
             </p>
@@ -59,7 +59,7 @@ export function MapSection() {
 
         {/* Interactive Map Interface */}
         <motion.div
-          className="relative mx-auto max-w-6xl aspect-[16/9] md:aspect-[21/9] rounded-[3.5rem] border border-border/20 bg-card/50 backdrop-blur-xl overflow-hidden shadow-[0_30px_100px_-20px_rgba(0,0,0,0.5)] group"
+          className="relative mx-auto max-w-6xl aspect-[16/9] md:aspect-[21/9] rounded-[3rem] border border-border/20 bg-card/50 backdrop-blur-xl overflow-hidden shadow-[0_30px_100px_-20px_rgba(0,0,0,0.5)] group"
           initial={{ opacity: 0, scale: 0.98 }}
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
@@ -166,7 +166,7 @@ export function MapSection() {
               </div>
               <div>
                 <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em] mb-1">Connectivity</div>
-                <div className="text-3xl font-black text-accent">99.4%</div>
+                <div className="text-3xl font-black text-primary dark:text-secondary">99.4%</div>
               </div>
             </div>
           </div>
@@ -174,7 +174,7 @@ export function MapSection() {
           {/* Map Controls Helper */}
           <div className="absolute bottom-8 left-8 text-[10px] font-bold text-muted-foreground/60 uppercase tracking-[0.3em] flex items-center gap-4">
             <span className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-primary" /> Established</span>
-            <span className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-accent animate-pulse" /> Emerging</span>
+            <span className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-secondary animate-pulse" /> Emerging</span>
           </div>
         </motion.div>
 

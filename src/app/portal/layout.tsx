@@ -81,9 +81,9 @@ export default function PortalLayout({
     return (
       <div className="h-screen w-full bg-[#020205] flex items-center justify-center">
         <div className="relative">
-          <div className="w-16 h-16 border-t-2 border-blue-500 rounded-full animate-spin" />
+          <div className="w-16 h-16 border-t-2 border-primary rounded-full animate-spin" />
           <div className="absolute inset-0 flex items-center justify-center">
-            <div className="w-8 h-8 bg-blue-500/20 rounded-full blur-md animate-pulse" />
+            <div className="w-8 h-8 bg-primary/20 rounded-full blur-md animate-pulse" />
           </div>
         </div>
       </div>
@@ -94,14 +94,14 @@ export default function PortalLayout({
   const portalType = user?.isSuperAdmin
     ? { label: "Command Center", color: "text-red-400", bg: "bg-red-500/10", border: "border-red-500/20" }
     : user?.organizations?.[0]?.role === "ORG_ADMIN"
-      ? { label: "Executive Suite", color: "text-blue-400", bg: "bg-blue-500/10", border: "border-blue-500/20" }
+      ? { label: "Executive Suite", color: "text-primary", bg: "bg-primary/10", border: "border-primary/20" }
       : { label: "Client Portal", color: "text-emerald-400", bg: "bg-emerald-500/10", border: "border-emerald-500/20" };
 
   return (
-    <div className="min-h-screen bg-[#020205] text-slate-200 selection:bg-blue-500/30">
+    <div className="min-h-screen bg-[#020205] text-slate-200 selection:bg-primary/30">
       {/* Background Decor */}
       <div className="fixed inset-0 pointer-events-none z-0">
-        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-blue-600/5 rounded-full blur-[120px]" />
+        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[120px]" />
         <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-indigo-600/5 rounded-full blur-[120px]" />
       </div>
 
@@ -120,14 +120,14 @@ export default function PortalLayout({
               <div className="p-8 pb-4">
                 <Link href="/" className="flex items-center gap-3 group">
                   <Logo size="sm" className="transition-transform group-hover:scale-110" />
-                  <span className="font-bold text-lg tracking-tighter text-white">GIIN <span className="text-blue-500 font-light">SYSTEMS</span></span>
+                  <span className="font-bold text-lg tracking-tighter text-white">GIIN <span className="text-primary font-light">SYSTEMS</span></span>
                 </Link>
 
                 <div className="mt-8 relative group">
                   <div className={cn("absolute inset-0 blur-md opacity-20 -z-10", portalType.bg)} />
                   <div className={cn("rounded-2xl border p-4 transition-all duration-300", portalType.bg, portalType.border)}>
                     <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 border border-white/10 flex items-center justify-center text-xs font-bold ring-2 ring-white/5 ring-offset-2 ring-offset-[#05050a]">
+                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-secondary border border-white/10 flex items-center justify-center text-xs font-bold ring-2 ring-white/5 ring-offset-2 ring-offset-[#05050a]">
                         {user?.firstName?.[0] || user?.email[0].toUpperCase()}
                       </div>
                       <div className="flex-1 min-w-0">
@@ -153,16 +153,16 @@ export default function PortalLayout({
                       className={cn(
                         "group flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-2xl transition-all duration-300 relative",
                         isActive
-                          ? "bg-blue-500/10 text-blue-400 border border-blue-500/20 shadow-[0_4px_20px_rgba(59,130,246,0.1)]"
+                          ? "bg-primary/10 text-primary border border-primary/20 shadow-[0_4px_20px_rgba(127,76,165,0.1)]"
                           : "text-slate-400 hover:text-white hover:bg-white/5 border border-transparent"
                       )}
                     >
-                      <item.icon className={cn("w-5 h-5 transition-transform group-hover:scale-110", isActive ? "text-blue-400" : "text-slate-500 group-hover:text-blue-400")} />
+                      <item.icon className={cn("w-5 h-5 transition-transform group-hover:scale-110", isActive ? "text-primary" : "text-slate-500 group-hover:text-primary")} />
                       <span className="flex-1">{item.name}</span>
                       {isActive && (
                         <motion.div
                           layoutId="active-indicator"
-                          className="absolute right-3 w-1.5 h-1.5 rounded-full bg-blue-500 shadow-[0_0_10px_#3b82f6]"
+                          className="absolute right-3 w-1.5 h-1.5 rounded-full bg-primary shadow-[0_0_10px_#7f4ca5]"
                         />
                       )}
                     </Link>
@@ -219,7 +219,7 @@ export default function PortalLayout({
             </div>
 
             <div className="flex items-center gap-4">
-              <div className="hidden md:flex items-center bg-white/5 border border-white/5 rounded-2xl px-4 py-2 focus-within:border-blue-500/50 transition-all">
+              <div className="hidden md:flex items-center bg-white/5 border border-white/5 rounded-2xl px-4 py-2 focus-within:border-primary/50 transition-all">
                 <Search className="w-4 h-4 text-slate-500" />
                 <input
                   type="text"
@@ -232,12 +232,12 @@ export default function PortalLayout({
                 <button
                   className={cn(
                     "w-12 h-12 rounded-2xl flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 transition-all border border-white/5 relative group",
-                    showNotifications && "bg-blue-500/10 text-blue-400 border-blue-500/20"
+                    showNotifications && "bg-primary/10 text-primary border-primary/20"
                   )}
                   onClick={() => setShowNotifications(!showNotifications)}
                 >
                   <Bell className="w-5 h-5" />
-                  <span className="absolute top-3 right-3 w-2 h-2 rounded-full bg-blue-500 border-2 border-[#020205] group-hover:scale-110 transition-transform" />
+                  <span className="absolute top-3 right-3 w-2 h-2 rounded-full bg-primary border-2 border-[#020205] group-hover:scale-110 transition-transform" />
                 </button>
 
                 {/* Notifications Dropdown */}
@@ -251,14 +251,14 @@ export default function PortalLayout({
                     >
                       <div className="p-6 border-b border-white/5 bg-white/5 flex items-center justify-between">
                         <h3 className="font-bold text-sm text-white flex items-center gap-2">
-                          <Sparkles className="w-4 h-4 text-blue-400" />
+                          <Sparkles className="w-4 h-4 text-primary" />
                           Activity Stream
                         </h3>
-                        <span className="text-[10px] font-bold text-blue-400 uppercase tracking-widest bg-blue-500/10 px-2 py-1 rounded-md">3 New</span>
+                        <span className="text-[10px] font-bold text-primary uppercase tracking-widest bg-primary/10 px-2 py-1 rounded-md">3 New</span>
                       </div>
                       <div className="max-h-[420px] overflow-y-auto custom-scrollbar">
                         {[
-                          { title: "Security Protocols Active", desc: "Enterprise-grade encryption verified across all nodes.", time: "2 min ago", icon: Shield, color: "text-blue-400", bg: "bg-blue-500/10" },
+                          { title: "Security Protocols Active", desc: "Enterprise-grade encryption verified across all nodes.", time: "2 min ago", icon: Shield, color: "text-primary", bg: "bg-primary/10" },
                           { title: "New Documentation Artifact", desc: "Project 'Nexus-X' technical brief has been uploaded.", time: "1 hour ago", icon: FolderLock, color: "text-purple-400", bg: "bg-purple-500/10" },
                           { title: "Financial Assessment Ready", desc: "Monthly infrastructure ROI report is now available.", time: "4 hours ago", icon: CreditCard, color: "text-emerald-400", bg: "bg-emerald-500/10" }
                         ].map((notif, i) => (

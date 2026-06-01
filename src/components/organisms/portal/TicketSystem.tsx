@@ -56,7 +56,7 @@ export function TicketSystem() {
              </div>
           </div>
           <div className="flex justify-start gap-4">
-             <div className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center shrink-0 border border-white/20">
+             <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center shrink-0 border border-white/20">
                <span className="text-xs font-bold text-white">GS</span>
              </div>
              <div className="bg-white/10 text-white p-4 rounded-2xl rounded-tl-sm max-w-[70%] text-sm leading-relaxed">

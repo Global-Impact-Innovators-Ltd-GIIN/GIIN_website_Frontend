@@ -20,7 +20,7 @@ export function ChartVisualizer({ title, type }: { title: string, type: 'bar' | 
               />
             ) : (
               <motion.div 
-                className="w-2 rounded-full bg-blue-500/50 group-hover:bg-blue-400 transition-colors"
+                className="w-2 rounded-full bg-primary/50 group-hover:bg-primary transition-colors"
                 initial={{ height: 0 }}
                 animate={{ height: `${val}%` }}
                 transition={{ duration: 1, delay: i * 0.05 }}

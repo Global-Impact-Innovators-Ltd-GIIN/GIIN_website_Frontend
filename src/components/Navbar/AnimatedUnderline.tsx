@@ -10,7 +10,7 @@ interface AnimatedUnderlineProps {
 
 export function AnimatedUnderline({ 
   layoutId = "activeUnderline", 
-  className = "absolute bottom-[-8px] left-0 right-0 h-[2px] bg-blue-500 shadow-[0_0_12px_rgba(59,130,246,0.8)]"
+  className = "absolute bottom-[-8px] left-0 right-0 h-[2px] bg-primary shadow-[0_0_12px_rgba(127,76,165,0.8)]"
 }: AnimatedUnderlineProps) {
   return (
     <motion.span

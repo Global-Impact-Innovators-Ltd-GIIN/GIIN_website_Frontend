@@ -1,5 +1,7 @@
 import { AIChatInterface } from "@/components/organisms/ai/AIChatInterface";
 
-export default function ChatSessionPage({ params }: { params: { personaId: string } }) {
-  return <AIChatInterface personaId={params.personaId} />;
+export default async function ChatSessionPage({ params }: { params: Promise<{ personaId: string }> }) {
+  const resolvedParams = await params;
+  return <AIChatInterface personaId={resolvedParams.personaId} />;
 }
+

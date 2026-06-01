@@ -84,14 +84,14 @@ export default async function StudentDashboard() {
             </div>
             
             <div className="p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xl">
-              <h3 className="font-bold text-white mb-4 flex items-center gap-2"><BookOpen className="w-5 h-5 text-blue-400" /> Recommended Reading</h3>
+              <h3 className="font-bold text-white mb-4 flex items-center gap-2"><BookOpen className="w-5 h-5 text-primary" /> Recommended Reading</h3>
               <ul className="space-y-3">
                 <li className="text-sm border-b border-white/10 pb-2">
-                  <a href="#" className="text-blue-400 hover:underline">The Future of AI in African Agriculture</a>
+                  <a href="#" className="text-primary hover:underline">The Future of AI in African Agriculture</a>
                   <span className="block text-xs text-slate-500 mt-1">GIIN Research Paper • 2026</span>
                 </li>
                 <li className="text-sm">
-                  <a href="#" className="text-blue-400 hover:underline">Blockchain Scaling Solutions</a>
+                  <a href="#" className="text-primary hover:underline">Blockchain Scaling Solutions</a>
                   <span className="block text-xs text-slate-500 mt-1">GIIN White Paper • 2026</span>
                 </li>
               </ul>

@@ -81,7 +81,7 @@ export function MobileMenu({ isOpen, onClose, user, onLogout }: MobileMenuProps)
         >
           {/* Ambient Glowing Background Stars/Particles */}
           <div className="absolute inset-0 pointer-events-none overflow-hidden">
-            <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl" />
+            <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
             <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl" />
             <svg className="absolute inset-0 w-full h-full opacity-30">
               <circle cx="10%" cy="15%" r="1" className="fill-slate-400 animate-pulse" />
@@ -94,9 +94,9 @@ export function MobileMenu({ isOpen, onClose, user, onLogout }: MobileMenuProps)
           {/* Header */}
           <div className="relative z-10 flex items-center justify-between border-b border-white/5 pb-4">
             <div className="flex items-center gap-2">
-              <span className="h-2.5 w-2.5 rounded-full bg-blue-500 animate-pulse" />
+              <span className="h-2.5 w-2.5 rounded-full bg-primary animate-pulse" />
               <span className="font-heading font-extrabold tracking-wider text-xl text-white">
-                GIIN <span className="text-blue-500">ECOSYSTEM</span>
+                GIIN <span className="text-primary">ECOSYSTEM</span>
               </span>
             </div>
             
@@ -127,7 +127,7 @@ export function MobileMenu({ isOpen, onClose, user, onLogout }: MobileMenuProps)
                       <span>{item.label}</span>
                       {item.type !== "link" && (
                         isExpanded ? (
-                          <ChevronUp className="w-4 h-4 text-blue-500" />
+                          <ChevronUp className="w-4 h-4 text-primary" />
                         ) : (
                           <ChevronDown className="w-4 h-4 text-slate-400" />
                         )
@@ -153,7 +153,7 @@ export function MobileMenu({ isOpen, onClose, user, onLogout }: MobileMenuProps)
                                 <div key={subsection.title} className="mb-2">
                                   <button
                                     onClick={() => toggleSubsection(subsection.title)}
-                                    className="flex items-center justify-between w-full text-sm font-medium font-mono text-blue-400 py-1.5 hover:text-blue-300 text-left"
+                                    className="flex items-center justify-between w-full text-sm font-medium font-mono text-primary py-1.5 hover:text-primary/85 text-left"
                                   >
                                     <span>{subsection.title}</span>
                                     {isSubExpanded ? (
@@ -229,7 +229,7 @@ export function MobileMenu({ isOpen, onClose, user, onLogout }: MobileMenuProps)
                 <div className="flex flex-col gap-3">
                   <div className="flex items-center justify-between px-3 py-2 rounded-lg bg-white/5 border border-white/5">
                     <span className="text-xs text-slate-400 truncate max-w-[200px]">{user.email}</span>
-                    <span className="text-[10px] uppercase font-mono tracking-wider text-blue-400 bg-blue-500/10 px-1.5 py-0.5 rounded border border-blue-500/20">
+                    <span className="text-[10px] uppercase font-mono tracking-wider text-primary bg-primary/10 px-1.5 py-0.5 rounded border border-primary/20">
                       {user.role}
                     </span>
                   </div>
@@ -237,7 +237,7 @@ export function MobileMenu({ isOpen, onClose, user, onLogout }: MobileMenuProps)
                     <Link
                       href="/admin"
                       onClick={onClose}
-                      className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-blue-500 text-white font-semibold hover:bg-blue-600 transition-colors text-sm shadow-[0_0_15px_rgba(59,130,246,0.3)]"
+                      className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-primary text-white font-semibold hover:bg-primary/95 transition-colors text-sm shadow-[0_0_15px_rgba(127,76,165,0.3)]"
                     >
                       Command Center
                     </Link>
@@ -264,7 +264,7 @@ export function MobileMenu({ isOpen, onClose, user, onLogout }: MobileMenuProps)
                   <Link
                     href="/auth/register"
                     onClick={onClose}
-                    className="flex items-center justify-center gap-1.5 w-full py-3 rounded-xl bg-blue-500 text-white font-semibold hover:bg-blue-600 transition-all text-sm shadow-[0_0_15px_rgba(59,130,246,0.3)]"
+                    className="flex items-center justify-center gap-1.5 w-full py-3 rounded-xl bg-primary text-white font-semibold hover:bg-primary/95 transition-all text-sm shadow-[0_0_15px_rgba(127,76,165,0.3)]"
                   >
                     <span>Initialize</span>
                     <ArrowRight className="w-3.5 h-3.5" />
