@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { cookies } from "next/headers";
 import { JWTService } from "@/lib/security/jwt";
+import { AuditLogger } from "@/lib/audit";
 
 export async function POST(
     req: Request,
@@ -17,7 +18,7 @@ export async function POST(
         if (!token) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
         const payload = await JWTService.verify(token.value);
-        if (!payload || !["ADMIN", "SUPER_ADMIN"].includes(payload.role as string)) {
+        if (!payload || !["ADMIN", "SUPER_ADMIN", "LOAN_MANAGER"].includes(payload.role as string)) {
             return NextResponse.json({ error: "Forbidden" }, { status: 403 });
         }
 
@@ -25,18 +26,17 @@ export async function POST(
             where: { id: loanId },
             data: {
                 recoveryOfficerId,
-                status: "OVERDUE" // Usually assigned when overdue
+                status: "OVERDUE"
             },
         });
 
-        // Log Activity
-        await prisma.loanActivityLog.create({
-            data: {
-                loanId,
-                userId: payload.sub as string,
-                action: "RECOVERY_OFFICER_ASSIGNED",
-                details: { recoveryOfficerId }
-            }
+        // Log Activity using unified AuditLogger
+        await AuditLogger.logEvent({
+            userId: payload.sub as string,
+            loanId,
+            action: "SETTINGS_MODIFIED", // Or add a specific action if needed
+            details: { recoveryOfficerId, note: "Recovery Officer Assigned" },
+            affectedRecord: "Loan"
         });
 
         return NextResponse.json({ success: true, loan });

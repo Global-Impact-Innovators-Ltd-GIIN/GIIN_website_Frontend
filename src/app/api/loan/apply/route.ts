@@ -65,13 +65,7 @@ export async function POST(req: Request) {
             }
         });
 
-        // 5. Initialize Collateral Record (Pre-verification)
-        // Note: We don't link to a 'Loan' yet because it's just an application.
-        // However, we want to store the details. We'll store it as metadata or extended schema.
-        // The user schema has Collateral linked to Loan. 
-        // For Phase 4, we'll store collateral details in the application Remarks or a separate TEMP table if needed.
-        // Actually, let's create a Loan in PENDING status immediately as per GIIN logic flow.
-
+        // 5. Initialize Loan & Collateral record
         const rate = data.loanDuration === 1 ? 0.15 : 0.25;
         const interest = data.requestedAmount * rate;
         const total = data.requestedAmount + interest;
@@ -116,7 +110,7 @@ export async function POST(req: Request) {
                 loanId: loan.id,
                 userId: sessionUserId,
                 actionType: "LOAN_APPLICATION_SUBMITTED",
-                details: { appCode, amount: data.requestedAmount }
+                newValue: { appCode, amount: data.requestedAmount } // Fixed field name
             }
         });
 

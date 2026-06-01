@@ -16,7 +16,9 @@ export type AuditAction =
   | 'USER_CREATED'
   | 'USER_SUSPENDED'
   | 'LOGIN_SUCCESS'
-  | 'LOGIN_FAILURE';
+  | 'LOGIN_FAILURE'
+  | 'SECURITY_EVENT'
+  | 'INVALID_CERT_VERIFICATION_ATTEMPT';
 
 export const AuditLogger = {
   /**
@@ -25,8 +27,8 @@ export const AuditLogger = {
   logEvent: async (params: {
     userId?: string;
     loanId?: string;
-    action: AuditAction;
-    details?: any;
+    action: AuditAction | string;
+    details?: any; // Maps to newValue in DB
     ipAddress?: string;
     affectedRecord?: string;
   }) => {
@@ -42,7 +44,8 @@ export const AuditLogger = {
           userId: params.userId,
           loanId: params.loanId,
           actionType: params.action,
-          details: params.details,
+          // Mapping details to newValue for compatibility with schema
+          newValue: params.details,
           ipAddress: params.ipAddress,
           affectedRecord: params.affectedRecord,
           timestamp: new Date()
@@ -51,6 +54,17 @@ export const AuditLogger = {
     } catch (e) {
       console.error("CRITICAL: Failed to write to Audit Log database", e);
     }
+  },
+
+  /**
+   * Backward compatibility for legacy security event logging.
+   */
+  logSecurityEvent: async (userId: string, action: string, details: any) => {
+    return AuditLogger.logEvent({
+      userId: userId === "SYSTEM" ? undefined : userId,
+      action: action as AuditAction,
+      details
+    });
   },
 
   logSystemError: (context: string, error: Error) => {

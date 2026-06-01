@@ -10,18 +10,18 @@ export async function GET() {
         if (!token) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
         const payload = await JWTService.verify(token.value);
-        if (!payload || !["ADMIN", "SUPER_ADMIN", "AUDITOR"].includes(payload.role as string)) {
+        if (!payload || !["ADMIN", "SUPER_ADMIN", "AUDITOR", "LOAN_MANAGER"].includes(payload.role as string)) {
             return NextResponse.json({ error: "Forbidden" }, { status: 403 });
         }
 
-        const auditLogs = await prisma.loanActivityLog.findMany({
+        const auditLogs = await prisma.loanAuditLog.findMany({
             include: {
                 loan: {
                     include: { borrower: true }
                 },
                 user: true,
             },
-            orderBy: { createdAt: "desc" },
+            orderBy: { timestamp: "desc" },
             take: 100,
         });
 

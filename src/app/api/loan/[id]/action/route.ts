@@ -23,7 +23,7 @@ export async function POST(
         const loanId = id;
 
         // 2. Permission Check
-        const requiredPermission = action === "APPROVE" || action === "REJECT" ? "loan.approve" : "loan.delete";
+        const requiredPermission = action === "APPROVE" || action === "REJECT" ? "loan.approve" : "loan.edit";
         if (!authorizePermission(session, requiredPermission)) {
             return forbiddenResponse();
         }
@@ -36,7 +36,7 @@ export async function POST(
             status = "ACTIVE";
             auditAction = "LOAN_APPROVED";
         } else if (action === "REJECT") {
-            status = "CANCELLED"; // Or REJECTED if using Application model
+            status = "CANCELLED";
             auditAction = "LOAN_REJECTED";
         } else if (action === "CANCEL") {
             status = "CANCELLED";
@@ -51,7 +51,7 @@ export async function POST(
             data: {
                 status,
                 loanOfficerId: userId,
-                startDate: action === "APPROVE" ? new Date() : undefined,
+                loanDate: action === "APPROVE" ? new Date() : undefined,
                 dueDate: action === "APPROVE" ? new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) : undefined, // 1 week default
             },
         });
