@@ -55,7 +55,7 @@ export function HeroSection() {
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.4)_100%)] z-30" /> {/* Vignette */}
 
         <img
-          src="/images/hero-bg.jpg"
+          src="/images/hero-bg.png"
           alt="GIIN Innovation Team"
           className="w-full h-full object-cover opacity-80"
         />
