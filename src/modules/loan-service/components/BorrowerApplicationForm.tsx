@@ -47,6 +47,39 @@ const COLLATERAL_TYPES = [
     { value: "OTHER", label: "Other Electronics", icon: <Box className="w-4 h-4" /> },
 ];
 
+interface LoanFormData {
+    fullName: string;
+    nationalId: string;
+    passportNumber: string;
+    studentId: string;
+    gender: string;
+    dob: string;
+    phone: string;
+    altPhone: string;
+    email: string;
+    address: string;
+    occupation: string;
+    requestedAmount: number;
+    currency: string;
+    loanDuration: number;
+    purpose: string;
+    collateralType: string;
+    brand: string;
+    model: string;
+    serialNumber: string;
+    devicePassword: string;
+    estimatedValue: number;
+    condition: string;
+    evidence: {
+        front: string | null;
+        rear: string | null;
+        sides: string | null;
+        accessories: string | null;
+    };
+    signedName: string;
+    agreedToTerms: boolean;
+}
+
 export function BorrowerApplicationForm() {
     const [currentStep, setCurrentStep] = useState(0);
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -54,7 +87,7 @@ export function BorrowerApplicationForm() {
     const [appCode, setAppCode] = useState("");
     const [error, setError] = useState("");
 
-    const [formData, setFormData] = useState({
+    const [formData, setFormData] = useState<LoanFormData>({
         // Personal
         fullName: "",
         nationalId: "",
@@ -83,13 +116,20 @@ export function BorrowerApplicationForm() {
         estimatedValue: 0,
         condition: "GOOD",
 
-        // Evidence (Mock for now)
-        images: [] as string[],
+        // Evidence
+        evidence: {
+            front: null,
+            rear: null,
+            sides: null,
+            accessories: null,
+        },
 
         // Protocol
         signedName: "",
         agreedToTerms: false,
     });
+
+    const [uploading, setUploading] = useState<string | null>(null);
 
     // Interest Calculation Logic
     const [calculations, setCalculations] = useState({
@@ -122,14 +162,69 @@ export function BorrowerApplicationForm() {
     const nextStep = () => setCurrentStep(prev => Math.min(prev + 1, STEPS.length - 1));
     const prevStep = () => setCurrentStep(prev => Math.max(prev - 1, 0));
 
+    const handleImageUpload = async (slot: string, e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        // Validation
+        if (file.size > 10 * 1024 * 1024) {
+            setError("Image size exceeds 10MB limit.");
+            return;
+        }
+
+        setUploading(slot);
+
+        try {
+            // In a production app, we would upload to S3/Cloudinary here.
+            // For this high-fidelity demo, we'll use local previews 
+            // and simulate a protocol upload delay.
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setFormData(prev => ({
+                    ...prev,
+                    evidence: {
+                        ...prev.evidence,
+                        [slot]: reader.result as string
+                    }
+                }));
+                setUploading(null);
+            };
+
+            // Simulate network latency for the "Protocol Injection" feel
+            setTimeout(() => {
+                reader.readAsDataURL(file);
+            }, 1200);
+
+        } catch (err) {
+            setError("Failed to process image protocol.");
+            setUploading(null);
+        }
+    };
+
+    const removeImage = (slot: string) => {
+        setFormData(prev => ({
+            ...prev,
+            evidence: {
+                ...prev.evidence,
+                [slot]: null
+            }
+        }));
+    };
+
     const handleSubmit = async () => {
         setIsSubmitting(true);
         setError("");
         try {
+            // Flatten evidence object into images array for API compatibility
+            const images = Object.values(formData.evidence).filter(v => v !== null) as string[];
+
             const response = await fetch("/api/loan/apply", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(formData),
+                body: JSON.stringify({
+                    ...formData,
+                    images: images.length > 0 ? images : ["/placeholder.png"]
+                }),
             });
 
             const data = await response.json();
@@ -362,12 +457,56 @@ export function BorrowerApplicationForm() {
                         </div>
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-                            {["Front Profile", "Rear Profile", "Sides / Ports", "Accessory Set"].map((label, i) => (
-                                <div key={i} className="aspect-square rounded-3xl border-2 border-dashed border-white/5 bg-white/[0.02] flex flex-col items-center justify-center gap-3 hover:bg-white/5 hover:border-primary/30 cursor-pointer transition-all group">
-                                    <div className="p-3 rounded-full bg-primary/10 text-primary transition-transform group-hover:scale-110">
-                                        <Camera className="w-6 h-6" />
-                                    </div>
-                                    <span className="text-[9px] font-black uppercase tracking-widest text-muted-foreground group-hover:text-primary transition-colors">{label}</span>
+                            {[
+                                { key: "front", label: "Front Profile" },
+                                { key: "rear", label: "Rear Profile" },
+                                { key: "sides", label: "Sides / Ports" },
+                                { key: "accessories", label: "Accessory Set" }
+                            ].map((slot) => (
+                                <div key={slot.key} className="relative group">
+                                    {formData.evidence[slot.key as keyof typeof formData.evidence] ? (
+                                        <div className="aspect-square rounded-3xl overflow-hidden border-2 border-primary/50 relative">
+                                            <img
+                                                src={formData.evidence[slot.key as keyof typeof formData.evidence]!}
+                                                alt={slot.label}
+                                                className="w-full h-full object-cover"
+                                            />
+                                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                                                <Button
+                                                    size="icon"
+                                                    variant="destructive"
+                                                    className="rounded-full w-8 h-8"
+                                                    onClick={() => removeImage(slot.key)}
+                                                >
+                                                    <AlertCircle className="w-4 h-4" />
+                                                </Button>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <label className={cn(
+                                            "aspect-square rounded-3xl border-2 border-dashed border-white/5 bg-white/[0.02] flex flex-col items-center justify-center gap-3 hover:bg-white/5 hover:border-primary/30 cursor-pointer transition-all group",
+                                            uploading === slot.key && "animate-pulse border-primary/50"
+                                        )}>
+                                            <input
+                                                type="file"
+                                                accept="image/*"
+                                                capture="environment"
+                                                className="hidden"
+                                                onChange={(e) => handleImageUpload(slot.key, e)}
+                                                disabled={uploading !== null}
+                                            />
+                                            <div className="p-3 rounded-full bg-primary/10 text-primary transition-transform group-hover:scale-110">
+                                                {uploading === slot.key ? (
+                                                    <Loader2 className="w-6 h-6 animate-spin" />
+                                                ) : (
+                                                    <Camera className="w-6 h-6" />
+                                                )}
+                                            </div>
+                                            <span className="text-[9px] font-black uppercase tracking-widest text-muted-foreground group-hover:text-primary transition-colors">
+                                                {uploading === slot.key ? "Uploading..." : slot.label}
+                                            </span>
+                                        </label>
+                                    )}
                                 </div>
                             ))}
                         </div>
