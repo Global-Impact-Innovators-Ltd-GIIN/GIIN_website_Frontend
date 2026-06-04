@@ -146,7 +146,7 @@ export function HeroSection() {
       </div>
 
       {/* Subtle Digital Grid Overlay */}
-      <div 
+      <div
         className="absolute inset-0 z-0 opacity-[0.06] dark:opacity-[0.12] pointer-events-none"
         style={{
           backgroundImage: `
@@ -163,7 +163,7 @@ export function HeroSection() {
       <div className="absolute inset-0 z-0 pointer-events-none">
         {/* Primary Purple Core Glow */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[75%] h-[75%] rounded-full bg-[radial-gradient(circle,var(--primary-glow)_0%,transparent_70%)] opacity-90" />
-        
+
         {/* Secondary Amethyst Soft Glow */}
         <div className="absolute top-[30%] left-[50%] -translate-x-1/2 -translate-y-1/2 w-[50%] h-[50%] rounded-full bg-[radial-gradient(circle,rgba(127,76,165,0.08)_0%,transparent_80%)] opacity-60 blur-3xl animate-pulse [animation-duration:12s]" />
       </div>
@@ -217,7 +217,7 @@ export function HeroSection() {
             className="group relative px-8 py-4 bg-primary text-white font-black uppercase tracking-widest text-[10px] rounded-2xl overflow-hidden shadow-xl shadow-primary/20 hover:scale-105 active:scale-95 transition-all"
           >
             <span className="relative z-10 flex items-center gap-2">
-              {user ? "Access Capital" : "Join the Network"}
+              {user ? "Access Capital" : "Sign Up"}
               <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
             </span>
             <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
@@ -246,6 +246,6 @@ export function HeroSection() {
           <div className="h-8 w-px bg-gradient-to-b from-primary via-secondary to-transparent group-hover:h-12 transition-all duration-300" />
         </Link>
       </motion.div>
-    </section>
+    </section >
   );
 }

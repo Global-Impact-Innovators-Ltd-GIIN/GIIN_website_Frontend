@@ -266,7 +266,7 @@ export function MobileMenu({ isOpen, onClose, user, onLogout }: MobileMenuProps)
                     onClick={onClose}
                     className="flex items-center justify-center gap-1.5 w-full py-3 rounded-xl bg-primary text-white font-semibold hover:bg-primary/95 transition-all text-sm shadow-[0_0_15px_rgba(127,76,165,0.3)]"
                   >
-                    <span>Initialize</span>
+                    <span>Sign Up</span>
                     <ArrowRight className="w-3.5 h-3.5" />
                   </Link>
                 </div>

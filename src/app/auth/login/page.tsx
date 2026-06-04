@@ -97,10 +97,10 @@ export default function LoginPage() {
         <motion.div variants={itemVariants} className="mb-10 text-center md:text-left">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] font-black uppercase tracking-[0.2em] mb-6">
             <Zap className="w-3 h-3 fill-primary" />
-            Vanguard Protocol
+            Secure Login
           </div>
           <h2 className="text-3xl md:text-4xl font-black text-foreground mb-3 tracking-tighter italic font-outfit uppercase">
-            Initialize <span className="text-primary not-italic">Identity</span>
+            Sign <span className="text-primary not-italic">In</span>
           </h2>
           <p className="text-muted-foreground text-sm font-medium leading-relaxed max-w-[280px]">
             Input your authorized enterprise credentials to establish a secure link.
@@ -109,7 +109,7 @@ export default function LoginPage() {
 
         <form onSubmit={handleLogin} className="space-y-6">
           <motion.div variants={itemVariants} className="space-y-2 group">
-            <label className="text-[10px] font-black text-muted-foreground/60 uppercase tracking-[0.2em] pl-1">Command Email</label>
+            <label className="text-[10px] font-black text-muted-foreground/60 uppercase tracking-[0.2em] pl-1">Email Address</label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none text-muted-foreground group-focus-within:text-primary transition-all duration-300">
                 <Mail className="w-5 h-5" />
@@ -119,7 +119,7 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full bg-white/[0.03] border border-white/5 rounded-2xl pl-14 pr-5 py-5 text-foreground placeholder:text-muted-foreground/20 focus:outline-none focus:border-primary/40 focus:bg-white/[0.05] transition-all duration-300 shadow-inner"
-                placeholder="operator@giin.tech"
+                placeholder="name@example.com"
                 required
               />
             </div>
@@ -127,8 +127,8 @@ export default function LoginPage() {
 
           <motion.div variants={itemVariants} className="space-y-2 group">
             <div className="flex items-center justify-between pl-1">
-              <label className="text-[10px] font-black text-muted-foreground/60 uppercase tracking-[0.2em]">Coded Passkey</label>
-              <Link href="/auth/forgot" className="text-[10px] font-black text-primary/40 hover:text-primary uppercase tracking-widest transition-colors">Access Recovery</Link>
+              <label className="text-[10px] font-black text-muted-foreground/60 uppercase tracking-[0.2em]">Password</label>
+              <Link href="/auth/forgot" className="text-[10px] font-black text-primary/40 hover:text-primary uppercase tracking-widest transition-colors">Forgot Password?</Link>
             </div>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none text-muted-foreground group-focus-within:text-primary transition-all duration-300">
@@ -151,7 +151,7 @@ export default function LoginPage() {
               <div className="w-5 h-5 bg-white/5 border border-white/10 rounded-lg peer-checked:bg-primary peer-checked:border-primary transition-all" />
               <ShieldCheck className="absolute w-3 h-3 text-white opacity-0 peer-checked:opacity-100 left-1 transition-opacity pointer-events-none" />
             </label>
-            <span className="text-[11px] text-muted-foreground font-bold uppercase tracking-widest">Maintain Station link</span>
+            <span className="text-[11px] text-muted-foreground font-bold uppercase tracking-widest">Remember Me</span>
           </motion.div>
 
           <AnimatePresence>
@@ -188,7 +188,7 @@ export default function LoginPage() {
                 </div>
               ) : (
                 <>
-                  <span className="text-xs font-black text-foreground uppercase tracking-[0.3em] group-hover:text-white transition-colors">Establish Connection</span>
+                  <span className="text-xs font-black text-foreground uppercase tracking-[0.3em] group-hover:text-white transition-colors">Sign In</span>
                   <Fingerprint className="w-6 h-6 text-primary group-hover:text-white transition-all group-hover:scale-110" />
                 </>
               )}
@@ -199,9 +199,9 @@ export default function LoginPage() {
         <motion.div variants={itemVariants} className="mt-12 text-center">
           <div className="h-px w-full bg-gradient-to-r from-transparent via-white/5 to-transparent mb-8" />
           <p className="text-[10px] text-muted-foreground font-black uppercase tracking-[0.2em]">
-            Unidentified Personnel?{" "}
+            Don't have an account?{" "}
             <Link href="/auth/register" className="text-primary hover:text-accent transition-all ml-2 underline decoration-primary/20 underline-offset-4">
-              Request Clearance
+              Sign Up
             </Link>
           </p>
           <div className="flex justify-center gap-8 mt-10 opacity-20 group-hover:opacity-40 transition-opacity">
