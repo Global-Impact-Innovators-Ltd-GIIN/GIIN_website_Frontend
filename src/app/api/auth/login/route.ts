@@ -23,10 +23,14 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
     }
 
-    const token = await JWTService.sign({ sub: user.id, email: user.email, role: user.isSuperAdmin ? "ADMIN" : "USER" });
+    const token = await JWTService.sign({
+      sub: user.id,
+      email: user.email,
+      role: user.isSuperAdmin ? "SUPER_ADMIN" : user.role
+    });
 
     const response = NextResponse.json({ success: true, user: { id: user.id, email: user.email, firstName: user.firstName, isSuperAdmin: user.isSuperAdmin } });
-    
+
     response.cookies.set({
       name: "next-auth.session-token",
       value: token,
@@ -37,8 +41,13 @@ export async function POST(req: Request) {
     });
 
     return response;
-  } catch (error) {
-    return NextResponse.json({ error: "Login failed" }, { status: 500 });
+  } catch (error: any) {
+    console.error("CRITICAL AUTH ERROR:", error);
+    return NextResponse.json({
+      error: "Authentication service unavailable",
+      details: process.env.NODE_ENV === "development" ? error.message : undefined,
+      code: error.code
+    }, { status: 500 });
   }
 }
 

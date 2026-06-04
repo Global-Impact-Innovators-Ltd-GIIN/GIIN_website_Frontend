@@ -1,11 +1,10 @@
 import React from "react";
-import { PrismaClient } from "@prisma/client";
 import { cookies } from "next/headers";
 import { JWTService } from "@/lib/security/jwt";
 import { redirect } from "next/navigation";
 import { ServerCrash, Search, Activity, ShieldAlert, Cpu } from "lucide-react";
 
-const prisma = new PrismaClient();
+import prisma from "@/lib/prisma";
 
 export default async function AnalystDashboard() {
   const cookieStore = await cookies();
@@ -49,7 +48,7 @@ export default async function AnalystDashboard() {
               </h2>
             </div>
             
-            <div className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden backdrop-blur-md">
+            <div className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden backdrop-blur-md hover:border-white/20 transition-all duration-300 hover:shadow-[0_0_30px_rgba(255,255,255,0.05)]">
               <table className="w-full text-left text-sm">
                 <thead className="bg-black/40 border-b border-white/10 text-slate-400">
                   <tr>
@@ -65,7 +64,7 @@ export default async function AnalystDashboard() {
                       <td colSpan={4} className="p-8 text-center text-slate-500">No open incidents in the queue.</td>
                     </tr>
                   ) : (
-                    openIncidents.map(incident => (
+                    openIncidents.map((incident: any) => (
                       <tr key={incident.id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
                         <td className="p-4 font-medium text-white flex items-center gap-3">
                           <ServerCrash className="w-4 h-4 text-slate-500" />
@@ -89,7 +88,7 @@ export default async function AnalystDashboard() {
           </div>
 
           <div className="space-y-6">
-            <div className="p-6 rounded-2xl bg-gradient-to-br from-red-900/20 to-black border border-red-500/20 backdrop-blur-md">
+            <div className="p-6 rounded-2xl bg-gradient-to-br from-red-900/20 to-black border border-red-500/20 backdrop-blur-md hover:-translate-y-1 transition-transform duration-300 hover:shadow-[0_0_20px_rgba(239,68,68,0.15)]">
               <h3 className="font-bold text-white mb-4 flex items-center gap-2">
                 <Activity className="w-4 h-4 text-red-400" /> Live Telemetry
               </h3>

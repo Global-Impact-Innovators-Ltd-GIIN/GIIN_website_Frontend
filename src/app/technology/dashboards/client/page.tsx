@@ -1,11 +1,10 @@
 import React from "react";
-import { PrismaClient } from "@prisma/client";
 import { cookies } from "next/headers";
 import { JWTService } from "@/lib/security/jwt";
 import { redirect } from "next/navigation";
 import { Clock, CheckCircle2, AlertCircle, FileText } from "lucide-react";
 
-const prisma = new PrismaClient();
+import prisma from "@/lib/prisma";
 
 export default async function ClientDashboard() {
   const cookieStore = await cookies();
@@ -29,7 +28,7 @@ export default async function ClientDashboard() {
     }
   });
 
-  const orgIds = user?.organizations.map(o => o.organizationId) || [];
+  const orgIds = user?.organizations.map((o: any) => o.organizationId) || [];
 
   const projects = await prisma.project.findMany({
     where: { organizationId: { in: orgIds } },
@@ -62,7 +61,7 @@ export default async function ClientDashboard() {
               </div>
             ) : (
               <div className="grid gap-4">
-                {projects.map(project => (
+                {projects.map((project: any) => (
                   <div key={project.id} className="p-6 border border-white/10 bg-black/40 rounded-2xl backdrop-blur-xl transition-all hover:border-primary/30">
                     <div className="flex items-start justify-between mb-4">
                       <div>
@@ -99,7 +98,7 @@ export default async function ClientDashboard() {
                   <p className="text-sm text-slate-400">No active proposals.</p>
                 </div>
               ) : (
-                proposals.map(prop => (
+                proposals.map((prop: any) => (
                   <div key={prop.id} className="p-4 border border-white/10 bg-black/40 rounded-xl">
                     <h4 className="font-bold text-white text-sm">{prop.title}</h4>
                     <div className="flex justify-between items-center mt-3">

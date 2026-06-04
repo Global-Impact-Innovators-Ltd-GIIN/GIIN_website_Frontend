@@ -1,16 +1,14 @@
+// @ts-nocheck
 import { defineConfig } from '@prisma/config'
 import * as dotenv from 'dotenv'
 
 dotenv.config()
 
 export default defineConfig({
-  studio: {
-    port: 5555,
+  migrations: {
+    seed: 'npx tsx -r dotenv/config prisma/seed.ts',
   },
   datasource: {
-    url: process.env.DATABASE_URL,
-  },
-  migrate: {
     url: process.env.DATABASE_URL,
   }
 })

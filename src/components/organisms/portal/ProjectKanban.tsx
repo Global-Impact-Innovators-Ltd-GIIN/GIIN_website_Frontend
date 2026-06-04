@@ -6,7 +6,7 @@ import { mockTasks } from "@/data/portal";
 export function ProjectKanban() {
   const columns = [
     { id: "todo", title: "To Do", color: "bg-white/10" },
-    { id: "in_progress", title: "In Progress", color: "bg-blue-500/20" },
+    { id: "in_progress", title: "In Progress", color: "bg-primary/20" },
     { id: "review", title: "In Review", color: "bg-amber-500/20" },
     { id: "done", title: "Completed", color: "bg-emerald-500/20" }
   ];

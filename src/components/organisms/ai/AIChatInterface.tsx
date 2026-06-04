@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import { aiPersonas } from "@/data/ai";
+import { useChat } from "ai/react";
 
 interface Props {
   personaId: string;
@@ -10,32 +11,18 @@ interface Props {
 
 export function AIChatInterface({ personaId }: Props) {
   const persona = aiPersonas.find(p => p.id === personaId) || aiPersonas[0];
-  const [input, setInput] = useState("");
-  const [isTyping, setIsTyping] = useState(false);
   const endOfMessagesRef = useRef<HTMLDivElement>(null);
-  
-  const [messages, setMessages] = useState<{role: "user" | "ai", text: string}[]>([
-    { role: "ai", text: `I am ${persona.name}, your ${persona.role}. How can I assist you with your enterprise objectives today?` }
-  ]);
+  const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat({
+    api: '/api/ai/chat',
+    body: { personaId },
+    initialMessages: [
+      { id: '1', role: 'assistant', content: `I am ${persona.name}, your ${persona.role}. How can I assist you with your enterprise objectives today?` }
+    ]
+  });
 
   useEffect(() => {
     endOfMessagesRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, isTyping]);
-
-  const handleSend = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!input.trim()) return;
-
-    setMessages(prev => [...prev, { role: "user", text: input }]);
-    setInput("");
-    setIsTyping(true);
-
-    // Simulate AI thinking and streaming response
-    setTimeout(() => {
-      setIsTyping(false);
-      setMessages(prev => [...prev, { role: "ai", text: `Based on your request, I recommend utilizing a highly decoupled architecture. Would you like me to generate a full technical proposal for this approach?` }]);
-    }, 1500);
-  };
+  }, [messages, isLoading]);
 
   return (
     <div className="flex flex-col h-full bg-black">
@@ -59,7 +46,7 @@ export function AIChatInterface({ personaId }: Props) {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
             >
-              {msg.role === "ai" && (
+              {msg.role === "assistant" && (
                 <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center shrink-0 text-sm border border-white/20 shadow-[0_0_15px_rgba(255,255,255,0.1)]">
                   {persona.icon}
                 </div>
@@ -70,12 +57,12 @@ export function AIChatInterface({ personaId }: Props) {
                   ? "bg-white text-black rounded-2xl rounded-tr-sm font-medium" 
                   : "bg-transparent text-white/90"
               }`}>
-                {msg.text}
+                {msg.content}
               </div>
             </motion.div>
           ))}
 
-          {isTyping && (
+          {isLoading && (
             <motion.div 
               className="flex justify-start gap-4"
               initial={{ opacity: 0 }}
@@ -98,23 +85,24 @@ export function AIChatInterface({ personaId }: Props) {
       {/* Input Area */}
       <div className="p-4 md:p-8 shrink-0 bg-gradient-to-t from-black via-black to-transparent pt-12">
         <div className="max-w-4xl mx-auto relative">
-          <form onSubmit={handleSend} className="relative flex items-end bg-[#111116] border border-white/10 rounded-2xl p-2 shadow-2xl focus-within:border-primary/50 transition-colors">
+          <form onSubmit={handleSubmit} className="relative flex items-end bg-[#111116] border border-white/10 rounded-2xl p-2 shadow-2xl focus-within:border-primary/50 transition-colors">
             <textarea 
               value={input}
-              onChange={(e) => setInput(e.target.value)}
+              onChange={handleInputChange}
               placeholder={`Message ${persona.name}...`}
               className="w-full bg-transparent text-white placeholder:text-white/30 resize-none max-h-32 min-h-[44px] px-4 py-3 focus:outline-none scrollbar-hide text-sm md:text-base"
               rows={1}
               onKeyDown={(e) => {
                 if(e.key === 'Enter' && !e.shiftKey) {
                   e.preventDefault();
-                  handleSend(e);
+                  // We need to pass the event to handleSubmit but TS requires type
+                  handleSubmit(e as any);
                 }
               }}
             />
             <button 
               type="submit" 
-              disabled={!input.trim() || isTyping}
+              disabled={!input.trim() || isLoading}
               className="m-2 w-10 h-10 rounded-xl bg-white text-black flex items-center justify-center shrink-0 disabled:opacity-50 disabled:bg-white/20 disabled:text-white hover:bg-gray-200 transition-colors"
             >
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">

@@ -1,11 +1,10 @@
 import React from "react";
-import { PrismaClient } from "@prisma/client";
 import { cookies } from "next/headers";
 import { JWTService } from "@/lib/security/jwt";
 import { redirect } from "next/navigation";
 import { PenTool, BrainCircuit, FileText, FlaskConical, Network } from "lucide-react";
 
-const prisma = new PrismaClient();
+import prisma from "@/lib/prisma";
 
 export default async function ResearcherDashboard() {
   const cookieStore = await cookies();
@@ -26,7 +25,7 @@ export default async function ResearcherDashboard() {
 
   if (!user) redirect("/auth/login");
 
-  const papers = user.authoredPapers.map(p => p.paper);
+  const papers = user.authoredPapers.map((p: any) => p.paper);
   const projects = user.ledResearch;
 
   return (
@@ -38,7 +37,7 @@ export default async function ResearcherDashboard() {
             <p className="text-slate-400 mt-2">Manage your publications, virtual labs, and AI-assisted workflows.</p>
           </div>
           <div className="flex gap-3">
-            <button className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-sm font-bold transition-all shadow-[0_0_15px_-3px_rgba(37,99,235,0.5)]">
+            <button className="px-4 py-2 bg-primary hover:bg-primary/90 text-white rounded-lg text-sm font-bold transition-all shadow-[0_0_15px_-3px_rgba(127,76,165,0.5)]">
               Submit Paper
             </button>
             <button className="px-4 py-2 bg-violet-500/10 hover:bg-violet-500/20 border border-violet-500/20 text-violet-400 rounded-lg text-sm font-bold transition-all flex items-center gap-2">
@@ -51,7 +50,7 @@ export default async function ResearcherDashboard() {
           <div className="lg:col-span-2 space-y-8">
             <div className="flex items-center justify-between">
               <h2 className="text-xl font-bold text-white flex items-center gap-2">
-                <PenTool className="w-5 h-5 text-blue-400" /> My Publications
+                <PenTool className="w-5 h-5 text-primary" /> My Publications
               </h2>
             </div>
             
@@ -61,8 +60,8 @@ export default async function ResearcherDashboard() {
               </div>
             ) : (
               <div className="grid gap-4">
-                {papers.map(paper => (
-                  <div key={paper.id} className="p-6 border border-white/10 bg-black/40 rounded-2xl backdrop-blur-xl transition-all hover:border-blue-500/30">
+                {papers.map((paper: any) => (
+                  <div key={paper.id} className="p-6 border border-white/10 bg-black/40 rounded-2xl backdrop-blur-xl transition-all hover:border-primary/30">
                     <div className="flex justify-between items-start mb-2">
                       <h3 className="text-lg font-bold text-white">{paper.title}</h3>
                       <span className="px-3 py-1 bg-white/10 text-white rounded-full text-xs font-bold uppercase tracking-wider">
@@ -89,7 +88,7 @@ export default async function ResearcherDashboard() {
                 </div>
               ) : (
                 <div className="grid gap-4">
-                  {projects.map(proj => (
+                  {projects.map((proj: any) => (
                     <div key={proj.id} className="p-4 border border-white/10 bg-black/40 rounded-xl">
                       <h4 className="font-bold text-white">{proj.title}</h4>
                       <p className="text-sm text-slate-400 mt-1">{proj.description}</p>
@@ -101,17 +100,17 @@ export default async function ResearcherDashboard() {
           </div>
 
           <div className="space-y-6">
-            <div className="p-6 rounded-2xl bg-gradient-to-br from-blue-900/20 to-black border border-blue-500/20 backdrop-blur-md">
+            <div className="p-6 rounded-2xl bg-gradient-to-br from-primary/20 to-black border border-primary/20 backdrop-blur-md">
               <h3 className="font-bold text-white mb-4 flex items-center gap-2">
-                <BrainCircuit className="w-5 h-5 text-blue-400" /> AI Citation Engine
+                <BrainCircuit className="w-5 h-5 text-primary" /> AI Citation Engine
               </h3>
               <p className="text-sm text-slate-300 mb-4">Paste your bibliography or DOIs to generate formatted citations instantly.</p>
               <textarea 
-                className="w-full bg-black/50 border border-white/10 rounded-lg p-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-blue-500" 
+                className="w-full bg-black/50 border border-white/10 rounded-lg p-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-primary" 
                 rows={4} 
                 placeholder="Enter DOI, URL, or plain text reference..."
               />
-              <button className="mt-3 w-full py-2 bg-blue-600/20 hover:bg-blue-600/40 text-blue-400 border border-blue-500/30 font-bold rounded-lg transition-colors text-sm">
+              <button className="mt-3 w-full py-2 bg-primary/20 hover:bg-primary/40 text-primary border border-primary/30 font-bold rounded-lg transition-colors text-sm">
                 Generate Citations
               </button>
             </div>

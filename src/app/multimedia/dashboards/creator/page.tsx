@@ -1,11 +1,10 @@
 import React from "react";
-import { PrismaClient } from "@prisma/client";
 import { cookies } from "next/headers";
 import { JWTService } from "@/lib/security/jwt";
 import { redirect } from "next/navigation";
 import { UploadCloud, Wand2, Scissors, History, FileVideo, LayoutGrid } from "lucide-react";
 
-const prisma = new PrismaClient();
+import prisma from "@/lib/prisma";
 
 export default async function CreatorDashboard() {
   const cookieStore = await cookies();
@@ -71,7 +70,7 @@ export default async function CreatorDashboard() {
                       <td colSpan={4} className="p-8 text-center text-slate-500">No assets uploaded yet. Let's create!</td>
                     </tr>
                   ) : (
-                    assets.map(asset => (
+                    assets.map((asset: any) => (
                       <tr key={asset.id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
                         <td className="p-4 font-medium text-white flex items-center gap-3">
                           <FileVideo className="w-4 h-4 text-slate-500" />

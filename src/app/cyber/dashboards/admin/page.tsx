@@ -1,11 +1,10 @@
 import React from "react";
-import { PrismaClient } from "@prisma/client";
 import { cookies } from "next/headers";
 import { JWTService } from "@/lib/security/jwt";
 import { redirect } from "next/navigation";
 import { ShieldCheck, Crosshair, Users, HardDrive } from "lucide-react";
 
-const prisma = new PrismaClient();
+import prisma from "@/lib/prisma";
 
 export default async function CyberAdminDashboard() {
   const cookieStore = await cookies();
@@ -35,7 +34,7 @@ export default async function CyberAdminDashboard() {
             { label: "Active Incidents (Critical)", value: incidentsCount, icon: <Crosshair className="w-5 h-5" />, color: "text-red-400" },
             { label: "Completed Security Audits", value: auditsCount, icon: <ShieldCheck className="w-5 h-5" />, color: "text-cyan-400" },
             { label: "Business Assessments Delivered", value: assessmentsCount, icon: <HardDrive className="w-5 h-5" />, color: "text-indigo-400" }
-          ].map((stat, i) => (
+          ].map((stat: any, i: any) => (
             <div key={i} className="p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md">
               <div className={`w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center mb-4 ${stat.color}`}>
                 {stat.icon}
