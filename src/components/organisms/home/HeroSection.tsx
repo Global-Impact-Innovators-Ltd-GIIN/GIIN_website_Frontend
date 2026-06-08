@@ -83,12 +83,32 @@ function TypingText({ text }: { text: string }) {
     return () => clearTimeout(timer);
   }, [currentText, isDeleting, text, speed]);
 
+  const lines = currentText.split("\n");
+  const line1 = lines[0] || "";
+  const line2 = lines[1] || "";
+  const isSecondLineTyping = currentText.includes("\n") || currentText.length > 6; // "GLOBAL" is 6 characters
+
   return (
-    <span className="relative inline-block text-center">
-      <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary via-secondary to-primary drop-shadow-[0_0_20px_rgba(127,76,165,0.15)] italic whitespace-pre-line">
-        {currentText}
+    <span className="relative flex flex-col items-center justify-center text-center">
+      {/* Line 1: GLOBAL */}
+      <span className="flex items-center justify-center flex-wrap">
+        <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary via-secondary to-primary drop-shadow-[0_0_20px_rgba(127,76,165,0.15)] italic">
+          {line1}
+        </span>
+        {!isSecondLineTyping && (
+          <span className="ml-1 inline-block w-[3px] h-[0.85em] bg-primary align-middle animate-pulse" />
+        )}
       </span>
-      <span className="ml-1 inline-block w-[3px] h-[0.85em] bg-primary align-middle animate-pulse" />
+
+      {/* Line 2: IMPACT INNOVATORS */}
+      {isSecondLineTyping && (
+        <span className="flex items-center justify-center flex-wrap mt-2">
+          <span className="text-white drop-shadow-[0_10px_20px_rgba(255,255,255,0.15)] italic">
+            {line2}
+          </span>
+          <span className="ml-1 inline-block w-[3px] h-[0.85em] bg-white align-middle animate-pulse" />
+        </span>
+      )}
     </span>
   );
 }
@@ -191,7 +211,7 @@ export function HeroSection() {
           transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
         >
           <span className="block min-h-[2.25em] w-full">
-            <TypingText text={"GLOBAL IMPACT\nINNOVATORS"} />
+            <TypingText text={"GLOBAL\nIMPACT INNOVATORS"} />
           </span>
         </motion.h1>
 
