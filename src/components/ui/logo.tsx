@@ -27,6 +27,8 @@ export function Logo({ className, showText = true, size = "md", href = "/" }: Lo
     xl: "text-6xl",
   };
 
+  const hasTextColor = className?.includes("text-");
+
   return (
     <Link href={href} className={cn("flex items-center gap-5 group", className)}>
       <div className={cn("relative flex-shrink-0", sizeClasses[size])}>
@@ -45,7 +47,11 @@ export function Logo({ className, showText = true, size = "md", href = "/" }: Lo
         </div>
       </div>
       {showText && (
-        <span className={cn("font-black tracking-tighter text-foreground selection:bg-accent/30 hidden sm:block font-outfit", textClasses[size])}>
+        <span className={cn(
+          "font-black tracking-tighter selection:bg-accent/30 hidden sm:block font-outfit",
+          !hasTextColor && "text-foreground",
+          textClasses[size]
+        )}>
           GIIN <span className="text-accent italic font-light">Ecosystem</span>
         </span>
       )}

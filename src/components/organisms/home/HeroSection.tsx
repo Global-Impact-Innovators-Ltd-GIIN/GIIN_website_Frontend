@@ -84,8 +84,8 @@ function TypingText({ text }: { text: string }) {
   }, [currentText, isDeleting, text, speed]);
 
   return (
-    <span className="relative inline-flex items-center">
-      <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary via-secondary to-primary drop-shadow-[0_0_20px_rgba(127,76,165,0.15)] italic">
+    <span className="relative inline-block text-center">
+      <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary via-secondary to-primary drop-shadow-[0_0_20px_rgba(127,76,165,0.15)] italic whitespace-pre-line">
         {currentText}
       </span>
       <span className="ml-1 inline-block w-[3px] h-[0.85em] bg-primary align-middle animate-pulse" />
@@ -185,14 +185,13 @@ export function HeroSection() {
         </motion.div>
 
         <motion.h1
-          className="mb-6 font-heading text-5xl font-black tracking-tighter sm:text-7xl md:text-8xl lg:text-9xl bg-clip-text text-transparent bg-gradient-to-br from-white via-white/90 to-primary/40 drop-shadow-[0_10px_30px_rgba(0,0,0,0.5)]"
+          className="mb-6 font-heading text-5xl font-black tracking-tighter sm:text-7xl md:text-8xl lg:text-9xl leading-[1.1] drop-shadow-[0_10px_30px_rgba(0,0,0,0.5)]"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
         >
-          GLOBAL <br className="md:hidden" />
-          <span className="block mt-1 min-h-[1.1em] md:inline md:mt-0 md:ml-3">
-            <TypingText text="IMPACT INNOVATORS" />
+          <span className="block min-h-[2.25em] w-full">
+            <TypingText text={"GLOBAL IMPACT\nINNOVATORS"} />
           </span>
         </motion.h1>
 
