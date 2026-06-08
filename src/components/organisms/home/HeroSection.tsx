@@ -122,9 +122,7 @@ function TypingText({ text, isDark }: { text: string; isDark: boolean }) {
 }
 
 const SCENES = [
-  "/images/hero-bg.png",
-  "/images/hero-2.png",
-  "/images/hero-3.png"
+  "/images/hero-bg.png"
 ];
 
 export function HeroSection() {
