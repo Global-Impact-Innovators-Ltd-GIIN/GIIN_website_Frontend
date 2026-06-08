@@ -238,7 +238,7 @@ export const navigationConfig: NavItem[] = [
             href: "/community",
             description: "Contribute engineering hours, mentorship, or operational support to open projects.",
             iconName: "Users2",
-            ctaText: "Join Network",
+            ctaText: "Sign Up",
           },
           {
             label: "Global Communities",

@@ -94,20 +94,20 @@ export default function RegisterPage() {
         <motion.div variants={itemVariants} className="mb-10">
           <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent/10 border border-accent/20 text-accent text-[9px] font-black uppercase tracking-[0.2em] mb-6">
             <Sparkles className="w-3 h-3 fill-accent" />
-            Strategic Enrollment
+            Create Account
           </span>
           <h2 className="text-3xl md:text-4xl font-black text-foreground mb-3 tracking-tighter italic font-outfit uppercase">
-            Protocol <span className="text-accent not-italic">Onboarding</span>
+            Sign <span className="text-accent not-italic">Up</span>
           </h2>
           <p className="text-muted-foreground text-sm font-medium leading-relaxed max-w-[320px]">
-            Begin your generational transformation by establishing your enterprise node today.
+            Begin your journey by creating an account today.
           </p>
         </motion.div>
 
         <form onSubmit={handleRegister} className="space-y-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <motion.div variants={itemVariants} className="space-y-2 group">
-              <label className="text-[10px] font-black text-muted-foreground/60 uppercase tracking-[0.2em] pl-1">Forename</label>
+              <label className="text-[10px] font-black text-muted-foreground/60 uppercase tracking-[0.2em] pl-1">First Name</label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-muted-foreground group-focus-within:text-accent transition-colors">
                   <User className="w-4 h-4" />
@@ -123,7 +123,7 @@ export default function RegisterPage() {
               </div>
             </motion.div>
             <motion.div variants={itemVariants} className="space-y-2 group">
-              <label className="text-[10px] font-black text-muted-foreground/60 uppercase tracking-[0.2em] pl-1">Surname</label>
+              <label className="text-[10px] font-black text-muted-foreground/60 uppercase tracking-[0.2em] pl-1">Last Name</label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-muted-foreground group-focus-within:text-accent transition-colors">
                   <User className="w-4 h-4" />
@@ -141,7 +141,7 @@ export default function RegisterPage() {
           </div>
 
           <motion.div variants={itemVariants} className="space-y-2 group">
-            <label className="text-[10px] font-black text-muted-foreground/60 uppercase tracking-[0.2em] pl-1">Network Identity (Email)</label>
+            <label className="text-[10px] font-black text-muted-foreground/60 uppercase tracking-[0.2em] pl-1">Email Address</label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-muted-foreground group-focus-within:text-accent transition-colors">
                 <Mail className="w-4 h-4" />
@@ -151,14 +151,14 @@ export default function RegisterPage() {
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 className="w-full bg-white/[0.03] border border-white/5 rounded-2xl pl-11 pr-4 py-4 text-foreground placeholder:text-muted-foreground/10 focus:outline-none focus:border-accent/40 focus:bg-white/[0.05] transition-all text-sm"
-                placeholder="identity@giin.tech"
+                placeholder="name@example.com"
                 required
               />
             </div>
           </motion.div>
 
           <motion.div variants={itemVariants} className="space-y-2 group">
-            <label className="text-[10px] font-black text-muted-foreground/60 uppercase tracking-[0.2em] pl-1">Secure Passkey</label>
+            <label className="text-[10px] font-black text-muted-foreground/60 uppercase tracking-[0.2em] pl-1">Password</label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-muted-foreground group-focus-within:text-accent transition-colors">
                 <Lock className="w-4 h-4" />
@@ -184,7 +184,7 @@ export default function RegisterPage() {
               >
                 <AlertCircle className="w-5 h-5 flex-shrink-0 animate-pulse" />
                 <div>
-                  <span className="block text-[8px] uppercase tracking-widest opacity-60 mb-1">Onboarding Error</span>
+                  <span className="block text-[8px] uppercase tracking-widest opacity-60 mb-1">Registration Error</span>
                   {error}
                 </div>
               </motion.div>
@@ -203,7 +203,7 @@ export default function RegisterPage() {
                 <Loader2 className="w-5 h-5 animate-spin text-accent" />
               ) : (
                 <>
-                  <span className="text-xs font-black text-foreground uppercase tracking-[0.3em] group-hover:text-white transition-colors">Initialize Access</span>
+                  <span className="text-xs font-black text-foreground uppercase tracking-[0.3em] group-hover:text-white transition-colors">Sign Up</span>
                   <Globe2 className="w-6 h-6 text-accent group-hover:text-white transition-all group-hover:rotate-12" />
                 </>
               )}
@@ -213,9 +213,9 @@ export default function RegisterPage() {
 
         <motion.div variants={itemVariants} className="mt-10 text-center">
           <p className="text-[10px] text-muted-foreground font-black uppercase tracking-[0.2em]">
-            Existing Personnel?{" "}
+            Already have an account?{" "}
             <Link href="/auth/login" className="text-accent hover:text-white transition-colors ml-2">
-              Authenticate
+              Sign In
             </Link>
           </p>
         </motion.div>
