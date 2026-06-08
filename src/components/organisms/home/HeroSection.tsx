@@ -186,7 +186,7 @@ export function HeroSection() {
             key={currentScene}
             src={SCENES[currentScene]}
             initial={{ opacity: 0, scale: 1.1 }}
-            animate={{ opacity: isDark ? 0.38 : 0.08, scale: 1 }}
+            animate={{ opacity: isDark ? 0.70 : 0.65, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
             transition={{ duration: 2, ease: "easeInOut" }}
             className="absolute inset-0 w-full h-full object-cover"
@@ -197,8 +197,8 @@ export function HeroSection() {
         </AnimatePresence>
 
         {/* Dynamic Overlays (reduces grey muddiness in light mode, enhances deep space in dark mode) */}
-        <div className={cn("absolute inset-0 z-10 transition-colors duration-500", isDark ? "bg-black/35" : "bg-white/10")} />
-        <div className={cn("absolute inset-0 z-20 bg-gradient-to-b via-transparent transition-colors duration-500", isDark ? "from-black/15 to-[#030308]" : "from-white/15 to-slate-50")} />
+        <div className={cn("absolute inset-0 z-10 transition-colors duration-500", isDark ? "bg-black/45" : "bg-white/55")} />
+        <div className={cn("absolute inset-0 z-20 bg-gradient-to-b via-transparent transition-colors duration-500", isDark ? "from-black/10 to-[#030308]" : "from-white/10 to-slate-50")} />
       </div>
 
       {/* 3D Particle Layer */}
