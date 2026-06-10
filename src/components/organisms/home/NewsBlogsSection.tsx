@@ -10,7 +10,7 @@ export function NewsBlogsSection() {
   ];
 
   return (
-    <section className="w-full bg-background py-20 transition-colors duration-500">
+    <section className="w-full bg-section-gradient py-20 transition-colors duration-500">
       <div className="container mx-auto px-6">
         <motion.div
           className="flex flex-col md:flex-row md:items-end md:justify-between mb-12"

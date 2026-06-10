@@ -21,7 +21,7 @@ const LinkedinIcon = () => (
 
 export function FooterSection() {
   return (
-    <footer className="w-full bg-background border-t border-border/10 pt-32 pb-16 transition-colors duration-500">
+    <footer className="w-full bg-section-gradient border-t border-border/10 pt-32 pb-16 transition-colors duration-500">
       <div className="container mx-auto px-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 mb-24">
           <div className="lg:col-span-2">

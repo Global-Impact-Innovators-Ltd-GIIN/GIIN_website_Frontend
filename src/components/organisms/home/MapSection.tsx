@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Map, { Marker, NavigationControl, Popup, MarkerEvent } from "react-map-gl/mapbox";
 import "mapbox-gl/dist/mapbox-gl.css";
-import { Sparkles, MapPin, Info, Network, Zap } from "lucide-react";
+import { Sparkles, MapPin, Info, Network, Zap, Play, Pause, Activity } from "lucide-react";
 
 // Innovation Hubs across Africa
 const HUBS = [
@@ -34,8 +34,26 @@ const CONNECTIONS = [
 
 const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN || "";
 
+// Generate a grid of points for the dot matrix inside Africa
+const DOTS_GRID: { x: number; y: number }[] = [];
+for (let x = 3; x <= 97; x += 3.2) {
+  for (let y = 3; y <= 97; y += 3.2) {
+    DOTS_GRID.push({ x, y });
+  }
+}
+
 export function MapSection() {
   const [selectedHub, setSelectedHub] = useState<typeof HUBS[0] | null>(null);
+  const [isAutoScan, setIsAutoScan] = useState(true);
+  const [connectivity, setConnectivity] = useState(99.4);
+  const [activeNodes, setActiveNodes] = useState(582);
+  const [logs, setLogs] = useState<string[]>([
+    "[SYSTEM] Booting autonomous telemetry mesh...",
+    "[OK] Lagos Node linked. Latency: 14ms",
+    "[SYNC] Cape Town SOC: backup sync complete",
+    "[OK] Nairobi Hub: routing tables active"
+  ]);
+
   const [viewState, setViewState] = useState({
     longitude: 17.5,
     latitude: 2.0,
@@ -43,6 +61,63 @@ export function MapSection() {
     pitch: 45,
     bearing: 0
   });
+
+  // Fluctuate connectivity and active nodes to make stats look live
+  useEffect(() => {
+    const statsInterval = setInterval(() => {
+      setConnectivity(parseFloat((99.1 + Math.random() * 0.8).toFixed(1)));
+      setActiveNodes(prev => {
+        const offset = Math.random() > 0.5 ? 1 : -1;
+        const next = prev + offset;
+        return next >= 580 && next <= 585 ? next : prev;
+      });
+    }, 4500);
+
+    return () => clearInterval(statsInterval);
+  }, []);
+
+  // System logs stream effect
+  useEffect(() => {
+    const cities = ["Lagos", "Nairobi", "Kigali", "Accra", "Cape Town", "Cairo", "Addis Ababa", "Casablanca"];
+    const templates = [
+      (c1: string, c2: string) => `[FLOW] ${c1} ↔ ${c2} rate: ${(Math.random() * 8 + 4).toFixed(1)} Gbps`,
+      (c1: string) => `[OK] ${c1} Node telemetry online`,
+      (c1: string) => `[SYNC] Replicating index weights to ${c1}...`,
+      (c1: string) => `[SEC] ${c1} SOC: firewall verified [OK]`,
+      (c1: string) => `[OPTIMIZE] Routing optimization complete for ${c1}`,
+      (c1: string) => `[PING] ${c1} ping: ${(10 + Math.random() * 30).toFixed(0)}ms`,
+    ];
+
+    const logsInterval = setInterval(() => {
+      const time = new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      const c1 = cities[Math.floor(Math.random() * cities.length)];
+      let c2 = cities[Math.floor(Math.random() * cities.length)];
+      while (c1 === c2) {
+        c2 = cities[Math.floor(Math.random() * cities.length)];
+      }
+      const template = templates[Math.floor(Math.random() * templates.length)];
+      const message = template(c1, c2);
+      
+      setLogs(prev => [...prev.slice(-3), `[${time}] ${message}`]);
+    }, 3000);
+
+    return () => clearInterval(logsInterval);
+  }, []);
+
+  // Auto scan effect - cycle through nodes
+  useEffect(() => {
+    if (!isAutoScan) return;
+
+    const scanInterval = setInterval(() => {
+      setSelectedHub((prev) => {
+        const currentIndex = prev ? HUBS.findIndex(h => h.id === prev.id) : -1;
+        const nextIndex = (currentIndex + 1) % HUBS.length;
+        return HUBS[nextIndex];
+      });
+    }, 4500);
+
+    return () => clearInterval(scanInterval);
+  }, [isAutoScan]);
 
   // Convert GPS coordinates to local SVG percentages for the fallback map
   const getSVGCoords = (lon: number, lat: number) => {
@@ -52,10 +127,31 @@ export function MapSection() {
     return { x: `${x}%`, y: `${y}%` };
   };
 
+  // Helper to draw curved connections in SVG
+  const getCurvePath = (x1: number, y1: number, x2: number, y2: number) => {
+    const mx = (x1 + x2) / 2;
+    const my = (y1 + y2) / 2;
+    const dx = x2 - x1;
+    const dy = y2 - y1;
+    const len = Math.sqrt(dx * dx + dy * dy);
+    
+    // Perpendicular normal vector
+    const nx = -dy / len;
+    const ny = dx / len;
+    
+    // Offset amount for bending (higher = more curved)
+    const offset = 8;
+    const cx = mx + nx * offset;
+    const cy = my + ny * offset;
+    
+    return `M ${x1} ${y1} Q ${cx} ${cy} ${x2} ${y2}`;
+  };
+
+  // SVG high-fidelity polyline path for Africa
+  const africaPath = "M 16.5 5.8 L 18.6 2.6 L 30.6 1.3 L 40.0 1.3 L 44.0 6.6 L 68.0 9.2 L 69.3 10.5 L 76.0 24.2 L 84.6 33.4 L 95.2 36.3 L 86.6 47.3 L 78.6 57.9 L 72.0 76.3 L 70.0 84.2 L 68.0 89.5 L 53.3 95.8 L 51.2 94.6 L 48.5 87.6 L 46.0 80.2 L 44.0 61.5 L 39.2 49.4 L 39.6 44.7 L 31.2 41.4 L 26.4 42.6 L 21.3 43.0 L 9.3 38.8 L 3.3 30.6 L 5.3 26.3 L 9.3 14.5 Z";
+
   return (
-    <section className="relative w-full border-t border-border/50 bg-background py-32 overflow-hidden transition-colors duration-500">
-      {/* Background decoration */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[1000px] bg-primary/5 dark:bg-primary/10 blur-[180px] rounded-full pointer-events-none" />
+    <section className="relative w-full border-t border-border/50 bg-section-gradient py-32 overflow-hidden transition-colors duration-500">
 
       <div className="container relative z-10 mx-auto px-6">
         <div className="text-center mb-16">
@@ -107,6 +203,7 @@ export function MapSection() {
                   onClick={(e: MarkerEvent<MouseEvent>) => {
                     if (e.originalEvent) e.originalEvent.stopPropagation();
                     setSelectedHub(hub);
+                    setIsAutoScan(false);
                   }}
                 >
                   <div className="cursor-pointer group/marker transform transition-transform hover:scale-125">
@@ -195,29 +292,60 @@ export function MapSection() {
               />
 
               {/* Grid outline map wrapper */}
-              <div className="w-[85%] h-[85%] relative max-w-lg aspect-square">
+              <div className="w-[85%] h-[85%] relative max-w-lg aspect-square flex items-center justify-center">
                 {/* Africa continent SVG path */}
                 <svg
                   viewBox="0 0 100 100"
                   className="absolute inset-0 w-full h-full text-primary/10 fill-current"
-                  style={{ filter: "drop-shadow(0 0 20px rgba(127,76,165,0.05))" }}
+                  style={{ filter: "drop-shadow(0 0 30px rgba(127,76,165,0.08))" }}
                 >
-                  <path
-                    d="M 18 12 C 26 7, 36 7, 44 7 C 54 7, 59 9, 64 12 C 69 17, 74 27, 79 34 C 82 38, 84 40, 86 42 C 84 47, 79 52, 74 62 C 69 72, 64 82, 51 96 C 49 94, 47 86, 45 81 C 41 71, 37 61, 35 56 C 33 51, 30 47, 25 44 C 19 41, 10 39, 2 39 C 5 31, 8 21, 18 12 Z"
-                    className="stroke-primary/20 dark:stroke-secondary/20 stroke-[0.4]"
-                    fill="url(#africa-gradient)"
-                  />
                   <defs>
+                    {/* Africa clipping path for dot matrix */}
+                    <clipPath id="africa-clip">
+                      <path d={africaPath} />
+                    </clipPath>
+                    
+                    {/* Glowing gradients */}
                     <radialGradient id="africa-gradient" cx="50%" cy="50%" r="50%">
-                      <stop offset="0%" stopColor="var(--color-primary)" stopOpacity="0.08" />
+                      <stop offset="0%" stopColor="var(--color-primary)" stopOpacity="0.12" />
                       <stop offset="100%" stopColor="transparent" stopOpacity="0" />
                     </radialGradient>
                   </defs>
 
-                  {/* Connective overlay streams */}
+                  {/* Africa filled silhouette */}
+                  <path
+                    d={africaPath}
+                    className="stroke-primary/20 dark:stroke-secondary/25 stroke-[0.4]"
+                    fill="url(#africa-gradient)"
+                  />
+
+                  {/* Twinkling Dot-Matrix overlay inside Africa boundary */}
+                  <g clipPath="url(#africa-clip)">
+                    {DOTS_GRID.map((dot, idx) => (
+                      <motion.circle
+                        key={idx}
+                        cx={dot.x}
+                        cy={dot.y}
+                        r={0.4 + (idx % 3) * 0.15}
+                        className="fill-primary/25 dark:fill-secondary/35"
+                        animate={{
+                          opacity: [0.15, 0.7, 0.15]
+                        }}
+                        transition={{
+                          duration: 3 + (idx % 5),
+                          repeat: Infinity,
+                          ease: "easeInOut",
+                          delay: (idx % 7) * 0.4
+                        }}
+                      />
+                    ))}
+                  </g>
+
+                  {/* Connective overlay streams (Curved paths with dash offsets) */}
                   {CONNECTIONS.map(([fromId, toId], idx) => {
                     const from = HUBS.find(h => h.id === fromId)!;
                     const to = HUBS.find(h => h.id === toId)!;
+                    
                     const fromCoords = getSVGCoords(from.coords[0], from.coords[1]);
                     const toCoords = getSVGCoords(to.coords[0], to.coords[1]);
 
@@ -226,24 +354,24 @@ export function MapSection() {
                     const toX = parseFloat(toCoords.x);
                     const toY = parseFloat(toCoords.y);
 
+                    const curvePath = getCurvePath(fromX, fromY, toX, toY);
+
                     return (
                       <g key={idx}>
-                        <line
-                          x1={fromX}
-                          y1={fromY}
-                          x2={toX}
-                          y2={toY}
-                          className="stroke-primary/20 dark:stroke-secondary/20 stroke-[0.2]"
+                        {/* Static thin line */}
+                        <path
+                          d={curvePath}
+                          fill="none"
+                          className="stroke-primary/15 dark:stroke-secondary/20 stroke-[0.25]"
                         />
-                        <motion.line
-                          x1={fromX}
-                          y1={fromY}
-                          x2={toX}
-                          y2={toY}
-                          className="stroke-primary/40 dark:stroke-secondary/50 stroke-[0.3]"
-                          strokeDasharray="4, 12"
-                          animate={{ strokeDashoffset: [0, -32] }}
-                          transition={{ repeat: Infinity, duration: 4, ease: "linear" }}
+                        {/* Animated signal particle flow */}
+                        <motion.path
+                          d={curvePath}
+                          fill="none"
+                          className="stroke-primary/50 dark:stroke-secondary/60 stroke-[0.35]"
+                          strokeDasharray="3, 10"
+                          animate={{ strokeDashoffset: [0, -26] }}
+                          transition={{ repeat: Infinity, duration: 4 + (idx % 3), ease: "linear" }}
                         />
                       </g>
                     );
@@ -260,19 +388,25 @@ export function MapSection() {
                       key={hub.id}
                       className="absolute -translate-x-1/2 -translate-y-1/2 z-10 cursor-pointer group/node"
                       style={{ left: coords.x, top: coords.y }}
-                      onClick={() => setSelectedHub(isSelected ? null : hub)}
+                      onClick={() => {
+                        setSelectedHub(hub);
+                        setIsAutoScan(false);
+                      }}
                     >
                       <div className="relative flex items-center justify-center">
                         {/* Interactive trigger area */}
                         <div className="absolute w-8 h-8 rounded-full bg-transparent" />
                         
-                        {/* Ripple animation */}
-                        <div className="absolute w-6 h-6 rounded-full bg-primary/25 dark:bg-secondary/25 scale-75 animate-ping opacity-60" />
+                        {/* Pulse animation rings */}
+                        <div className="absolute w-6 h-6 rounded-full bg-primary/20 dark:bg-secondary/20 scale-75 animate-ping opacity-60" />
+                        {isSelected && (
+                          <div className="absolute w-8 h-8 rounded-full bg-primary/10 border border-primary/20 scale-100 animate-pulse" />
+                        )}
                         
                         {/* Glowing core */}
-                        <div className={`w-3 h-3 rounded-full border border-white/20 transition-all duration-300 ${isSelected ? 'bg-accent scale-125 shadow-[0_0_15px_var(--color-accent)]' : 'bg-primary dark:bg-secondary group-hover/node:bg-accent group-hover/node:shadow-[0_0_12px_rgba(245,158,11,0.8)] shadow-[0_0_8px_rgba(127,76,165,0.6)]'}`} />
+                        <div className={`w-3 h-3 rounded-full border border-white/20 transition-all duration-300 ${isSelected ? 'bg-primary scale-125 shadow-[0_0_12px_rgba(127,76,165,0.9)]' : 'bg-primary dark:bg-secondary group-hover/node:bg-primary group-hover/node:shadow-[0_0_10px_rgba(127,76,165,0.7)] shadow-[0_0_6px_rgba(127,76,165,0.5)]'}`} />
 
-                        {/* Label name tag */}
+                        {/* Label name tag on marker hover */}
                         <div className="absolute top-4 left-1/2 -translate-x-1/2 pointer-events-none opacity-0 group-hover/node:opacity-100 transition-opacity duration-300 z-20">
                           <div className="bg-background/95 border border-border/20 backdrop-blur-md px-2.5 py-1 rounded-lg shadow-xl text-center whitespace-nowrap">
                             <span className="text-[9px] font-black uppercase tracking-widest text-foreground">{hub.name}</span>
@@ -282,73 +416,142 @@ export function MapSection() {
                     </div>
                   );
                 })}
-
-                {/* SVG Map details popup */}
-                <AnimatePresence>
-                  {selectedHub && (
-                    <motion.div
-                      initial={{ opacity: 0, scale: 0.92, y: 15 }}
-                      animate={{ opacity: 1, scale: 1, y: 0 }}
-                      exit={{ opacity: 0, scale: 0.92, y: 15 }}
-                      className="absolute bottom-4 left-1/2 -translate-x-1/2 w-72 p-5 rounded-2xl bg-card/95 backdrop-blur-md border border-border/20 shadow-2xl z-30 text-left font-outfit"
-                    >
-                      <div className="flex items-center gap-3 mb-4">
-                        <div className="p-2 rounded-xl bg-primary/10 text-primary">
-                          <MapPin className="w-4 h-4" />
-                        </div>
-                        <div>
-                          <h4 className="font-bold text-foreground text-sm tracking-tight">{selectedHub.name}</h4>
-                          <p className="text-[10px] text-muted-foreground">{selectedHub.city}</p>
-                        </div>
-                      </div>
-
-                      <div className="space-y-2 mb-4 text-[11px]">
-                        <div className="flex justify-between items-center">
-                          <span className="text-muted-foreground uppercase tracking-widest font-bold">Division</span>
-                          <span className="text-primary dark:text-secondary font-bold">{selectedHub.type}</span>
-                        </div>
-                        <div className="flex justify-between items-center">
-                          <span className="text-muted-foreground uppercase tracking-widest font-bold">Activity</span>
-                          <span className="text-foreground font-medium flex items-center gap-1">
-                            <Zap className="w-3 h-3 text-accent animate-pulse" /> Optimal Telemetry
-                          </span>
-                        </div>
-                      </div>
-
-                      <button className="w-full py-2 rounded-xl bg-foreground text-background text-[10px] font-bold uppercase tracking-widest hover:bg-primary hover:text-white transition-all flex items-center justify-center gap-1.5">
-                        <Info className="w-3 h-3" /> Node Details
-                      </button>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
               </div>
 
               {/* Grid Fallback Warning banner */}
-              <div className="absolute top-4 right-4 z-20 flex items-center gap-2 rounded-xl border border-border/10 bg-background/80 px-3 py-1.5 text-[9px] font-bold uppercase tracking-[0.15em] text-muted-foreground backdrop-blur-md">
-                <Network className="w-3 h-3 text-primary" />
+              <div className="absolute top-4 right-4 z-20 flex items-center gap-2 rounded-xl border border-border/10 bg-background/80 px-3 py-1.5 text-[9px] font-bold uppercase tracking-[0.15em] text-muted-foreground backdrop-blur-md pointer-events-none">
+                <Network className="w-3 h-3 text-primary animate-pulse" />
                 Autonomous Telemetry Mesh Active
               </div>
             </div>
           )}
 
-          {/* Map Overlay Stats */}
-          <div className="absolute top-8 left-8 p-6 rounded-[2rem] border border-white/5 bg-background/40 backdrop-blur-md hidden md:block pointer-events-none z-10">
+          {/* LEFT Cockpit Control Panel */}
+          <div className="absolute top-8 left-8 p-6 rounded-[2rem] border border-white/5 bg-background/40 backdrop-blur-md hidden md:block pointer-events-auto z-10 w-64 shadow-xl">
             <div className="space-y-4">
-              <div>
-                <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em] mb-1">Active Nodes</div>
-                <div className="text-3xl font-black text-foreground">582</div>
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">Active Nodes</span>
+                <span className="flex h-2 w-2 relative">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                </span>
+              </div>
+              <div className="text-3xl font-black text-foreground">
+                {activeNodes}
               </div>
               <div>
                 <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em] mb-1">Connectivity</div>
-                <div className="text-3xl font-black text-primary dark:text-secondary">99.4%</div>
+                <div className="text-3xl font-black text-primary dark:text-secondary">
+                  {connectivity.toFixed(1)}%
+                </div>
+              </div>
+              <div className="pt-2 border-t border-white/5 flex items-center justify-between">
+                <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
+                  <Activity className="w-3 h-3" /> Auto Scan
+                </span>
+                <button
+                  onClick={() => setIsAutoScan(!isAutoScan)}
+                  className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-wider transition-all flex items-center gap-1 ${isAutoScan ? 'bg-primary/20 text-primary border border-primary/30' : 'bg-muted text-muted-foreground border border-border/30'}`}
+                >
+                  {isAutoScan ? <Pause className="w-2 h-2" /> : <Play className="w-2 h-2" />}
+                  {isAutoScan ? "ON" : "OFF"}
+                </button>
               </div>
             </div>
           </div>
 
-          {/* Map Controls Helper */}
-          <div className="absolute bottom-8 left-8 text-[10px] font-bold text-muted-foreground/60 uppercase tracking-[0.3em] flex items-center gap-4 z-10 pointer-events-none">
-            <span className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-primary" /> Established</span>
-            <span className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-secondary animate-pulse" /> Emerging</span>
+          {/* RIGHT Sidebar (Node Intelligence & Scrolling Logs) */}
+          <div className="absolute top-8 right-8 w-80 h-[calc(100%-4rem)] hidden lg:flex flex-col gap-4 z-10 pointer-events-auto shadow-xl">
+            {/* Node Intelligence Dashboard */}
+            <div className="p-5 rounded-[2rem] border border-white/5 bg-background/40 backdrop-blur-md flex-1 flex flex-col justify-between overflow-hidden">
+              <div>
+                <div className="flex items-center justify-between border-b border-white/5 pb-3 mb-4">
+                  <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em] flex items-center gap-1.5">
+                    <Network className="w-3.5 h-3.5 text-primary animate-pulse" />
+                    Node Intelligence
+                  </span>
+                  {selectedHub ? (
+                    <span className="px-2 py-0.5 rounded-full bg-primary/10 text-primary text-[8px] font-bold uppercase tracking-wider border border-primary/20">
+                      Active
+                    </span>
+                  ) : (
+                    <span className="px-2 py-0.5 rounded-full bg-muted text-muted-foreground text-[8px] font-bold uppercase tracking-wider border border-border/20 animate-pulse">
+                      Scanning
+                    </span>
+                  )}
+                </div>
+
+                <AnimatePresence mode="wait">
+                  {selectedHub ? (
+                    <motion.div
+                      key={selectedHub.id}
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -20 }}
+                      transition={{ duration: 0.3 }}
+                      className="space-y-4"
+                    >
+                      <div>
+                        <h4 className="text-lg font-black text-foreground tracking-tight">{selectedHub.name}</h4>
+                        <p className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
+                          <MapPin className="w-3 h-3 text-primary" /> {selectedHub.city}
+                        </p>
+                      </div>
+
+                      <div className="space-y-2.5 pt-2">
+                        <div className="flex justify-between items-center text-[10px]">
+                          <span className="text-muted-foreground uppercase tracking-widest font-bold">Specialization</span>
+                          <span className="text-primary dark:text-secondary font-bold uppercase tracking-wider">{selectedHub.type}</span>
+                        </div>
+                        <div className="flex justify-between items-center text-[10px]">
+                          <span className="text-muted-foreground uppercase tracking-widest font-bold">Throughput</span>
+                          <span className="text-foreground font-mono font-bold">{(selectedHub.id * 14.2 + 8.1).toFixed(1)} Gbps</span>
+                        </div>
+                        <div className="flex justify-between items-center text-[10px]">
+                          <span className="text-muted-foreground uppercase tracking-widest font-bold">Local Ping</span>
+                          <span className="text-foreground font-mono font-bold">{(12 + selectedHub.id * 7 + Math.random() * 5).toFixed(0)}ms</span>
+                        </div>
+                        <div className="flex justify-between items-center text-[10px]">
+                          <span className="text-muted-foreground uppercase tracking-widest font-bold">Impact Weight</span>
+                          <div className="flex gap-1">
+                            <span className="w-2.5 h-1 rounded-full bg-primary" />
+                            <span className="w-2.5 h-1 rounded-full bg-primary" />
+                            <span className={`w-2.5 h-1 rounded-full ${selectedHub.impact === 'High' ? 'bg-primary' : 'bg-white/10'}`} />
+                          </div>
+                        </div>
+                      </div>
+                    </motion.div>
+                  ) : (
+                    <motion.div
+                      key="scanning"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      className="h-28 flex flex-col items-center justify-center text-center space-y-2"
+                    >
+                      <div className="w-8 h-8 rounded-full border-2 border-primary/20 border-t-primary animate-spin" />
+                      <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.25em]">Mesh Discovery Active</p>
+                      <p className="text-[9px] text-muted-foreground/60 max-w-[200px]">Click a node or wait for Auto-Scan to fetch details.</p>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+
+              {/* Scrolling Telemetry System Logs */}
+              <div className="border-t border-white/5 pt-4 mt-4 flex-1 flex flex-col justify-end overflow-hidden">
+                <div className="flex items-center justify-between text-[9px] font-bold text-muted-foreground uppercase tracking-wider mb-2 font-mono">
+                  <span>🛰️ Telemetry Stream</span>
+                  <span className="text-green-500 animate-pulse">Live</span>
+                </div>
+                <div className="bg-black/35 rounded-xl p-3 font-mono text-[8px] text-green-400/90 space-y-1.5 h-[110px] overflow-hidden border border-white/5 flex flex-col justify-end">
+                  {logs.map((log, index) => (
+                    <div key={index} className="truncate opacity-90 first:opacity-40 transition-opacity duration-300">
+                      {log}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
         </motion.div>
 

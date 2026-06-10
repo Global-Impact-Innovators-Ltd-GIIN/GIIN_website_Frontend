@@ -238,7 +238,7 @@ export function GlobeSection() {
   const isDark = resolvedTheme === "dark";
 
   return (
-    <section className="relative h-screen w-full bg-background flex flex-col items-center justify-center overflow-hidden border-t border-border/10 transition-colors duration-500">
+    <section className="relative h-screen w-full bg-section-gradient flex flex-col items-center justify-center overflow-hidden border-t border-border/10 transition-colors duration-500">
       {/* Immersive centered backdrop glow aura */}
       <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_center,rgba(139,92,246,0.08),transparent_65%)] dark:bg-[radial-gradient(circle_at_center,rgba(127,76,165,0.2),transparent_55%)] z-0" />
 

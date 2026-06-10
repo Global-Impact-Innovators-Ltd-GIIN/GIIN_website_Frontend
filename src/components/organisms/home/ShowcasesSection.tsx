@@ -161,7 +161,7 @@ export function ShowcasesSection() {
   };
 
   return (
-    <section className="w-full bg-background py-20 relative overflow-hidden">
+    <section className="w-full bg-section-gradient py-20 relative overflow-hidden">
       {/* Soundwave animation styles */}
       <style dangerouslySetInnerHTML={{ __html: `
         @keyframes pulse-wave {

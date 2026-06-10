@@ -132,9 +132,6 @@ export function HeroSection() {
   const y = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
   const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
 
-  const { resolvedTheme } = useTheme();
-  const isDark = resolvedTheme === "dark";
-
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentScene((prev) => (prev + 1) % SCENES.length);
@@ -143,7 +140,7 @@ export function HeroSection() {
   }, []);
 
   return (
-    <section className="relative h-screen w-full min-w-full overflow-hidden bg-background transition-colors duration-500">
+    <section className="relative h-screen w-full min-w-full overflow-hidden bg-[#020205]">
       {/* Floating Blobs Custom Animations */}
       <style dangerouslySetInnerHTML={{ __html: `
         @keyframes float-blob-1 {
@@ -163,21 +160,15 @@ export function HeroSection() {
         }
       ` }} />
 
-      {/* Background Image Layer with Cross-fade & Theme Adaptive Contrast */}
+      {/* Background Image Layer with Cross-fade & Permanent Dark Contrast */}
       <div className="absolute inset-0 z-0 w-full h-full">
-        {/* Base theme background color */}
-        <div className={cn("absolute inset-0 transition-colors duration-500", isDark ? "bg-[#030308]" : "bg-slate-50")} />
+        {/* Deep midnight base background */}
+        <div className="absolute inset-0 bg-[#020205]" />
 
         {/* Ambient Floating Color Blobs */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-60 z-0">
-          <div className={cn(
-            "absolute -top-40 -left-40 w-[600px] h-[600px] rounded-full blur-[130px] animate-blob-1 transition-all duration-700",
-            isDark ? "bg-primary/15" : "bg-primary/8"
-          )} />
-          <div className={cn(
-            "absolute -bottom-40 -right-40 w-[600px] h-[600px] rounded-full blur-[130px] animate-blob-2 transition-all duration-700",
-            isDark ? "bg-blue-500/10" : "bg-blue-300/8"
-          )} />
+          <div className="absolute -top-40 -left-40 w-[600px] h-[600px] rounded-full blur-[130px] animate-blob-1 bg-primary/15" />
+          <div className="absolute -bottom-40 -right-40 w-[600px] h-[600px] rounded-full blur-[130px] animate-blob-2 bg-blue-500/10" />
         </div>
         
         {/* Soft watermark background office image */}
@@ -186,7 +177,7 @@ export function HeroSection() {
             key={currentScene}
             src={SCENES[currentScene]}
             initial={{ opacity: 0, scale: 1.1 }}
-            animate={{ opacity: isDark ? 0.70 : 0.65, scale: 1 }}
+            animate={{ opacity: 0.8, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
             transition={{ duration: 2, ease: "easeInOut" }}
             className="absolute inset-0 w-full h-full object-cover"
@@ -196,24 +187,21 @@ export function HeroSection() {
           />
         </AnimatePresence>
 
-        {/* Dynamic Overlays (reduces grey muddiness in light mode, enhances deep space in dark mode) */}
-        <div className={cn("absolute inset-0 z-10 transition-colors duration-500", isDark ? "bg-black/45" : "bg-white/55")} />
-        <div className={cn("absolute inset-0 z-20 bg-gradient-to-b via-transparent transition-colors duration-500", isDark ? "from-black/10 to-[#030308]" : "from-white/10 to-slate-50")} />
+        {/* Clean dark overlays (45% black tint to maintain contrast, then a bottom gradient to fade into dark/light pages) */}
+        <div className="absolute inset-0 z-10 bg-black/45" />
+        <div className="absolute inset-0 z-20 bg-gradient-to-b from-black/10 via-transparent to-[#020205]" />
       </div>
 
       {/* 3D Particle Layer */}
       <div className="absolute inset-0 z-40 pointer-events-none opacity-40">
         <Canvas camera={{ position: [0, 0, 5] }}>
-          <ParticleEnvironment isDark={isDark} />
+          <ParticleEnvironment isDark={true} />
         </Canvas>
       </div>
 
       {/* Subtle Digital Grid Overlay */}
       <div
-        className={cn(
-          "absolute inset-0 z-0 pointer-events-none transition-opacity duration-500",
-          isDark ? "opacity-[0.12]" : "opacity-[0.05]"
-        )}
+        className="absolute inset-0 z-0 pointer-events-none opacity-[0.12]"
         style={{
           backgroundImage: `
             linear-gradient(to right, rgba(127, 76, 165, 0.1) 1px, transparent 1px),
@@ -235,8 +223,8 @@ export function HeroSection() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
         >
-          <span className="mb-5 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.2em] text-primary dark:text-secondary backdrop-blur-md shadow-sm">
-            <span className="w-1.5 h-1.5 rounded-full bg-primary dark:bg-secondary animate-ping" />
+          <span className="mb-5 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.2em] text-secondary backdrop-blur-md shadow-sm">
+            <span className="w-1.5 h-1.5 rounded-full bg-secondary animate-ping" />
             The Future of African Innovation
           </span>
         </motion.div>
@@ -248,15 +236,12 @@ export function HeroSection() {
           transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
         >
           <span className="block min-h-[2.25em] w-full">
-            <TypingText text={"GLOBAL\nIMPACT INNOVATORS"} isDark={isDark} />
+            <TypingText text={"GLOBAL\nIMPACT INNOVATORS"} isDark={true} />
           </span>
         </motion.h1>
 
         <motion.p
-          className={cn(
-            "mx-auto max-w-2xl text-lg sm:text-xl md:text-2xl font-medium transition-colors duration-500",
-            isDark ? "text-white/80 drop-shadow-md" : "text-slate-600"
-          )}
+          className="mx-auto max-w-2xl text-lg sm:text-xl md:text-2xl font-medium text-white/80 drop-shadow-md"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.6, ease: "easeOut" }}
@@ -285,7 +270,7 @@ export function HeroSection() {
           {!user && (
             <Link
               href="/auth/login"
-              className="px-8 py-4 border border-foreground/10 bg-foreground/5 hover:bg-foreground/10 text-foreground dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10 dark:text-white font-black uppercase tracking-widest text-[10px] rounded-2xl backdrop-blur-md transition-all hover:scale-105 active:scale-95"
+              className="px-8 py-4 border border-white/10 bg-white/5 hover:bg-white/10 text-white font-black uppercase tracking-widest text-[10px] rounded-2xl backdrop-blur-md transition-all hover:scale-105 active:scale-95"
             >
               Sign In
             </Link>
@@ -301,10 +286,10 @@ export function HeroSection() {
         transition={{ delay: 1.4, duration: 0.8 }}
       >
         <Link href="#mission" className="flex flex-col items-center gap-2 group cursor-pointer">
-          <span className="text-[9px] uppercase tracking-[0.25em] text-muted-foreground group-hover:text-primary dark:group-hover:text-secondary transition-colors duration-300">Discover</span>
+          <span className="text-[9px] uppercase tracking-[0.25em] text-muted-foreground group-hover:text-secondary transition-colors duration-300">Discover</span>
           <div className="h-8 w-px bg-gradient-to-b from-primary via-secondary to-transparent group-hover:h-12 transition-all duration-300" />
         </Link>
       </motion.div>
-    </section >
+    </section>
   );
 }
