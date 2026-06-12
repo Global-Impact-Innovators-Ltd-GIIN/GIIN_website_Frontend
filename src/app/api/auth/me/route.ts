@@ -40,7 +40,7 @@ export async function GET() {
             lastName: user.lastName,
             avatarUrl: user.avatarUrl,
             isSuperAdmin: user.isSuperAdmin,
-            organizations: user.organizations.map((m) => ({
+            organizations: user.organizations.map((m: any) => ({
                 id: m.organization.id,
                 name: m.organization.name,
                 role: m.role.name,

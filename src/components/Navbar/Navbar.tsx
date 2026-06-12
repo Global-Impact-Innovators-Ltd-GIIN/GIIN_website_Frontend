@@ -162,7 +162,7 @@ export function Navbar({ user }: NavbarProps) {
       )}
     >
       <div className="max-w-7xl mx-auto flex items-center justify-between">
-        <Logo size="md" className="transition-transform duration-300 hover:scale-[1.02]" />
+        <Logo size="md" className={cn("transition-transform duration-300 hover:scale-[1.02]", scrolled ? "text-foreground" : "text-white")} />
 
         <nav className="hidden md:flex items-center gap-1.5">
           {navigationConfig.map((item) => {
@@ -177,7 +177,12 @@ export function Navbar({ user }: NavbarProps) {
                     href={item.href || "/"}
                     ref={(el) => { headerRefs.current[item.label] = el; }}
                     onKeyDown={(e) => handleHeaderKeyDown(e, item)}
-                    className={cn("relative px-4 py-2 text-sm font-bold tracking-wide rounded-lg text-muted-foreground hover:text-foreground transition-colors duration-300 flex items-center gap-1.5")}
+                    className={cn(
+                      "relative px-4 py-2 text-sm font-bold tracking-wide rounded-lg transition-colors duration-300 flex items-center gap-1.5",
+                      scrolled 
+                        ? "text-muted-foreground hover:text-foreground" 
+                        : "text-white/80 hover:text-white"
+                    )}
                   >
                     <span>{item.label}</span>
                     {isActive && <AnimatedUnderline layoutId="desktopActiveUnderline" />}
@@ -188,7 +193,12 @@ export function Navbar({ user }: NavbarProps) {
                     aria-haspopup="true"
                     aria-expanded={isMenuOpen}
                     onKeyDown={(e) => handleHeaderKeyDown(e, item)}
-                    className={cn("relative px-4 py-2 text-sm font-bold tracking-wide rounded-lg text-muted-foreground hover:text-foreground transition-colors duration-300 flex items-center gap-1.5 focus:outline-none")}
+                    className={cn(
+                      "relative px-4 py-2 text-sm font-bold tracking-wide rounded-lg transition-colors duration-300 flex items-center gap-1.5 focus:outline-none",
+                      scrolled 
+                        ? "text-muted-foreground hover:text-foreground" 
+                        : "text-white/80 hover:text-white"
+                    )}
                   >
                     <span>{item.label}</span>
                     <ChevronDown className={cn("w-3.5 h-3.5 transition-transform", isMenuOpen && "rotate-180 text-primary")} />
@@ -246,7 +256,17 @@ export function Navbar({ user }: NavbarProps) {
 
           {!user ? (
             <div className="flex items-center gap-3">
-              <Link href="/auth/login" className="text-sm font-semibold text-muted-foreground hover:text-foreground px-3 py-2">Login</Link>
+              <Link 
+                href="/auth/login" 
+                className={cn(
+                  "text-sm font-semibold px-3 py-2 transition-colors",
+                  scrolled 
+                    ? "text-muted-foreground hover:text-foreground" 
+                    : "text-white/80 hover:text-white"
+                )}
+              >
+                Login
+              </Link>
               <Link href="/auth/register" className="group/cta relative inline-flex items-center gap-1.5 text-sm font-bold bg-accent text-accent-foreground px-5 py-2.5 rounded-xl hover:bg-accent/90 transition-all shadow-xl">
                 <span>Sign Up</span>
                 <ArrowRight className="w-4 h-4 transition-transform group-hover/cta:translate-x-0.5" />
@@ -262,7 +282,17 @@ export function Navbar({ user }: NavbarProps) {
         </div>
 
         <div className="flex md:hidden items-center gap-3">
-          <button onClick={() => setIsMobileOpen(true)} className="p-2 rounded-lg border border-border/10 text-muted-foreground"><Menu className="w-5 h-5" /></button>
+          <button 
+            onClick={() => setIsMobileOpen(true)} 
+            className={cn(
+              "p-2 rounded-lg transition-colors",
+              scrolled 
+                ? "border border-border/10 text-muted-foreground hover:text-foreground" 
+                : "border border-white/20 text-white/80 hover:text-white hover:border-white/40"
+            )}
+          >
+            <Menu className="w-5 h-5" />
+          </button>
         </div>
       </div>
 

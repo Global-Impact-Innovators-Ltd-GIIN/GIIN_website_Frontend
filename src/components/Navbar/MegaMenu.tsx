@@ -84,6 +84,7 @@ export function MegaMenu({ sections, onClose }: MegaMenuProps) {
                   item={item}
                   onHover={setActiveItem}
                   onLeave={() => { }}
+                  onClick={onClose}
                 />
               ))}
             </div>
@@ -101,6 +102,7 @@ export function MegaMenu({ sections, onClose }: MegaMenuProps) {
                   item={item}
                   onHover={setActiveItem}
                   onLeave={() => { }}
+                  onClick={onClose}
                 />
               ))}
             </div>
@@ -118,6 +120,7 @@ export function MegaMenu({ sections, onClose }: MegaMenuProps) {
                   item={item}
                   onHover={setActiveItem}
                   onLeave={() => { }}
+                  onClick={onClose}
                 />
               ))}
             </div>
@@ -138,6 +141,7 @@ export function MegaMenu({ sections, onClose }: MegaMenuProps) {
                     item={item}
                     onHover={setActiveItem}
                     onLeave={() => { }}
+                    onClick={onClose}
                   />
                 ))}
               </div>
@@ -155,6 +159,7 @@ export function MegaMenu({ sections, onClose }: MegaMenuProps) {
                     item={item}
                     onHover={setActiveItem}
                     onLeave={() => { }}
+                    onClick={onClose}
                   />
                 ))}
               </div>

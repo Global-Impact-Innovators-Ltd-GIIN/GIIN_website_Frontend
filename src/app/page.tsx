@@ -33,8 +33,7 @@ export default function Home() {
       <GlobeSection />
 
       {/* 5. The Ecosystem Overview */}
-      <section id="ecosystem" className="w-full border-t border-border/10 bg-background py-28 relative overflow-hidden transition-colors duration-500">
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/5 dark:bg-primary/10 blur-[120px] rounded-full pointer-events-none" />
+      <section id="ecosystem" className="w-full border-t border-border/10 bg-section-gradient py-28 relative overflow-hidden transition-colors duration-500">
         <div className="container mx-auto px-6 relative z-10">
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
             <div className="max-w-2xl">
@@ -101,9 +100,7 @@ export default function Home() {
       <NewsBlogsSection />
 
       {/* 10. Global CTA */}
-      <section className="relative w-full py-40 overflow-hidden bg-background transition-colors duration-500">
-        <div className="absolute inset-0 bg-primary/5 dark:bg-primary/10 pointer-events-none" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/5 blur-[150px] rounded-full pointer-events-none" />
+      <section className="relative w-full py-40 overflow-hidden bg-section-gradient transition-colors duration-500">
 
         <div className="container mx-auto px-6 text-center relative z-10">
           <motion.div

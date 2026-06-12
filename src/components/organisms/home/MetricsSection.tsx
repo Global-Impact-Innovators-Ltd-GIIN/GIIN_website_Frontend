@@ -11,7 +11,7 @@ const metrics = [
 
 export function MetricsSection() {
   return (
-    <section className="w-full border-t border-border/50 bg-background py-24">
+    <section className="w-full border-t border-border/50 bg-section-gradient py-24">
       <div className="container mx-auto px-6 text-center">
         <motion.h2
           className="mb-16 font-heading text-4xl font-black md:text-6xl text-foreground tracking-tighter"

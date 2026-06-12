@@ -7,9 +7,7 @@ import { cn } from "@/lib/utils";
 
 export function VisionSection() {
     return (
-        <section id="vision" className="w-full py-28 bg-background relative overflow-hidden transition-colors duration-500">
-            {/* Background decoration */}
-            <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-primary/5 dark:bg-primary/10 blur-[150px] rounded-full pointer-events-none" />
+        <section id="vision" className="w-full py-28 bg-section-gradient relative overflow-hidden transition-colors duration-500">
 
             <div className="container mx-auto px-6 relative z-10 text-center">
                 <motion.div

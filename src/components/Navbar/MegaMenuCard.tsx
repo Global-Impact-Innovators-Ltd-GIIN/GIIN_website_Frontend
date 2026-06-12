@@ -10,9 +10,10 @@ interface MegaMenuCardProps {
   item: NavLink;
   onHover: (item: NavLink) => void;
   onLeave: () => void;
+  onClick?: () => void;
 }
 
-export function MegaMenuCard({ item, onHover, onLeave }: MegaMenuCardProps) {
+export function MegaMenuCard({ item, onHover, onLeave, onClick }: MegaMenuCardProps) {
   const cardRef = useRef<HTMLDivElement>(null);
   const [rotateX, setRotateX] = useState(0);
   const [rotateY, setRotateY] = useState(0);
@@ -85,7 +86,7 @@ export function MegaMenuCard({ item, onHover, onLeave }: MegaMenuCardProps) {
         }}
       />
 
-      <Link href={item.href} className="flex gap-4 items-start relative z-10">
+      <Link href={item.href} onClick={onClick} className="flex gap-4 items-start relative z-10">
         <div className="flex-shrink-0 p-2.5 rounded-lg border border-border/10 bg-background text-muted-foreground group-hover:text-primary group-hover:border-primary/20 group-hover:shadow-[0_0_15px_var(--primary-glow)] transition-all">
           <Icon className="w-5 h-5" />
         </div>

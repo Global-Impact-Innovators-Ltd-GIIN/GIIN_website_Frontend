@@ -9,9 +9,10 @@ import * as THREE from "three";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { useAuth } from "@/components/providers/auth-provider";
+import { cn } from "@/lib/utils";
 
 // Generate particle positions once outside the component
-const particleCount = 1500;
+const particleCount = 1200;
 const particlePositions = new Float32Array(particleCount * 3);
 for (let i = 0; i < particleCount; i++) {
   particlePositions[i * 3] = (Math.random() - 0.5) * 10;
@@ -20,15 +21,14 @@ for (let i = 0; i < particleCount; i++) {
 }
 
 // AI Particle Environment Component with smooth slow drift animation
-function ParticleEnvironment() {
+function ParticleEnvironment({ isDark }: { isDark: boolean }) {
   const ref = useRef<THREE.Points>(null);
-  const { resolvedTheme } = useTheme();
-  const particleColor = resolvedTheme === "dark" ? "#7F4CA5" : "#4B1C71";
+  const particleColor = isDark ? "#8b5cf6" : "#6366f1";
 
   useFrame((state) => {
     if (ref.current) {
-      ref.current.rotation.y = state.clock.getElapsedTime() * 0.01;
-      ref.current.rotation.x = Math.sin(state.clock.getElapsedTime() * 0.02) * 0.02;
+      ref.current.rotation.y = state.clock.getElapsedTime() * 0.008;
+      ref.current.rotation.x = Math.sin(state.clock.getElapsedTime() * 0.01) * 0.01;
     }
   });
 
@@ -38,10 +38,10 @@ function ParticleEnvironment() {
         <PointMaterial
           transparent
           color={particleColor}
-          size={0.028}
+          size={0.025}
           sizeAttenuation={true}
           depthWrite={false}
-          opacity={resolvedTheme === "dark" ? 0.4 : 0.25}
+          opacity={isDark ? 0.35 : 0.15}
         />
       </Points>
     </group>
@@ -49,7 +49,7 @@ function ParticleEnvironment() {
 }
 
 // Premium Typing Effect Component (Loops continuously)
-function TypingText({ text }: { text: string }) {
+function TypingText({ text, isDark }: { text: string; isDark: boolean }) {
   const [currentText, setCurrentText] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
   const [speed, setSpeed] = useState(80);
@@ -83,20 +83,46 @@ function TypingText({ text }: { text: string }) {
     return () => clearTimeout(timer);
   }, [currentText, isDeleting, text, speed]);
 
+  const lines = currentText.split("\n");
+  const line1 = lines[0] || "";
+  const line2 = lines[1] || "";
+  const isSecondLineTyping = currentText.includes("\n") || currentText.length > 6; // "GLOBAL" is 6 characters
+
   return (
-    <span className="relative inline-flex items-center">
-      <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary via-secondary to-primary drop-shadow-[0_0_20px_rgba(127,76,165,0.15)] italic">
-        {currentText}
+    <span className="relative flex flex-col items-center justify-center text-center">
+      {/* Line 1: GLOBAL */}
+      <span className="flex items-center justify-center flex-wrap">
+        <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary via-secondary to-primary drop-shadow-[0_0_20px_rgba(127,76,165,0.15)] italic">
+          {line1}
+        </span>
+        {!isSecondLineTyping && (
+          <span className="ml-1 inline-block w-[3px] h-[0.85em] bg-primary align-middle animate-pulse" />
+        )}
       </span>
-      <span className="ml-1 inline-block w-[3px] h-[0.85em] bg-primary align-middle animate-pulse" />
+
+      {/* Line 2: IMPACT INNOVATORS */}
+      {isSecondLineTyping && (
+        <span className="flex items-center justify-center flex-wrap mt-2">
+          <span className={cn(
+            "italic transition-colors duration-500",
+            isDark 
+              ? "text-white drop-shadow-[0_10px_20px_rgba(255,255,255,0.15)]" 
+              : "text-slate-900 drop-shadow-[0_5px_10px_rgba(15,23,42,0.1)]"
+          )}>
+            {line2}
+          </span>
+          <span className={cn(
+            "ml-1 inline-block w-[3px] h-[0.85em] align-middle animate-pulse",
+            isDark ? "bg-white" : "bg-slate-900"
+          )} />
+        </span>
+      )}
     </span>
   );
 }
 
 const SCENES = [
-  "/images/hero-bg.png",
-  "/images/hero-2.png", // Assuming user will add this or I'll use a placeholder
-  "/images/hero-3.png"
+  "/images/hero-bg.png"
 ];
 
 export function HeroSection() {
@@ -114,13 +140,38 @@ export function HeroSection() {
   }, []);
 
   return (
-    <section className="relative h-screen w-full min-w-full overflow-hidden bg-background transition-colors duration-500">
-      {/* Background Image Layer with Cross-fade */}
-      <div className="absolute inset-0 z-0 w-full h-full">
-        <div className="absolute inset-0 bg-black/50 z-10" />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-background z-20" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.4)_100%)] z-30" />
+    <section className="relative h-screen w-full min-w-full overflow-hidden bg-[#020205]">
+      {/* Floating Blobs Custom Animations */}
+      <style dangerouslySetInnerHTML={{ __html: `
+        @keyframes float-blob-1 {
+          0%, 100% { transform: translate(0, 0) scale(1); }
+          33% { transform: translate(40px, -60px) scale(1.1); }
+          66% { transform: translate(-30px, 30px) scale(0.9); }
+        }
+        @keyframes float-blob-2 {
+          0%, 100% { transform: translate(0, 0) scale(1); }
+          50% { transform: translate(-50px, 50px) scale(1.15); }
+        }
+        .animate-blob-1 {
+          animation: float-blob-1 20s ease-in-out infinite;
+        }
+        .animate-blob-2 {
+          animation: float-blob-2 24s ease-in-out infinite;
+        }
+      ` }} />
 
+      {/* Background Image Layer with Cross-fade & Permanent Dark Contrast */}
+      <div className="absolute inset-0 z-0 w-full h-full">
+        {/* Deep midnight base background */}
+        <div className="absolute inset-0 bg-[#020205]" />
+
+        {/* Ambient Floating Color Blobs */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-60 z-0">
+          <div className="absolute -top-40 -left-40 w-[600px] h-[600px] rounded-full blur-[130px] animate-blob-1 bg-primary/15" />
+          <div className="absolute -bottom-40 -right-40 w-[600px] h-[600px] rounded-full blur-[130px] animate-blob-2 bg-blue-500/10" />
+        </div>
+        
+        {/* Soft watermark background office image */}
         <AnimatePresence mode="wait">
           <motion.img
             key={currentScene}
@@ -131,23 +182,26 @@ export function HeroSection() {
             transition={{ duration: 2, ease: "easeInOut" }}
             className="absolute inset-0 w-full h-full object-cover"
             onError={(e) => {
-              // Fallback if images don't exist
               (e.target as HTMLImageElement).src = "/images/hero-bg.png";
             }}
           />
         </AnimatePresence>
+
+        {/* Clean dark overlays (45% black tint to maintain contrast, then a bottom gradient to fade into dark/light pages) */}
+        <div className="absolute inset-0 z-10 bg-black/45" />
+        <div className="absolute inset-0 z-20 bg-gradient-to-b from-black/10 via-transparent to-[#020205]" />
       </div>
 
-      {/* 3D Particle Layer (Toned down) */}
+      {/* 3D Particle Layer */}
       <div className="absolute inset-0 z-40 pointer-events-none opacity-40">
         <Canvas camera={{ position: [0, 0, 5] }}>
-          <ParticleEnvironment />
+          <ParticleEnvironment isDark={true} />
         </Canvas>
       </div>
 
       {/* Subtle Digital Grid Overlay */}
       <div
-        className="absolute inset-0 z-0 opacity-[0.06] dark:opacity-[0.12] pointer-events-none"
+        className="absolute inset-0 z-0 pointer-events-none opacity-[0.12]"
         style={{
           backgroundImage: `
             linear-gradient(to right, rgba(127, 76, 165, 0.1) 1px, transparent 1px),
@@ -159,15 +213,6 @@ export function HeroSection() {
         }}
       />
 
-      {/* Radial Ambient Glows - Deep purple focused */}
-      <div className="absolute inset-0 z-0 pointer-events-none">
-        {/* Primary Purple Core Glow */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[75%] h-[75%] rounded-full bg-[radial-gradient(circle,var(--primary-glow)_0%,transparent_70%)] opacity-90" />
-
-        {/* Secondary Amethyst Soft Glow */}
-        <div className="absolute top-[30%] left-[50%] -translate-x-1/2 -translate-y-1/2 w-[50%] h-[50%] rounded-full bg-[radial-gradient(circle,rgba(127,76,165,0.08)_0%,transparent_80%)] opacity-60 blur-3xl animate-pulse [animation-duration:12s]" />
-      </div>
-
       {/* Overlay Content */}
       <motion.div
         style={{ y, opacity }}
@@ -178,26 +223,25 @@ export function HeroSection() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
         >
-          <span className="mb-5 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.2em] text-primary dark:text-secondary backdrop-blur-md shadow-sm">
-            <span className="w-1.5 h-1.5 rounded-full bg-primary dark:bg-secondary animate-ping" />
+          <span className="mb-5 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.2em] text-secondary backdrop-blur-md shadow-sm">
+            <span className="w-1.5 h-1.5 rounded-full bg-secondary animate-ping" />
             The Future of African Innovation
           </span>
         </motion.div>
 
         <motion.h1
-          className="mb-6 font-heading text-5xl font-black tracking-tighter sm:text-7xl md:text-8xl lg:text-9xl bg-clip-text text-transparent bg-gradient-to-br from-white via-white/90 to-primary/40 drop-shadow-[0_10px_30px_rgba(0,0,0,0.5)]"
+          className="mb-6 font-heading text-5xl font-black tracking-tighter sm:text-7xl md:text-8xl lg:text-9xl leading-[1.1] drop-shadow-[0_10px_30px_rgba(0,0,0,0.3)]"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
         >
-          GLOBAL <br className="md:hidden" />
-          <span className="block mt-1 min-h-[1.1em] md:inline md:mt-0 md:ml-3">
-            <TypingText text="IMPACT INNOVATORS" />
+          <span className="block min-h-[2.25em] w-full">
+            <TypingText text={"GLOBAL\nIMPACT INNOVATORS"} isDark={true} />
           </span>
         </motion.h1>
 
         <motion.p
-          className="mx-auto max-w-2xl text-lg text-white/80 sm:text-xl md:text-2xl drop-shadow-md font-medium"
+          className="mx-auto max-w-2xl text-lg sm:text-xl md:text-2xl font-medium text-white/80 drop-shadow-md"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.6, ease: "easeOut" }}
@@ -226,7 +270,7 @@ export function HeroSection() {
           {!user && (
             <Link
               href="/auth/login"
-              className="px-8 py-4 border border-foreground/10 bg-foreground/5 hover:bg-foreground/10 text-foreground dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10 dark:text-white font-black uppercase tracking-widest text-[10px] rounded-2xl backdrop-blur-md transition-all hover:scale-105 active:scale-95"
+              className="px-8 py-4 border border-white/10 bg-white/5 hover:bg-white/10 text-white font-black uppercase tracking-widest text-[10px] rounded-2xl backdrop-blur-md transition-all hover:scale-105 active:scale-95"
             >
               Sign In
             </Link>
@@ -242,10 +286,10 @@ export function HeroSection() {
         transition={{ delay: 1.4, duration: 0.8 }}
       >
         <Link href="#mission" className="flex flex-col items-center gap-2 group cursor-pointer">
-          <span className="text-[9px] uppercase tracking-[0.25em] text-muted-foreground group-hover:text-primary dark:group-hover:text-secondary transition-colors duration-300">Discover</span>
+          <span className="text-[9px] uppercase tracking-[0.25em] text-muted-foreground group-hover:text-secondary transition-colors duration-300">Discover</span>
           <div className="h-8 w-px bg-gradient-to-b from-primary via-secondary to-transparent group-hover:h-12 transition-all duration-300" />
         </Link>
       </motion.div>
-    </section >
+    </section>
   );
 }

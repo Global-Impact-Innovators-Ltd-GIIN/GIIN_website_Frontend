@@ -49,8 +49,12 @@
 }
 
 :root {
-  --background: oklch(0.99 0.01 270);
-  /* Softest lavender white */
+  --background: oklch(0.97 0.013 270);
+  /* Soft lavender-tinted background */
+  --bg-gradient-from: oklch(0.98 0.008 270);
+  /* Very bright soft lavender */
+  --bg-gradient-to: oklch(0.95 0.015 270);
+  /* Slightly deeper soft lavender */
   --foreground: oklch(0.12 0.04 285);
   /* Deep midnight purple */
   --card: oklch(1 0 0);
@@ -80,12 +84,17 @@
 }
 
 .dark {
-  --background: #020205;
-  /* Midnight Abyss */
+  --background: #06040d;
+  /* Midnight Purple-Black Abyss */
+  --bg-gradient-from: #06040d;
+  /* Deep dark purple-black */
+  --bg-gradient-to: #0f0c1a;
+  /* Slightly lighter dark purple */
   --foreground: #F8FAFC;
-  --card: #0A0A12;
+  --card: #0f0c1a;
+  /* Dark purple-tinted card for depth contrast */
   --card-foreground: #F8FAFC;
-  --popover: #0A0A12;
+  --popover: #0f0c1a;
   --popover-foreground: #F8FAFC;
   --primary: #7F4CA5;
   /* Amethyst for visibility in dark mode */
@@ -139,6 +148,10 @@
 
 @utility animate-glow-pulse {
   animation: glow-pulse 3s ease-in-out infinite;
+}
+
+@utility bg-section-gradient {
+  background: linear-gradient(135deg, var(--bg-gradient-from), var(--bg-gradient-to));
 }
 
 @keyframes glow-pulse {
