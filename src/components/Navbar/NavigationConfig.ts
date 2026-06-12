@@ -355,7 +355,7 @@ export const navigationConfig: NavItem[] = [
     items: [
       {
         label: "Founder Message",
-        href: "/leadership#founder",
+        href: "/leadership/founder-message",
         description: "A note on the core drive behind creating GIIN, from the desk of the Founder.",
         iconName: "MessageSquare",
       },
