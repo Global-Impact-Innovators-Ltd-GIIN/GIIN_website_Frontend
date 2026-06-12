@@ -2,9 +2,9 @@
 
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Globe, Lightbulb, GraduationCap, TrendingUp, Cpu, Handshake } from "lucide-react";
+import { Globe, Lightbulb, GraduationCap, TrendingUp, Cpu, Handshake, Sparkles } from "lucide-react";
 
-interface VisionItem {
+interface RoadmapItem {
   id: string;
   icon: React.ComponentType<{ className?: string }>;
   title: string;
@@ -13,18 +13,18 @@ interface VisionItem {
   details: string[];
 }
 
-export function FutureVision() {
-  const [activeStep, setActiveStep] = useState<string>("pan-african");
+export function Chapter6TheFuture() {
+  const [activeStep, setActiveStep] = useState<string>("network");
 
-  const steps: VisionItem[] = [
+  const steps: RoadmapItem[] = [
     {
-      id: "pan-african",
+      id: "network",
       icon: Globe,
       title: "Pan-African Leadership Network",
       sub: "Continental Coalition",
       timeline: "Phase 1: 2026 - 2027",
       details: [
-        "Unifying regional chapters into a single digital assembly.",
+        "Unifying regional leadership chapters into a single digital assembly.",
         "Deploying encrypted communication tools for executive collaboration.",
         "Establishing permanent leadership hubs in Accra, Nairobi, and Kigali."
       ]
@@ -42,7 +42,7 @@ export function FutureVision() {
       ]
     },
     {
-      id: "academy",
+      id: "programs",
       icon: GraduationCap,
       title: "Tech Transformation Programs",
       sub: "Educational Scale-up",
@@ -92,15 +92,18 @@ export function FutureVision() {
   ];
 
   return (
-    <section className="py-24 bg-card/10 border-y border-border/10 relative overflow-hidden">
+    <section id="future" className="py-24 bg-background relative z-10">
       <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[140px] pointer-events-none" />
 
       <div className="container mx-auto px-6 relative z-10">
         
         {/* Section Header */}
         <div className="max-w-3xl mx-auto text-center mb-16">
-          <span className="text-[10px] font-bold text-accent tracking-[0.25em] uppercase">The Roadmap</span>
-          <h2 className="text-3xl md:text-5xl font-black text-foreground tracking-tighter font-heading mt-3 mb-4">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary-foreground/90 text-[10px] font-bold uppercase tracking-[0.2em] mb-6">
+            <Sparkles className="w-3.5 h-3.5 text-accent" />
+            Chapter 6: The Future
+          </div>
+          <h2 className="text-3xl md:text-5xl font-black text-foreground tracking-tighter font-heading mb-4">
             A Vision Beyond Today
           </h2>
           <p className="text-muted-foreground text-lg font-light leading-relaxed">
@@ -108,10 +111,10 @@ export function FutureVision() {
           </p>
         </div>
 
-        {/* Dynamic Timeline Grid */}
+        {/* Roadmap Steps */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center max-w-5xl mx-auto">
           
-          {/* Timeline Node List */}
+          {/* Timeline Nodes */}
           <div className="lg:col-span-5 flex flex-col gap-2 relative">
             <div className="absolute left-6 top-6 bottom-6 w-[2px] bg-border/10 -z-10" />
 
@@ -145,7 +148,7 @@ export function FutureVision() {
             })}
           </div>
 
-          {/* Timeline Node Details View */}
+          {/* Detailed Content View */}
           <div className="lg:col-span-7 h-full">
             <AnimatePresence mode="wait">
               {steps.map((step) => {
@@ -174,9 +177,9 @@ export function FutureVision() {
 
                       <div className="h-px bg-border/10 w-full" />
 
-                      <ul className="space-y-4">
+                      <ul className="space-y-4 font-sans text-sm font-light text-muted-foreground leading-relaxed">
                         {step.details.map((detail, idx) => (
-                          <li key={idx} className="flex items-start gap-3 text-sm text-muted-foreground font-light leading-relaxed">
+                          <li key={idx} className="flex items-start gap-3">
                             <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
                             <span>{detail}</span>
                           </li>
@@ -184,11 +187,9 @@ export function FutureVision() {
                       </ul>
                     </div>
 
-                    <div className="mt-8 pt-6 border-t border-border/5 flex items-center justify-between">
-                      <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest">
-                        TIMELINE OBJECTIVE
-                      </span>
-                      <span className="text-xs font-bold text-foreground bg-muted/40 px-3.5 py-1.5 rounded-full border border-border/5 font-mono">
+                    <div className="mt-8 pt-6 border-t border-border/5 flex items-center justify-between font-mono text-[10px] text-muted-foreground">
+                      <span>TIMELINE METRIC</span>
+                      <span className="text-xs font-bold text-foreground bg-muted/40 px-3 py-1.5 rounded-full border border-border/5">
                         {step.timeline}
                       </span>
                     </div>

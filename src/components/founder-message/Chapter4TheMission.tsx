@@ -5,10 +5,10 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import { Quote, Sparkles } from "lucide-react";
 
-export function FounderLetter() {
+export function Chapter4TheMission() {
   return (
-    <section id="letter" className="py-24 bg-background relative z-10">
-      {/* Background spotlights */}
+    <section id="mission" className="py-24 bg-background relative z-10">
+      {/* Background radial highlights */}
       <div className="absolute top-1/2 left-1/3 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[130px] pointer-events-none" />
       <div className="absolute bottom-10 right-10 w-96 h-96 bg-accent/5 rounded-full blur-[100px] pointer-events-none" />
 
@@ -18,13 +18,13 @@ export function FounderLetter() {
         <div className="max-w-3xl mx-auto text-center mb-16">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary-foreground/90 text-[10px] font-bold uppercase tracking-[0.2em] mb-6">
             <Sparkles className="w-3.5 h-3.5 text-accent" />
-            Direct Communication
+            Chapter 4: The Mission
           </div>
           <h2 className="text-3xl md:text-5xl font-black text-foreground tracking-tighter font-heading mb-4">
-            A Letter From the Founder
+            The Desk of the Founder
           </h2>
           <p className="text-muted-foreground text-lg font-light leading-relaxed">
-            A direct message detailing our convictions, our journey, and the future we are actively engineering.
+            Our purpose stated in a direct message regarding sovereignty, ecosystem building, and continental acceleration.
           </p>
         </div>
 
@@ -36,12 +36,12 @@ export function FounderLetter() {
           transition={{ duration: 0.8 }}
           className="max-w-4xl mx-auto p-8 md:p-16 rounded-[2.5rem] border border-border/10 bg-card/25 backdrop-blur-2xl shadow-2xl relative"
         >
-          {/* Watermark / Decorative element */}
+          {/* Watermark quote icon */}
           <div className="absolute top-10 right-10 opacity-[0.02] text-foreground pointer-events-none">
             <Quote className="w-48 h-48" />
           </div>
 
-          {/* Letter Meta */}
+          {/* Document Header Info */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 border-b border-border/10 pb-8 mb-10 font-heading">
             <div className="flex items-center gap-4">
               <div className="relative w-16 h-16 rounded-full overflow-hidden border border-border/20">
@@ -63,7 +63,7 @@ export function FounderLetter() {
             </div>
           </div>
 
-          {/* Letter Content */}
+          {/* Letter Body Text */}
           <div className="space-y-6 text-foreground/90 font-light leading-relaxed text-base md:text-lg">
             <p className="font-bold text-foreground font-heading">
               To the Builders, Dreamers, and Partners of the African Digital Age,
@@ -90,7 +90,7 @@ export function FounderLetter() {
             </p>
           </div>
 
-          {/* Sign-off Block */}
+          {/* Document Sign-off stamp */}
           <div className="mt-12 pt-8 border-t border-border/10 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
             <div className="space-y-2">
               <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest block">

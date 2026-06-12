@@ -3,24 +3,24 @@
 import React from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { Zap, ArrowRight, Compass } from "lucide-react";
+import { Zap, ArrowDown, Users } from "lucide-react";
 
-interface FounderHeroProps {
-  onExploreVision: () => void;
+interface Chapter1MeetFounderProps {
+  onExploreClick: () => void;
 }
 
-export function FounderHero({ onExploreVision }: FounderHeroProps) {
+export function Chapter1MeetFounder({ onExploreClick }: Chapter1MeetFounderProps) {
   return (
     <section className="relative min-h-[90vh] flex items-center justify-center pt-24 pb-16 overflow-hidden z-10">
-      {/* Background Neon Gradients */}
+      {/* Cinematic Background glows */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[120px] animate-glow-pulse" />
-        <div className="absolute bottom-1/4 right-1/4 translate-x-1/2 translate-y-1/2 w-[400px] h-[400px] bg-indigo-500/10 rounded-full blur-[100px]" />
+        <div className="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 w-[550px] h-[550px] bg-primary/10 rounded-full blur-[130px] animate-glow-pulse" />
+        <div className="absolute bottom-1/4 right-1/4 translate-x-1/2 translate-y-1/2 w-[450px] h-[450px] bg-indigo-500/10 rounded-full blur-[110px]" />
       </div>
 
       <div className="container mx-auto px-6 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center relative z-10">
         
-        {/* Left Side: Text and Intro */}
+        {/* Left Side: Dynamic Text & Hook */}
         <div className="lg:col-span-7 flex flex-col justify-center text-left">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -28,13 +28,13 @@ export function FounderHero({ onExploreVision }: FounderHeroProps) {
             transition={{ duration: 0.8 }}
             className="space-y-6"
           >
-            {/* Tag / Badge */}
+            {/* Tag Badge */}
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary-foreground/95 text-[10px] font-bold uppercase tracking-[0.2em] w-fit">
               <Zap className="w-3.5 h-3.5 text-accent animate-pulse" />
-              Leadership & Purpose
+              Chapter 1: Meet the Founder
             </div>
 
-            {/* Title / Headline */}
+            {/* Main Headline */}
             <h1 className="text-4xl sm:text-5xl md:text-7xl font-black text-foreground tracking-tighter font-heading leading-[0.9] text-balance">
               Building Leaders.<br />
               <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary via-indigo-400 to-accent">
@@ -45,17 +45,17 @@ export function FounderHero({ onExploreVision }: FounderHeroProps) {
 
             {/* Supporting Text */}
             <p className="text-lg md:text-xl text-muted-foreground font-light leading-relaxed max-w-2xl text-balance">
-              What began as a vision to develop transformational leaders and innovative solutions has evolved into an ecosystem dedicated to empowering individuals, organizations, and communities across Africa and beyond.
+              What began as a personal conviction to develop transformational leaders and modular digital systems has evolved into an ecosystem dedicated to empowering individuals, organizations, and communities across Africa and beyond.
             </p>
 
-            {/* CTA Buttons */}
+            {/* Call to Actions */}
             <div className="flex flex-wrap items-center gap-4 pt-4">
               <button
-                onClick={onExploreVision}
+                onClick={onExploreClick}
                 className="group inline-flex items-center gap-2 bg-gradient-to-r from-primary to-indigo-600 hover:from-primary/90 hover:to-indigo-500 text-white font-bold px-6 py-3.5 rounded-xl transition-all shadow-lg hover:shadow-indigo-500/10 hover:scale-[1.02]"
               >
-                <span>Explore Our Vision</span>
-                <Compass className="w-4 h-4 transition-transform group-hover:rotate-45" />
+                <span>Enter The Narrative</span>
+                <ArrowDown className="w-4 h-4 transition-transform group-hover:translate-y-1" />
               </button>
 
               <a
@@ -63,13 +63,13 @@ export function FounderHero({ onExploreVision }: FounderHeroProps) {
                 className="group inline-flex items-center gap-2 border border-border/20 bg-card/40 backdrop-blur-md hover:bg-card/75 text-foreground hover:text-white font-bold px-6 py-3.5 rounded-xl transition-all"
               >
                 <span>Join The Movement</span>
-                <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                <Users className="w-4 h-4 text-accent transition-transform group-hover:scale-110" />
               </a>
             </div>
 
-            {/* Signature Graphic Element */}
-            <div className="pt-8 flex flex-col gap-2 opacity-80">
-              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">FOUNDER SIGN-OFF</span>
+            {/* Signature & Details */}
+            <div className="pt-8 flex flex-col gap-2 opacity-85">
+              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">AUTHENTICATED DIGITAL PATH</span>
               <div className="flex items-center gap-4">
                 <svg
                   className="w-36 h-12 text-accent fill-none stroke-current stroke-[1.5]"
@@ -78,8 +78,8 @@ export function FounderHero({ onExploreVision }: FounderHeroProps) {
                 >
                   <path d="M10 25 C20 15, 30 5, 40 25 C50 45, 60 35, 70 20 C80 5, 90 15, 100 30 C110 45, 120 40, 130 30 C140 20, 145 25, 150 25 M30 20 L50 35 M90 22 L110 32" />
                 </svg>
-                <div className="border-l border-border/20 pl-4">
-                  <p className="text-xs font-bold text-foreground">Dr. Emmanuel K. Mensah</p>
+                <div className="border-l border-border/20 pl-4 font-heading">
+                  <p className="text-sm font-bold text-foreground">Dr. Emmanuel K. Mensah</p>
                   <p className="text-[10px] text-muted-foreground">Founder & Executive Director, GIIN</p>
                 </div>
               </div>
@@ -87,7 +87,7 @@ export function FounderHero({ onExploreVision }: FounderHeroProps) {
           </motion.div>
         </div>
 
-        {/* Right Side: Portrait Image with glow effect */}
+        {/* Right Side: Portrait image with grayscale to color hover transition */}
         <div className="lg:col-span-5 relative flex justify-center items-center">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
@@ -95,8 +95,8 @@ export function FounderHero({ onExploreVision }: FounderHeroProps) {
             transition={{ duration: 1, delay: 0.2 }}
             className="relative w-full max-w-[420px] aspect-[4/5] rounded-[3rem] overflow-hidden border border-border/10 shadow-2xl group"
           >
-            {/* Ambient Card Glow */}
-            <div className="absolute inset-0 bg-gradient-to-tr from-primary/10 via-transparent to-accent/5 opacity-50 z-10 pointer-events-none group-hover:opacity-80 transition-opacity duration-700" />
+            {/* Gradient glow frame */}
+            <div className="absolute inset-0 bg-gradient-to-tr from-primary/10 via-transparent to-accent/5 opacity-55 z-10 pointer-events-none group-hover:opacity-80 transition-opacity duration-700" />
             
             <Image
               src="https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=800&auto=format&fit=crop"
@@ -104,16 +104,16 @@ export function FounderHero({ onExploreVision }: FounderHeroProps) {
               fill
               priority
               sizes="(max-w-768px) 100vw, 420px"
-              className="object-cover grayscale group-hover:grayscale-0 transition-all duration-1000 scale-100 group-hover:scale-105"
+              className="object-cover grayscale group-hover:grayscale-0 transition-all duration-[800ms] scale-100 group-hover:scale-105"
             />
             
-            {/* Overlay Gradient for text legibility & framing */}
+            {/* Framing Vignette */}
             <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/10 to-transparent z-20" />
             
-            {/* Floating details badge */}
-            <div className="absolute bottom-8 left-8 right-8 z-30 p-5 rounded-2xl border border-border/15 bg-background/80 backdrop-blur-xl flex flex-col gap-1">
+            {/* Details overlay */}
+            <div className="absolute bottom-8 left-8 right-8 z-30 p-5 rounded-2xl border border-border/15 bg-background/85 backdrop-blur-xl flex flex-col gap-1">
               <span className="text-[9px] font-bold text-accent tracking-[0.25em] uppercase">Ecosystem Steward</span>
-              <h3 className="text-lg font-black text-foreground font-heading">Continental Architecture</h3>
+              <h3 className="text-lg font-black text-foreground font-heading">Sovereign Architecture</h3>
               <p className="text-xs text-muted-foreground">Directing technology & leadership transformation from our headquarters in Accra.</p>
             </div>
           </motion.div>

@@ -2,23 +2,20 @@
 
 import React, { useRef } from "react";
 import { PageTransition } from "@/components/ui/PageTransition";
-import { FounderHero } from "@/components/founder-message/FounderHero";
-import { FounderStory } from "@/components/founder-message/FounderStory";
-import { WhyGIINExists } from "@/components/founder-message/WhyGIINExists";
-import { LeadershipPhilosophy } from "@/components/founder-message/LeadershipPhilosophy";
-import { FounderLetter } from "@/components/founder-message/FounderLetter";
-import { FutureVision } from "@/components/founder-message/FutureVision";
-import { LeadershipCommitments } from "@/components/founder-message/LeadershipCommitments";
-import { PersonalValues } from "@/components/founder-message/PersonalValues";
-import { FounderSignature } from "@/components/founder-message/FounderSignature";
-import { FounderCTA } from "@/components/founder-message/FounderCTA";
+import { Chapter1MeetFounder } from "@/components/founder-message/Chapter1MeetFounder";
+import { Chapter2TheProblem } from "@/components/founder-message/Chapter2TheProblem";
+import { Chapter3TheAwakening } from "@/components/founder-message/Chapter3TheAwakening";
+import { Chapter4TheMission } from "@/components/founder-message/Chapter4TheMission";
+import { Chapter5ThePhilosophy } from "@/components/founder-message/Chapter5ThePhilosophy";
+import { Chapter6TheFuture } from "@/components/founder-message/Chapter6TheFuture";
+import { Chapter7TheInvitation } from "@/components/founder-message/Chapter7TheInvitation";
 
 export default function FounderMessagePage() {
-  // Ref to scroll to the letter section
-  const letterSectionRef = useRef<HTMLDivElement>(null);
+  // Ref to scroll to the Mission chapter
+  const missionSectionRef = useRef<HTMLDivElement>(null);
 
-  const handleExploreVision = () => {
-    letterSectionRef.current?.scrollIntoView({
+  const handleExploreNarrative = () => {
+    missionSectionRef.current?.scrollIntoView({
       behavior: "smooth",
       block: "start",
     });
@@ -27,10 +24,10 @@ export default function FounderMessagePage() {
   return (
     <PageTransition>
       {/* Head Tags for Title and Meta SEO */}
-      <title>Founder&apos;s Message | GIIN Leadership & Vision</title>
+      <title>Founder&apos;s Desk | GIIN Vision & Leadership</title>
       <meta
         name="description"
-        content="Read the direct personal message, core leadership philosophy, and roadmap for digital sovereignty in Africa from the Founder of GIIN."
+        content="Enter the mind of GIIN's Founder. Explore the 7 chapters of our narrative: Meet the Founder, The Problem, The Awakening, The Mission, The Philosophy, The Future, and The Invitation."
       />
 
       <main className="min-h-screen bg-[#020205] text-slate-200 selection:bg-primary/30 relative overflow-x-hidden pt-20">
@@ -45,37 +42,28 @@ export default function FounderMessagePage() {
         {/* Outer container for content positioning */}
         <div className="relative z-10 w-full">
           
-          {/* Section 1: Hero */}
-          <FounderHero onExploreVision={handleExploreVision} />
+          {/* Chapter 1: Meet the Founder */}
+          <Chapter1MeetFounder onExploreClick={handleExploreNarrative} />
 
-          {/* Section 2: Story (Milestones) */}
-          <FounderStory />
+          {/* Chapter 2: The Problem Gaps */}
+          <Chapter2TheProblem />
 
-          {/* Section 3: Why GIIN Exists (Challenges -> Solutions) */}
-          <WhyGIINExists />
+          {/* Chapter 3: The Awakening Ecosystem Node Mesh */}
+          <Chapter3TheAwakening />
 
-          {/* Section 4: Philosophy Cards */}
-          <LeadershipPhilosophy />
-
-          {/* Section 5: The centerpiece letter (Anchor for scrolling) */}
-          <div ref={letterSectionRef} className="scroll-mt-24">
-            <FounderLetter />
+          {/* Chapter 4: The Mission (Anchor for scrolling) */}
+          <div ref={missionSectionRef} className="scroll-mt-24">
+            <Chapter4TheMission />
           </div>
 
-          {/* Section 6: Future Roadmap */}
-          <FutureVision />
+          {/* Chapter 5: Philosophy & Values */}
+          <Chapter5ThePhilosophy />
 
-          {/* Section 7: Commitments */}
-          <LeadershipCommitments />
+          {/* Chapter 6: The Future Roadmap */}
+          <Chapter6TheFuture />
 
-          {/* Section 8: Values */}
-          <PersonalValues />
-
-          {/* Section 9: Signature Closure */}
-          <FounderSignature />
-
-          {/* Section 10: Call to Actions */}
-          <FounderCTA />
+          {/* Chapter 7: The Invitation Call-to-Actions & Signature Outro */}
+          <Chapter7TheInvitation />
 
         </div>
 
