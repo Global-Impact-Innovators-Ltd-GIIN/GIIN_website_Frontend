@@ -34,10 +34,10 @@ const CONNECTIONS = [
 
 const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN || "";
 
-// Generate a grid of points for the dot matrix inside Africa
+// Generate an optimized grid of points for the dot matrix inside Africa
 const DOTS_GRID: { x: number; y: number }[] = [];
-for (let x = 3; x <= 97; x += 3.2) {
-  for (let y = 3; y <= 97; y += 3.2) {
+for (let x = 4; x <= 96; x += 5.5) {
+  for (let y = 4; y <= 96; y += 5.5) {
     DOTS_GRID.push({ x, y });
   }
 }
@@ -322,20 +322,15 @@ export function MapSection() {
                   {/* Twinkling Dot-Matrix overlay inside Africa boundary */}
                   <g clipPath="url(#africa-clip)">
                     {DOTS_GRID.map((dot, idx) => (
-                      <motion.circle
+                      <circle
                         key={idx}
                         cx={dot.x}
                         cy={dot.y}
                         r={0.4 + (idx % 3) * 0.15}
-                        className="fill-primary/25 dark:fill-secondary/35"
-                        animate={{
-                          opacity: [0.15, 0.7, 0.15]
-                        }}
-                        transition={{
-                          duration: 3 + (idx % 5),
-                          repeat: Infinity,
-                          ease: "easeInOut",
-                          delay: (idx % 7) * 0.4
+                        className="fill-primary/25 dark:fill-secondary/35 dot-twinkle"
+                        style={{
+                          animationDuration: `${3 + (idx % 5)}s`,
+                          animationDelay: `${(idx % 7) * 0.4}s`
                         }}
                       />
                     ))}
@@ -365,13 +360,14 @@ export function MapSection() {
                           className="stroke-primary/15 dark:stroke-secondary/20 stroke-[0.25]"
                         />
                         {/* Animated signal particle flow */}
-                        <motion.path
+                        <path
                           d={curvePath}
                           fill="none"
-                          className="stroke-primary/50 dark:stroke-secondary/60 stroke-[0.35]"
+                          className="stroke-primary/50 dark:stroke-secondary/60 stroke-[0.35] flow-line"
                           strokeDasharray="3, 10"
-                          animate={{ strokeDashoffset: [0, -26] }}
-                          transition={{ repeat: Infinity, duration: 4 + (idx % 3), ease: "linear" }}
+                          style={{
+                            animationDuration: `${4 + (idx % 3)}s`
+                          }}
                         />
                       </g>
                     );
@@ -570,6 +566,19 @@ export function MapSection() {
       </div>
 
       <style jsx global>{`
+        @keyframes twinkle {
+          0%, 100% { opacity: 0.15; }
+          50% { opacity: 0.70; }
+        }
+        @keyframes flow {
+          to { stroke-dashoffset: -26; }
+        }
+        .dot-twinkle {
+          animation: twinkle ease-in-out infinite;
+        }
+        .flow-line {
+          animation: flow linear infinite;
+        }
         .mapboxgl-popup {
           z-index: 100;
         }

@@ -2,14 +2,37 @@
 
 import React from "react";
 import { HeroSection } from "@/components/organisms/home/HeroSection";
-import { GlobeSection } from "@/components/organisms/home/GlobeSection";
 import { MetricsSection } from "@/components/organisms/home/MetricsSection";
-import { MapSection } from "@/components/organisms/home/MapSection";
 import { ShowcasesSection } from "@/components/organisms/home/ShowcasesSection";
 import { NewsBlogsSection } from "@/components/organisms/home/NewsBlogsSection";
 import { FooterSection } from "@/components/organisms/home/FooterSection";
 import { MissionSection } from "@/components/organisms/home/MissionSection";
 import { VisionSection } from "@/components/organisms/home/VisionSection";
+import dynamic from "next/dynamic";
+
+const GlobeSection = dynamic(
+  () => import("@/components/organisms/home/GlobeSection").then((mod) => mod.GlobeSection),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="h-screen w-full bg-[#020205] flex items-center justify-center text-slate-500 font-mono text-xs animate-pulse">
+        Initializing WebGL Globe...
+      </div>
+    ),
+  }
+);
+
+const MapSection = dynamic(
+  () => import("@/components/organisms/home/MapSection").then((mod) => mod.MapSection),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="h-[500px] w-full bg-[#020205] flex items-center justify-center text-slate-500 font-mono text-xs animate-pulse">
+        Configuring Map Telemetry...
+      </div>
+    ),
+  }
+);
 import Link from "next/link";
 import { ArrowRight, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
@@ -71,11 +94,11 @@ export default function Home() {
                   <div className={`absolute inset-0 bg-gradient-to-br ${div.color} to-transparent opacity-0 transition-opacity group-hover:opacity-100`} />
                   <div className="relative z-10 flex h-full flex-col justify-between">
                     <div>
-                      <h3 className="text-xl font-bold text-foreground mb-3 group-hover:text-primary dark:group-hover:text-secondary transition-colors tracking-tight">{div.title}</h3>
+                      <h3 className="text-xl font-bold text-foreground mb-3 group-hover:text-primary dark:group-hover:text-secondary tracking-tight">{div.title}</h3>
                       <p className="text-muted-foreground text-sm leading-relaxed group-hover:text-foreground transition-colors">{div.desc}</p>
                     </div>
                     <div className="mt-8 flex items-center text-xs font-bold uppercase tracking-widest text-primary dark:text-secondary opacity-0 -translate-x-2 transition-all group-hover:opacity-100 group-hover:translate-x-0">
-                      Enter System <ArrowRight className="ml-2 h-4 w-4" />
+                      Explore Sector <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
                     </div>
                   </div>
                 </Link>
@@ -85,10 +108,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 6. Impact Metrics (Journey Target) */}
-      <div id="journey" className="w-full">
-        <MetricsSection />
-      </div>
+      {/* 6. Metrics Overview */}
+      <MetricsSection />
 
       {/* 7. Innovation Map */}
       <MapSection />

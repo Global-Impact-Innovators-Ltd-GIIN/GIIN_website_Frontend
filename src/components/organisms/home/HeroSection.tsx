@@ -1,52 +1,15 @@
 "use client";
 
-import React, { useRef, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
-import { Canvas, useFrame } from "@react-three/fiber";
-import { Points, PointMaterial } from "@react-three/drei";
 import { useTheme } from "next-themes";
-import * as THREE from "three";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { useAuth } from "@/components/providers/auth-provider";
 import { cn } from "@/lib/utils";
+import dynamic from "next/dynamic";
 
-// Generate particle positions once outside the component
-const particleCount = 1200;
-const particlePositions = new Float32Array(particleCount * 3);
-for (let i = 0; i < particleCount; i++) {
-  particlePositions[i * 3] = (Math.random() - 0.5) * 10;
-  particlePositions[i * 3 + 1] = (Math.random() - 0.5) * 10;
-  particlePositions[i * 3 + 2] = (Math.random() - 0.5) * 10;
-}
-
-// AI Particle Environment Component with smooth slow drift animation
-function ParticleEnvironment({ isDark }: { isDark: boolean }) {
-  const ref = useRef<THREE.Points>(null);
-  const particleColor = isDark ? "#8b5cf6" : "#6366f1";
-
-  useFrame((state) => {
-    if (ref.current) {
-      ref.current.rotation.y = state.clock.getElapsedTime() * 0.008;
-      ref.current.rotation.x = Math.sin(state.clock.getElapsedTime() * 0.01) * 0.01;
-    }
-  });
-
-  return (
-    <group rotation={[0, 0, Math.PI / 6]}>
-      <Points ref={ref} positions={particlePositions} stride={3} frustumCulled={false}>
-        <PointMaterial
-          transparent
-          color={particleColor}
-          size={0.025}
-          sizeAttenuation={true}
-          depthWrite={false}
-          opacity={isDark ? 0.35 : 0.15}
-        />
-      </Points>
-    </group>
-  );
-}
+const HeroCanvas = dynamic(() => import("./HeroCanvas"), { ssr: false });
 
 // Premium Typing Effect Component (Loops continuously)
 function TypingText({ text, isDark }: { text: string; isDark: boolean }) {
@@ -194,9 +157,7 @@ export function HeroSection() {
 
       {/* 3D Particle Layer */}
       <div className="absolute inset-0 z-40 pointer-events-none opacity-40">
-        <Canvas camera={{ position: [0, 0, 5] }}>
-          <ParticleEnvironment isDark={true} />
-        </Canvas>
+        <HeroCanvas />
       </div>
 
       {/* Subtle Digital Grid Overlay */}
