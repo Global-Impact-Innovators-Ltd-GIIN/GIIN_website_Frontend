@@ -355,25 +355,25 @@ export const navigationConfig: NavItem[] = [
     items: [
       {
         label: "Founder Message",
-        href: "/leadership#founder",
+        href: "/leadership/team#executive-leadership",
         description: "A note on the core drive behind creating GIIN, from the desk of the Founder.",
         iconName: "MessageSquare",
       },
       {
         label: "Leadership Team",
-        href: "/leadership#team",
+        href: "/leadership/team",
         description: "Meet the directors, tech leads, and creative designers driving the network forward.",
         iconName: "Users",
       },
       {
         label: "Core Principles",
-        href: "/leadership#principles",
+        href: "/leadership/team#philosophy",
         description: "The set of non-negotiable guidelines ensuring sovereign development and high standards.",
         iconName: "ShieldAlert",
       },
       {
         label: "Impact Stories",
-        href: "/leadership#stories",
+        href: "/leadership/team#culture",
         description: "Case studies exploring the lives and startups impacted by our infrastructure deployment.",
         iconName: "Heart",
       },
