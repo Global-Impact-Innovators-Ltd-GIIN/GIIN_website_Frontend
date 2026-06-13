@@ -39,7 +39,7 @@ export default function LeadershipPhilosophy() {
                         <div className="absolute inset-0 bg-primary/20 blur-[100px] rounded-full" />
                         <div className="relative p-8 rounded-3xl bg-card border border-primary/10 backdrop-blur-xl">
                             <p className="text-2xl font-medium italic text-primary">
-                                "Behind every transformational organization is a team of transformational leaders."
+                                &quot;Behind every transformational organization is a team of transformational leaders.&quot;
                             </p>
                         </div>
                     </div>

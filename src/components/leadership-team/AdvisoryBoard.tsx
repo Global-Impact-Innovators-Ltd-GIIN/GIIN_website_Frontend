@@ -32,7 +32,7 @@ export default function AdvisoryBoard() {
                 <div className="flex flex-col items-center text-center mb-16">
                     <h2 className="text-4xl font-bold mb-4">Advisory Board & Council</h2>
                     <p className="text-muted-foreground max-w-2xl">
-                        Our strategic council consists of world-class leaders and experts who provide high-level guidance to GIIN's executive team.
+                        Our strategic council consists of world-class leaders and experts who provide high-level guidance to GIIN&apos;s executive team.
                     </p>
                 </div>
 
@@ -55,7 +55,7 @@ export default function AdvisoryBoard() {
                             </div>
 
                             <p className="text-muted-foreground italic leading-relaxed text-sm">
-                                "{advisor.note}"
+                                &quot;{advisor.note}&quot;
                             </p>
 
                             <div className="mt-8 flex gap-1">

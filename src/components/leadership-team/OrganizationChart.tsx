@@ -1,14 +1,14 @@
 'use client';
 
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { ChevronDown, ChevronRight, User, Users, Shield, Zap, Target } from 'lucide-react';
 
 interface StructureNode {
     id: string;
     role: string;
     name: string;
-    icon: any;
+    icon: React.ComponentType<{ className?: string }>;
     children?: StructureNode[];
 }
 
@@ -86,7 +86,7 @@ const OrgNode = ({ node, level = 0 }: { node: StructureNode; level?: number }) =
                     {/* Vertical Line */}
                     <div className="absolute top-0 w-0.5 h-8 bg-gradient-to-b from-primary/60 to-primary/20" />
                     <div className="flex gap-8">
-                        {node.children.map((child) => (
+                        {node.children?.map((child) => (
                             <OrgNode key={child.id} node={child} level={level + 1} />
                         ))}
                     </div>

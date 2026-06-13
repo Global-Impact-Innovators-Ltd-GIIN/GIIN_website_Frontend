@@ -4,7 +4,6 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import {
     Zap,
-    Lightbulb,
     TrendingUp,
     Briefcase,
     GraduationCap,
