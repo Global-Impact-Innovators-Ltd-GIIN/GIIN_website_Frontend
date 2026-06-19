@@ -241,8 +241,8 @@ export function Navbar({ user }: NavbarProps) {
 
         <AnimatePresence>
           {activeMenu === "Ecosystem" && (
-            <div className="hidden md:block absolute top-full left-0 right-0 pointer-events-none z-40 pt-1" onMouseEnter={() => handleMouseEnter("Ecosystem", false)} onMouseLeave={handleMouseLeave}>
-              <div className="pointer-events-auto">
+            <div className="hidden md:block absolute top-full left-0 right-0 pointer-events-none z-40 pt-1">
+              <div className="pointer-events-auto" onMouseEnter={() => handleMouseEnter("Ecosystem", false)} onMouseLeave={handleMouseLeave}>
                 <MegaMenu sections={(navigationConfig.find((n) => n.label === "Ecosystem")?.items as MegaMenuSection[]) || []} onClose={() => setActiveMenu(null)} />
               </div>
             </div>
