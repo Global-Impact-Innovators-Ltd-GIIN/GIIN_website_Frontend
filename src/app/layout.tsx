@@ -6,6 +6,7 @@ import { Navbar } from "@/components/organisms/layout/Navbar";
 import { AuthProvider } from "@/components/providers/auth-provider";
 import { PageTransition } from "@/components/ui/PageTransition";
 import { ThemeProvider } from "@/components/providers/theme-provider";
+import { ServiceWorkerRegister } from "@/components/providers/ServiceWorkerRegister";
 import "./globals.css";
 
 const inter = Inter({
@@ -62,21 +63,7 @@ export default async function RootLayout({
             <PageTransition>{children}</PageTransition>
           </ThemeProvider>
         </AuthProvider>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              if ('serviceWorker' in navigator) {
-                window.addEventListener('load', function() {
-                  navigator.serviceWorker.register('/sw.js').then(function(registration) {
-                    console.log('ServiceWorker registration successful with scope: ', registration.scope);
-                  }, function(err) {
-                    console.log('ServiceWorker registration failed: ', err);
-                  });
-                });
-              }
-            `,
-          }}
-        />
+        <ServiceWorkerRegister />
       </body>
     </html>
   );
