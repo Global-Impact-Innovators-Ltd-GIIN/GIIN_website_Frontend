@@ -77,7 +77,7 @@ export function MobileMenu({ isOpen, onClose, user, onLogout }: MobileMenuProps)
           initial="hidden"
           animate="visible"
           exit="exit"
-          className="fixed inset-0 z-50 flex flex-col h-screen w-screen bg-slate-950/98 backdrop-blur-2xl overflow-y-auto px-6 py-6"
+          className="fixed inset-0 z-[100] flex flex-col h-screen w-screen bg-slate-950/98 backdrop-blur-2xl overflow-y-auto px-6 py-6"
         >
           {/* Ambient Glowing Background Stars/Particles */}
           <div className="absolute inset-0 pointer-events-none overflow-hidden">

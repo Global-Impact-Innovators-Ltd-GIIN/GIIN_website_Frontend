@@ -155,7 +155,7 @@ export function Navbar({ user }: NavbarProps) {
   return (
     <header
       className={cn(
-        "fixed top-0 left-0 w-full z-50 transition-all duration-500 px-6 py-4",
+        "fixed top-0 left-0 w-full z-[100] transition-all duration-500 px-6 py-4",
         scrolled
           ? "bg-background/80 border-b border-border/10 backdrop-blur-[16px] py-3 shadow-lg"
           : "bg-transparent border-b border-transparent py-4"
@@ -213,7 +213,7 @@ export function Navbar({ user }: NavbarProps) {
                       key={item.label}
                       ref={(el) => { dropdownRefs.current[item.label] = el; }}
                       initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 10 }}
-                      className="absolute top-full left-0 pt-3 w-80 z-50 pointer-events-auto"
+                      className="absolute top-full left-0 pt-3 w-80 z-[100] pointer-events-auto"
                     >
                       <div className="rounded-xl border border-border/10 shadow-xl backdrop-blur-[25px] overflow-hidden p-3 flex flex-col gap-1 bg-card/90">
                         {(item.items as NavLink[]).map((subLink, subIdx) => {

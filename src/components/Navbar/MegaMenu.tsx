@@ -61,7 +61,7 @@ export function MegaMenu({ sections, onClose }: MegaMenuProps) {
       initial="hidden"
       animate="visible"
       exit="exit"
-      className="relative mt-4 mx-auto max-w-7xl rounded-2xl border border-border/10 shadow-xl backdrop-blur-[25px] overflow-hidden z-50 bg-card/80"
+      className="relative mt-4 mx-auto max-w-7xl rounded-2xl border border-border/10 shadow-xl backdrop-blur-[25px] overflow-hidden z-[100] bg-card/80"
       onMouseLeave={() => setActiveItem(null)}
     >
       {/* Immersive background aura */}

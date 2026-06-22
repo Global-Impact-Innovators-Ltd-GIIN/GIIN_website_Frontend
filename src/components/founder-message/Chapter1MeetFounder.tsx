@@ -19,7 +19,7 @@ export function Chapter1MeetFounder({ onExploreClick }: Chapter1MeetFounderProps
       </div>
 
       <div className="container mx-auto px-6 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center relative z-10">
-        
+
         {/* Left Side: Dynamic Text & Hook */}
         <div className="lg:col-span-7 flex flex-col justify-center text-left">
           <motion.div
@@ -97,7 +97,7 @@ export function Chapter1MeetFounder({ onExploreClick }: Chapter1MeetFounderProps
           >
             {/* Gradient glow frame */}
             <div className="absolute inset-0 bg-gradient-to-tr from-primary/10 via-transparent to-accent/5 opacity-55 z-10 pointer-events-none group-hover:opacity-80 transition-opacity duration-700" />
-            
+
             <Image
               src="https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=800&auto=format&fit=crop"
               alt="Dr. Emmanuel K. Mensah"
@@ -106,10 +106,10 @@ export function Chapter1MeetFounder({ onExploreClick }: Chapter1MeetFounderProps
               sizes="(max-w-768px) 100vw, 420px"
               className="object-cover grayscale group-hover:grayscale-0 transition-all duration-[800ms] scale-100 group-hover:scale-105"
             />
-            
+
             {/* Framing Vignette */}
             <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/10 to-transparent z-20" />
-            
+
             {/* Details overlay */}
             <div className="absolute bottom-8 left-8 right-8 z-30 p-5 rounded-2xl border border-border/15 bg-background/85 backdrop-blur-xl flex flex-col gap-1">
               <span className="text-[9px] font-bold text-accent tracking-[0.25em] uppercase">Ecosystem Steward</span>

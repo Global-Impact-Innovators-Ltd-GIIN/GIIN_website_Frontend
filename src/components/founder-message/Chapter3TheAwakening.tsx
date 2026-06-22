@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Crown, Cpu, BarChart3, GraduationCap, Play, Atom, HeartCircuit } from "lucide-react";
+import { Crown, Cpu, BarChart3, GraduationCap, Play, Atom, Activity } from "lucide-react";
 
 interface Node {
   id: string;
@@ -86,7 +86,7 @@ export function Chapter3TheAwakening() {
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-16">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary-foreground/90 text-[10px] font-bold uppercase tracking-[0.2em] mb-6">
-            <HeartCircuit className="w-3.5 h-3.5 text-accent animate-pulse" />
+            <Activity className="w-3.5 h-3.5 text-accent animate-pulse" />
             Chapter 3: The Awakening
           </div>
           <h2 className="text-3xl md:text-5xl font-black text-foreground tracking-tighter font-heading mb-4">
