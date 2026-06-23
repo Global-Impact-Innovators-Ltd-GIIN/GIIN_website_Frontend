@@ -331,7 +331,7 @@ export const navigationConfig: NavItem[] = [
       },
       {
         label: "Learning Center",
-        href: "/academy",
+        href: "/resources/learning-center",
         description: "Self-paced study modules, exercises, and tutorials for engineers and systems designers.",
         iconName: "BookOpen",
       },
