@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Outfit } from "next/font/google";
+import { Inter, Outfit, Space_Grotesk } from "next/font/google";
 import { cookies } from "next/headers";
 import { JWTService } from "@/lib/security/jwt";
 import { Navbar } from "@/components/organisms/layout/Navbar";
@@ -15,6 +15,11 @@ const inter = Inter({
 
 const outfit = Outfit({
   variable: "--font-outfit",
+  subsets: ["latin"],
+});
+
+const spaceGrotesk = Space_Grotesk({
+  variable: "--font-space-grotesk",
   subsets: ["latin"],
 });
 
@@ -47,7 +52,7 @@ export default async function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${outfit.variable} antialiased`}
+      className={`${inter.variable} ${outfit.variable} ${spaceGrotesk.variable} antialiased`}
       suppressHydrationWarning
     >
       <body className="min-h-screen bg-background text-foreground font-sans selection:bg-primary/30">
